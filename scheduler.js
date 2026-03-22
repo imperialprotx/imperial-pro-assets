@@ -1,929 +1,661 @@
-// ═══════════════════════════════════════════════════════
-//  IMPERIAL PRO INSPECTION — SCHEDULER ENGINE
-//  All pricing, state, UI logic
-// ═══════════════════════════════════════════════════════
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2
+// Auto-advance, phase discounts, Core/Pro slider,
+// green addon toggles, WDI by pkg, silent surcharges,
+// weekend blocking, larger fonts, military green
 
-// ── PRICING TABLES ──────────────────────────────────────
+const PHASE1=[{max:2000,p:325},{max:2500,p:349},{max:3000,p:369},{max:3500,p:395},{max:4000,p:419},{max:4500,p:445},{max:5000,p:469},{max:5500,p:495},{max:6000,p:525},{max:Infinity,p:null}];
+const PHASE2=[{max:2000,p:449},{max:2500,p:469},{max:3000,p:489},{max:3500,p:539},{max:4000,p:589},{max:4500,p:639},{max:5000,p:689},{max:5500,p:739},{max:6000,p:789},{max:Infinity,p:null}];
+const PHASE3=[{max:2000,p:475},{max:2500,p:499},{max:3000,p:525},{max:3500,p:549},{max:4000,p:575},{max:4500,p:599},{max:5000,p:625},{max:5500,p:675},{max:6000,p:725},{max:Infinity,p:null}];
+const PHASE4=[{max:2000,p:425},{max:2500,p:449},{max:3000,p:475},{max:3500,p:499},{max:4000,p:525},{max:4500,p:549},{max:5000,p:575},{max:5500,p:625},{max:6000,p:675},{max:Infinity,p:null}];
+const RESALE_CORE=[{max:1500,p:475},{max:2000,p:500},{max:2500,p:550},{max:3000,p:575},{max:3500,p:625},{max:4000,p:675},{max:4500,p:725},{max:5000,p:825},{max:5500,p:925},{max:6000,p:1025},{max:Infinity,p:null}];
+const RESALE_PRO=[{max:1500,p:575},{max:2000,p:600},{max:2500,p:650},{max:3000,p:675},{max:3500,p:750},{max:4000,p:800},{max:4500,p:875},{max:5000,p:975},{max:5500,p:1075},{max:6000,p:1175},{max:Infinity,p:null}];
+const FOUND_A=[{max:2000,p:250},{max:2500,p:275},{max:3000,p:300},{max:3500,p:325},{max:4000,p:350},{max:5000,p:375},{max:6000,p:425},{max:Infinity,p:null}];
+const FOUND_B=[{max:2000,p:350},{max:2500,p:375},{max:3000,p:400},{max:3500,p:425},{max:4000,p:450},{max:5000,p:500},{max:6000,p:550},{max:Infinity,p:null}];
+const PRELISTING=[{max:2000,p:450},{max:2500,p:475},{max:3000,p:500},{max:3500,p:525},{max:4000,p:550},{max:4500,p:575},{max:5000,p:600},{max:6000,p:650},{max:Infinity,p:null}];
+const WDI_STANDALONE=[{max:1500,p:175},{max:2000,p:195},{max:2500,p:215},{max:3000,p:235},{max:3500,p:255},{max:4000,p:275},{max:5000,p:300},{max:6000,p:325},{max:Infinity,p:null}];
+const WDI_ADDON_CORE=[{max:1500,p:115},{max:2000,p:125},{max:2500,p:135},{max:3000,p:145},{max:3500,p:155},{max:4000,p:165},{max:5000,p:175},{max:6000,p:185},{max:Infinity,p:null}];
+const WDI_ADDON_PRO=75;
 
-const PHASE1 = [
-  {max:2000,p:325},{max:2500,p:349},{max:3000,p:369},{max:3500,p:395},
-  {max:4000,p:419},{max:4500,p:445},{max:5000,p:469},{max:5500,p:495},
-  {max:6000,p:525},{max:Infinity,p:null}
-];
-const PHASE2 = [
-  {max:2000,p:449},{max:2500,p:469},{max:3000,p:489},{max:3500,p:539},
-  {max:4000,p:589},{max:4500,p:639},{max:5000,p:689},{max:5500,p:739},
-  {max:6000,p:789},{max:Infinity,p:null}
-];
-const PHASE3 = [
-  {max:2000,p:475},{max:2500,p:499},{max:3000,p:525},{max:3500,p:549},
-  {max:4000,p:575},{max:4500,p:599},{max:5000,p:625},{max:5500,p:675},
-  {max:6000,p:725},{max:Infinity,p:null}
-];
-const PHASE4 = [
-  {max:2000,p:425},{max:2500,p:449},{max:3000,p:475},{max:3500,p:499},
-  {max:4000,p:525},{max:4500,p:549},{max:5000,p:575},{max:5500,p:625},
-  {max:6000,p:675},{max:Infinity,p:null}
-];
-const RESALE_CORE = [
-  {max:1500,p:475},{max:2000,p:500},{max:2500,p:550},{max:3000,p:575},
-  {max:3500,p:625},{max:4000,p:675},{max:4500,p:725},{max:5000,p:825},
-  {max:5500,p:925},{max:6000,p:1025},{max:Infinity,p:null}
-];
-const RESALE_PRO = [
-  {max:1500,p:575},{max:2000,p:600},{max:2500,p:650},{max:3000,p:675},
-  {max:3500,p:750},{max:4000,p:800},{max:4500,p:875},{max:5000,p:975},
-  {max:5500,p:1075},{max:6000,p:1175},{max:Infinity,p:null}
-];
-const FOUND_A = [
-  {max:2000,p:250},{max:2500,p:275},{max:3000,p:300},{max:3500,p:325},
-  {max:4000,p:350},{max:5000,p:375},{max:6000,p:425},{max:Infinity,p:null}
-];
-const FOUND_B = [
-  {max:2000,p:350},{max:2500,p:375},{max:3000,p:400},{max:3500,p:425},
-  {max:4000,p:450},{max:5000,p:500},{max:6000,p:550},{max:Infinity,p:null}
-];
-const PRELISTING = [
-  {max:2000,p:450},{max:2500,p:475},{max:3000,p:500},{max:3500,p:525},
-  {max:4000,p:550},{max:4500,p:575},{max:5000,p:600},{max:6000,p:650},
-  {max:Infinity,p:null}
-];
-const WDI_STANDALONE = [
-  {max:1500,p:175},{max:2000,p:195},{max:2500,p:215},{max:3000,p:235},
-  {max:3500,p:255},{max:4000,p:275},{max:5000,p:300},{max:6000,p:325},
-  {max:Infinity,p:null}
-];
-const WDI_ADDON = [
-  {max:1500,p:75},{max:2000,p:85},{max:2500,p:95},{max:3000,p:100},
-  {max:3500,p:110},{max:4000,p:115},{max:5000,p:125},{max:6000,p:135},
-  {max:Infinity,p:null}
-];
+const AGE_SURCHARGE=[{from:1977,to:9999,fee:0},{from:1967,to:1976,fee:25},{from:1957,to:1966,fee:35},{from:1947,to:1956,fee:50},{from:1937,to:1946,fee:75},{from:1927,to:1936,fee:100},{from:1917,to:1926,fee:135},{from:1907,to:1916,fee:250},{from:0,to:1906,fee:375}];
+const COUPONS={'JADI':{amount:30,label:'Promo Code JADI'},'SAVE30':{amount:30,label:'Promo Code SAVE30'},'REFERRAL':{amount:50,label:'Referral Discount'},'FAMILY':{amount:50,label:'Family Discount'}};
 
-// Age surcharge (resale only)
-const AGE_SURCHARGE = [
-  {from:1977,to:9999,fee:0},
-  {from:1967,to:1976,fee:25},
-  {from:1957,to:1966,fee:35},
-  {from:1947,to:1956,fee:50},
-  {from:1937,to:1946,fee:75},
-  {from:1927,to:1936,fee:100},
-  {from:1917,to:1926,fee:135},
-  {from:1907,to:1916,fee:250},
-  {from:0,to:1906,fee:375}
-];
+const S={step:1,propType:null,role:null,service:null,military:false,sqft:null,year:null,foundation:null,phase:null,foundLevel:null,moldType:null,resalePkg:'pro',addons:{mold:false,wdi:false,repair:false,extraSamples:0},coupon:null,customQuote:false};
 
-// Coupons
-const COUPONS = {
-  'JADI':    {amount:30, label:'Promo Code — JADI'},
-  'SAVE30':  {amount:30, label:'Promo Code — SAVE30'},
-  'REFERRAL':{amount:50, label:'Referral Discount'},
-  'FAMILY':  {amount:50, label:'Family Discount'}
-};
+function lookup(table,sqft){if(!sqft)return null;for(const t of table){if(sqft<=t.max)return t.p;}return null;}
+function fmt(n){return n!=null?'$'+n.toLocaleString():'--';}
+function ageFee(year){if(!year)return 0;for(const b of AGE_SURCHARGE){if(year>=b.from&&year<=b.to)return b.fee;}return 0;}
+function crawlFee(){return S.foundation==='crawl'?100:0;}
+function scrollToWizard(){var el=document.getElementById('wizard-top');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
-// ── STATE ────────────────────────────────────────────────
-const S = {
-  step: 1,
-  propType: null,    // residential | commercial
-  role: null,        // homebuyer | homeowner | agent
-  service: null,     // resale | phase | foundation | mold | termite | prelisting | warranty
-  military: false,
-  sqft: null,
-  year: null,
-  foundation: null,  // slab | crawl
-  phase: null,       // 1|2|3|4
-  foundLevel: null,  // A|B
-  moldType: null,    // iaq | assessment
-  resalePkg: null,   // core | pro
-  addons: {
-    mold: false,
-    wdi: false,
-    repair: false,
-    extraSamples: 0
-  },
-  coupon: null,      // {amount, label}
-  basePrice: null,
-  customQuote: false,
-};
-
-// ── HELPERS ──────────────────────────────────────────────
-function lookup(table, sqft) {
-  if(!sqft) return null;
-  for(const t of table) { if(sqft <= t.max) return t.p; }
-  return null;
+function wdiAddonPrice(){
+  var svc=S.service;
+  var isPro=svc==='resale'&&S.resalePkg==='pro';
+  var isPhase=svc==='phase'&&S.phase>=3;
+  var isWarranty=svc==='warranty';
+  var isPre=svc==='prelisting';
+  if(isPro||isPhase||isWarranty||isPre)return WDI_ADDON_PRO;
+  return lookup(WDI_ADDON_CORE,S.sqft)||115;
 }
-function fmt(n) { return n != null ? '$' + n.toLocaleString() : '—'; }
-function ageFee(year) {
-  if(!year) return 0;
-  for(const b of AGE_SURCHARGE) { if(year >= b.from && year <= b.to) return b.fee; }
+
+function getPhaseDiscount(phase){
+  if(S.service!=='phase')return 0;
+  if(phase===1||phase===2)return 25;
   return 0;
 }
-function crawlFee() { return S.foundation === 'crawl' ? 100 : 0; }
-function isCustom() { return S.sqft && S.sqft > 6000; }
 
-function scrollToWizard() {
-  document.getElementById('wizard-top').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-// ── PROGRESS ─────────────────────────────────────────────
-const STEP_LABELS = ['Type','Service','Details','Add-ons','Book'];
-function updateProgress(step) {
-  for(let i=1;i<=5;i++){
-    const dot = document.getElementById('pd'+i);
-    const lbl = document.getElementById('pl-'+i);
-    dot.classList.remove('active','done');
-    lbl.classList.remove('active','done');
-    if(i < step){ dot.classList.add('done'); lbl.classList.add('done'); dot.textContent='✓'; }
-    else if(i === step){ dot.classList.add('active'); lbl.classList.add('active'); dot.textContent=i; }
-    else { dot.textContent=i; }
-    const line = document.getElementById('pl'+i);
-    if(line) line.classList.toggle('done', i < step);
+function updateProgress(step){
+  for(var i=1;i<=5;i++){
+    var dot=document.getElementById('pd'+i);
+    var lbl=document.getElementById('pl-'+i);
+    if(!dot||!lbl)continue;
+    dot.classList.remove('active','done');lbl.classList.remove('active','done');
+    if(i<step){dot.classList.add('done');lbl.classList.add('done');dot.textContent='+';}
+    else if(i===step){dot.classList.add('active');lbl.classList.add('active');dot.textContent=i;}
+    else{dot.textContent=i;}
+    var line=document.getElementById('pl'+i);
+    if(line)line.classList.toggle('done',i<step);
   }
 }
 
-// ── NAVIGATION ───────────────────────────────────────────
-function goStep(n) {
-  if(n===5) buildAddons();
-  if(n===6) renderFinalSummary();
-  document.querySelectorAll('.step-section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('step-'+n).classList.add('active');
-  S.step = n;
-  updateProgress(n);
-  scrollToWizard();
+function goStep(n){
+  if(n===5)buildAddons();
+  if(n===6)renderFinalSummary();
+  document.querySelectorAll('.step-section').forEach(function(s){s.classList.remove('active');});
+  var el=document.getElementById('step-'+n);
+  if(el)el.classList.add('active');
+  S.step=n;updateProgress(n);scrollToWizard();
 }
 
-// ── STEP 1: PROPERTY TYPE ────────────────────────────────
-function pickPropertyType(t) {
-  S.propType = t;
-  ['residential','commercial'].forEach(x=>{
-    document.getElementById('cc-'+x).classList.toggle('selected', x===t);
-  });
-  if(t==='commercial'){
-    window.location.href='https://www.commercialpropertyinspectionstx.com/Contact.html';
-    return;
-  }
-  document.getElementById('next-1').disabled = false;
+function pickPropertyType(t){
+  S.propType=t;
+  ['residential','commercial'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===t);});
+  if(t==='commercial'){window.location.href='https://www.commercialpropertyinspectionstx.com/Contact.html';return;}
+  setTimeout(function(){goStep(2);},300);
 }
 
-// ── STEP 2: ROLE ─────────────────────────────────────────
-function pickRole(r) {
-  S.role = r;
-  ['homebuyer','homeowner','agent'].forEach(x=>{
-    document.getElementById('cc-'+x).classList.toggle('selected', x===r);
-  });
-  // Show agent fields if role=agent
-  document.getElementById('agent-fields').style.display = (r==='agent') ? 'block' : 'none';
-  document.getElementById('next-2').disabled = false;
+function pickRole(r){
+  S.role=r;
+  ['homebuyer','homeowner','agent'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===r);});
+  var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
+  setTimeout(function(){goStep(3);},300);
 }
 
-function toggleMilitary() {
-  S.military = !S.military;
-  document.getElementById('mil-wrap').classList.toggle('active', S.military);
-  // If military, WDI addon forced free — update summary if on step 5
-  if(S.step >= 5) renderSummary();
+function toggleMilitary(){
+  S.military=!S.military;
+  var wrap=document.getElementById('mil-wrap');
+  if(wrap)wrap.classList.toggle('active',S.military);
+  if(S.step>=5)renderSummary();
 }
 
-// ── STEP 3: SERVICE CARDS ────────────────────────────────
-const SERVICE_DEFS = {
-  homebuyer: [
-    { id:'resale', icon:'🏠', title:'Resale Home Inspection', desc:'Buying an existing home. Choose Core or Pro — both include infrared thermal imaging, moisture testing, and our industry-leading report.', tag:'✦ Core · Pro · Add-ons' },
-    { id:'phase', icon:'🏗️', title:'New Construction Phase Inspection', desc:'Building a new home with a builder. ICC-certified inspections at every critical stage — the only ICC-certified inspector in Fort Bend County.', tag:'✦ Phase 1 · 2 · 3 · 4' },
-    { id:'foundation', icon:'📐', title:'Standalone Foundation Inspection', desc:'Foundation evaluation only — Level A visual assessment or Level B full ZIPLEVEL® precision survey.', tag:'✦ Level A · Level B' },
-    { id:'mold', icon:'🧪', title:'Standalone Mold / IAQ Inspection', desc:'Air and surface sampling with certified lab results, or a full mold assessment + sampling. No home inspection required.', tag:'✦ IAQ Sampling · Assessment' },
-    { id:'termite', icon:'🪲', title:'Standalone WDI Termite Inspection', desc:'TDA-licensed wood-destroying insect inspection. Required by most lenders. Identify active infestations and conditions that invite future activity.', tag:'✦ TDA #801793' },
+var SERVICE_DEFS={
+  homebuyer:[
+    {id:'resale',icon:'🏠',title:'Resale Home Inspection',desc:'Buying an existing home. Core includes full TREC inspection, infrared thermal imaging, and moisture testing. Upgrade to Pro to add a ZIPLEVEL precision foundation survey — the standard for Fort Bend County.',tag:'✦ Core · Pro · Add-ons'},
+    {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'Building with a builder. ICC-certified inspections at every critical stage. The only ICC-certified inspector in Fort Bend County.',tag:'✦ Phase 1 · 2 · 3 · 4'},
+    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Foundation evaluation only. Level A is a thorough visual assessment. Level B is a full ZIPLEVEL precision survey with CAD drawing — the same tool foundation engineers use.',tag:'✦ Level A · Level B'},
+    {id:'mold',icon:'🧪',title:'Standalone Mold / IAQ Inspection',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ IAQ Sampling · Assessment'},
+    {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. Required by most lenders. Identifies active infestations and conditions that invite future activity.',tag:'✦ TDA Licensed'},
   ],
-  homeowner: [
-    { id:'warranty', icon:'📋', title:'Builder Warranty Inspection (MEPS)', desc:'Your 11-month window before your builder\'s 1-year warranty expires. MEPS inspection — Mechanical, Electrical, Plumbing, Structural. Your last chance to make them fix it at no cost.', tag:'✦ Phase 4 Pricing' },
-    { id:'prelisting', icon:'🏷️', title:'Pre-Listing Inspection', desc:'Selling your home? A pre-listing MEPS inspection identifies issues before buyers find them — giving you control of the negotiation.', tag:'✦ MEPS Scope' },
-    { id:'foundation', icon:'📐', title:'Standalone Foundation Inspection', desc:'Level A visual assessment or Level B full ZIPLEVEL® precision survey with CAD drawing and deflection analysis.', tag:'✦ Level A · Level B' },
-    { id:'mold', icon:'🧪', title:'Mold / IAQ Inspection', desc:'Professional air and surface sampling with certified lab results, or a full mold assessment + sampling.', tag:'✦ IAQ Sampling · Assessment' },
-    { id:'termite', icon:'🪲', title:'WDI Termite Inspection', desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.', tag:'✦ TDA #801793' },
+  homeowner:[
+    {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS Scope · Phase 4 Pricing'},
+    {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
+    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment or Level B full ZIPLEVEL precision survey with CAD drawing and deflection analysis.',tag:'✦ Level A · Level B'},
+    {id:'mold',icon:'🧪',title:'Mold / IAQ Inspection',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ IAQ Sampling · Assessment'},
+    {id:'termite',icon:'🪲',title:'WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.',tag:'✦ TDA Licensed'},
   ],
-  agent: [
-    { id:'resale', icon:'🏠', title:'Resale Home Inspection', desc:'For your buyer purchasing an existing home. Core or Pro — both include infrared imaging and our Repair Request Builder for negotiations.', tag:'✦ Core · Pro · Add-ons' },
-    { id:'phase', icon:'🏗️', title:'New Construction Phase Inspection', desc:'For your buyer building with a builder. ICC-certified at every stage — Fort Bend County\'s only ICC-certified inspector.', tag:'✦ Phase 1 · 2 · 3 · 4' },
-    { id:'foundation', icon:'📐', title:'Standalone Foundation Inspection', desc:'Level A or Level B precision survey — powerful negotiating data for your clients.', tag:'✦ Level A · Level B' },
-    { id:'mold', icon:'🧪', title:'Standalone Mold / IAQ Inspection', desc:'Certified air and surface sampling. One visit, full written report.', tag:'✦ IAQ Sampling · Assessment' },
-    { id:'termite', icon:'🪲', title:'Standalone WDI Termite Inspection', desc:'TDA-licensed WDI inspection. Required by most lenders — book alongside any inspection.', tag:'✦ TDA #801793' },
+  agent:[
+    {id:'resale',icon:'🏠',title:'Resale Home Inspection',desc:'For your buyer purchasing an existing home. Core or Pro — both include infrared imaging and our Repair Request Builder formatted for seller negotiations.',tag:'✦ Core · Pro · Add-ons'},
+    {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'For your buyer building with a builder. ICC-certified at every stage — Fort Bend County\'s only ICC-certified inspector.',tag:'✦ Phase 1 · 2 · 3 · 4'},
+    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A or Level B precision survey — powerful negotiating data for your clients.',tag:'✦ Level A · Level B'},
+    {id:'mold',icon:'🧪',title:'Standalone Mold / IAQ Inspection',desc:'Certified air and surface sampling. One visit, full written report.',tag:'✦ IAQ Sampling · Assessment'},
+    {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed WDI inspection. Required by most lenders.',tag:'✦ TDA Licensed'},
   ]
 };
 
-function buildStep3Cards() {
-  const role = S.role;
-  const defs = SERVICE_DEFS[role] || SERVICE_DEFS.homebuyer;
-  const wrap = document.getElementById('step3-cards');
-  wrap.innerHTML = '';
-  const grid = document.createElement('div');
-  grid.className = 'choice-grid-2';
-  defs.forEach(def => {
-    const card = document.createElement('div');
-    card.className = 'choice-card';
-    card.id = 'svc-'+def.id;
-    card.innerHTML = `<div class="cc-icon">${def.icon}</div><div class="cc-title">${def.title}</div><div class="cc-desc">${def.desc}</div><div class="cc-tag">${def.tag}</div>`;
-    card.setAttribute('onclick', "window.IPpickService('" + def.id + "')");
+function buildStep3Cards(){
+  var role=S.role;
+  var defs=SERVICE_DEFS[role]||SERVICE_DEFS.homebuyer;
+  var wrap=document.getElementById('step3-cards');
+  wrap.innerHTML='';
+  var grid=document.createElement('div');
+  grid.className='choice-grid-2';
+  defs.forEach(function(def){
+    var card=document.createElement('div');
+    card.className='choice-card';
+    card.id='svc-'+def.id;
+    card.innerHTML='<div class="cc-icon">'+def.icon+'</div><div class="cc-title">'+def.title+'</div><div class="cc-desc">'+def.desc+'</div><div class="cc-tag">'+def.tag+'</div>';
+    card.setAttribute('onclick',"window.IPpickService('"+def.id+"')");
     grid.appendChild(card);
   });
   wrap.appendChild(grid);
 }
 
-function pickService(svc) {
-  S.service = svc;
-  S.addons = {mold:false,wdi:false,repair:false,extraSamples:0};
-  S.resalePkg = null;
-  S.phase = null;
-  S.foundLevel = null;
-  S.moldType = null;
-  document.querySelectorAll('[id^="svc-"]').forEach(c=>c.classList.remove('selected'));
-  const el = document.getElementById('svc-'+svc);
-  if(el) el.classList.add('selected');
-  document.getElementById('next-3').disabled = false;
+function pickService(svc){
+  S.service=svc;
+  S.addons={mold:false,wdi:false,repair:false,extraSamples:0};
+  S.resalePkg='pro';S.phase=null;S.foundLevel=null;S.moldType=null;
+  document.querySelectorAll('[id^="svc-"]').forEach(function(c){c.classList.remove('selected');});
+  var el=document.getElementById('svc-'+svc);if(el)el.classList.add('selected');
   configStep4();
+  setTimeout(function(){goStep(4);},300);
 }
 
-// ── STEP 4: PROPERTY DETAILS CONFIG ─────────────────────
-function configStep4() {
-  const svc = S.service;
-  // Show/hide field groups
-  const show = (id, visible) => {
-    const el = document.getElementById(id);
-    if(el) el.style.display = visible ? 'block' : 'none';
-  };
-  // All off first
-  ['fg-sqft','fg-year','fg-foundation','fg-phase','fg-found-level','fg-mold-type','fg-resale-pkg'].forEach(id=>show(id,false));
-  show('price-preview', false);
+function configStep4(){
+  var svc=S.service;
+  function show(id,v){var el=document.getElementById(id);if(el)el.style.display=v?'block':'none';}
+  ['fg-sqft','fg-year','fg-foundation','fg-phase','fg-found-level','fg-mold-type','fg-resale-pkg'].forEach(function(id){show(id,false);});
+  show('price-preview',false);
+  show('fg-sqft',true);
+  if(svc==='resale'||svc==='prelisting')show('fg-year',true);
+  if(svc==='resale'||svc==='phase'||svc==='foundation'||svc==='warranty'||svc==='prelisting')show('fg-foundation',true);
+  if(svc==='phase')show('fg-phase',true);
+  if(svc==='warranty')S.phase=4;
+  if(svc==='foundation')show('fg-found-level',true);
+  if(svc==='mold')show('fg-mold-type',true);
+  if(svc==='resale'){show('fg-resale-pkg',true);buildResaleSlider();}
+  S.sqft=null;S.year=null;S.foundation=null;
+  var si=document.getElementById('inp-sqft');if(si)si.value='';
+  var yi=document.getElementById('inp-year');if(yi)yi.value='';
+  document.querySelectorAll('.radio-btn').forEach(function(rb){rb.classList.remove('selected');});
+  show('price-preview',false);show('custom-quote-wrap',false);
+  var n4=document.getElementById('next-4');if(n4)n4.disabled=true;
+}
 
-  // Sq ft always shown
-  show('fg-sqft', true);
+function buildResaleSlider(){
+  var wrap=document.getElementById('pkg-cards-wrap');
+  wrap.innerHTML='<div style="background:var(--white);border:2px solid rgba(10,22,40,.1);padding:clamp(20px,2.5vw,32px)">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">'
+    +'<div><div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:var(--orange)!important;margin-bottom:6px" id="pkg-tier-label">Pro Package</div>'
+    +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(20px,2.5vw,28px)!important;font-weight:700!important;color:var(--text-dark)!important;line-height:1.1" id="pkg-title-label">Core + ZIPLEVEL Foundation Survey</div></div>'
+    +'<div style="text-align:right;flex-shrink:0"><div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(36px,5vw,52px)!important;font-weight:700!important;color:var(--text-dark)!important;line-height:1;letter-spacing:-.03em" id="pkg-price-display">Enter sq ft above</div>'
+    +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;color:var(--text-muted)!important;letter-spacing:.1em!important;text-transform:uppercase!important;margin-top:4px">estimated starting price</div></div></div>'
+    +'<div style="margin-bottom:20px">'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:10px">'
+    +'<span style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--text-muted)!important">Core</span>'
+    +'<span style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--orange)!important">Pro ✦ Most Popular</span></div>'
+    +'<div style="position:relative;height:52px;display:flex;align-items:center">'
+    +'<div style="position:absolute;left:0;right:0;height:8px;background:rgba(10,22,40,.1);border-radius:4px">'
+    +'<div id="slider-fill" style="height:100%;background:var(--orange);border-radius:4px;width:100%;transition:width .3s ease"></div></div>'
+    +'<input type="range" min="0" max="1" step="1" value="1" id="pkg-slider" style="position:relative;z-index:1;width:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;height:52px;margin:0" oninput="window.IPonSliderChange(this.value)"></div></div>'
+    +'<div id="pkg-features" style="border-top:1px solid rgba(10,22,40,.08);padding-top:16px"></div>'
+    +'<div id="pkg-savings-banner" style="display:none;margin-top:16px;background:rgba(26,107,58,.08);border:1px solid rgba(168,213,184,.3);border-left:4px solid #6ecf95;padding:14px 18px">'
+    +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:#3a9e5f!important;margin-bottom:5px">Included Value</div>'
+    +'<div id="pkg-savings-text" style="font-family:\'Crimson Pro\',serif!important;font-size:16px!important;color:#2d7a4a!important;line-height:1.55"></div></div></div>';
 
-  // Year built — resale, prelisting (homeowner services get age surcharge too)
-  if(['resale','prelisting'].includes(svc)) show('fg-year', true);
-
-  // Foundation type — resale, phase, foundation standalone
-  if(['resale','phase','foundation','warranty','prelisting'].includes(svc)) show('fg-foundation', true);
-
-  // Phase selector
-  if(svc === 'phase') show('fg-phase', true);
-  if(svc === 'warranty') {
-    // Auto-select phase 4
-    S.phase = 4;
+  // Add slider thumb styles
+  if(!document.getElementById('slider-style')){
+    var st=document.createElement('style');
+    st.id='slider-style';
+    st.textContent='#pkg-slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#c8531a;cursor:pointer;border:3px solid #fafaf8;box-shadow:0 2px 8px rgba(200,83,26,.4);}'
+      +'#pkg-slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#c8531a;cursor:pointer;border:3px solid #fafaf8;box-shadow:0 2px 8px rgba(200,83,26,.4);}';
+    document.head.appendChild(st);
   }
-
-  // Foundation level
-  if(svc === 'foundation') show('fg-found-level', true);
-
-  // Mold type
-  if(svc === 'mold') show('fg-mold-type', true);
-
-  // Resale package
-  if(svc === 'resale') show('fg-resale-pkg', true);
-
-  S.sqft = null;
-  S.year = null;
-  S.foundation = null;
-  const sqftInp = document.getElementById('inp-sqft');
-  const yearInp = document.getElementById('inp-year');
-  if(sqftInp) sqftInp.value = '';
-  if(yearInp) yearInp.value = '';
-  document.querySelectorAll('.radio-btn').forEach(rb=>rb.classList.remove('selected'));
-  document.getElementById('next-4').disabled = true;
-  document.getElementById('price-preview').style.display = 'none';
-  document.getElementById('custom-quote-wrap').style.display = 'none';
-
-  // Build resale package cards
-  if(svc === 'resale') buildResalePackages();
+  updateSliderDisplay(1);
 }
 
-function buildResalePackages() {
-  const wrap = document.getElementById('pkg-cards-wrap');
-  const pkgs = [
-    {
-      id:'core', name:'Core', subtitle:'Complete Inspection',
-      bullets:['Full TREC Home Inspection','Infrared Thermal Imaging — Included','Moisture Meter Testing Throughout','Photo-Rich Report in 24 Hours','Interactive Summary Webpage','Repair Request Builder'],
-      note:'Foundation: Visual Assessment (spot elevation + drainage review)'
-    },
-    {
-      id:'pro', name:'Pro', subtitle:'Core + Foundation Survey',
-      featured:true,
-      bullets:['Everything in Core, plus:','ZIPLEVEL® Precision Elevation Survey','Full Foundation Footprint Mapped','CAD Drawing in Report','Documented Baseline for Monitoring'],
-      note:'Saves $350+ vs standalone foundation survey — the standard for Houston clay soils'
-    }
-  ];
-  wrap.innerHTML = pkgs.map(pkg=>`
-    <div class="choice-card${pkg.featured?' selected':''}" id="pkg-${pkg.id}" onclick="window.IPpickResalePkg('${pkg.id}')" style="padding:20px">
-      ${pkg.featured?'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:.4rem!important;font-weight:800!important;letter-spacing:.2em!important;text-transform:uppercase!important;color:var(--orange)!important;margin-bottom:8px!important">✦ Most Popular</div>':''}
-      <div class="cc-title" style="font-size:clamp(18px,2vw,24px)!important;margin-bottom:2px">${pkg.name}</div>
-      <div style="font-family:\'Crimson Pro\',serif!important;font-size:13px!important;color:var(--text-muted)!important;margin-bottom:12px!important;font-style:italic">${pkg.subtitle}</div>
-      <div class="pc-total-num" id="pkg-price-${pkg.id}" style="font-size:clamp(28px,4vw,40px)!important;color:var(--text-dark)!important;line-height:1!important;margin-bottom:8px">—</div>
-      <ul style="list-style:none;margin-bottom:12px">
-        ${pkg.bullets.map(b=>`<li style="font-family:'Crimson Pro',serif!important;font-size:13px!important;color:var(--text-mid)!important;padding:4px 0;border-bottom:1px solid rgba(10,22,40,.05);display:flex;gap:7px;align-items:flex-start"><span style="color:var(--orange);flex-shrink:0;margin-top:1px">✦</span>${b}</li>`).join('')}
-      </ul>
-      <div style="font-family:'Crimson Pro',serif!important;font-size:12px!important;color:var(--orange)!important;font-style:italic!important;line-height:1.45">${pkg.note}</div>
-    </div>
-  `).join('');
-  // Default select pro
-  S.resalePkg = 'pro';
-}
-
-function pickResalePkg(pkg) {
-  S.resalePkg = pkg;
-  ['core','pro'].forEach(p=>{
-    const el = document.getElementById('pkg-'+p);
-    if(el) el.classList.toggle('selected', p===pkg);
-  });
+function onSliderChange(val){
+  var v=parseInt(val);
+  S.resalePkg=v===1?'pro':'core';
+  var fill=document.getElementById('slider-fill');
+  if(fill)fill.style.width=v===1?'100%':'0%';
+  updateSliderDisplay(v);
   onDetailsChange();
 }
 
-function pickFoundation(f) {
-  S.foundation = f;
-  ['slab','crawl'].forEach(x=>{
-    document.getElementById('rb-'+x).classList.toggle('selected',x===f);
-  });
-  onDetailsChange();
+function updateSliderDisplay(val){
+  var isPro=(parseInt(val)===1);
+  var tierEl=document.getElementById('pkg-tier-label');
+  var titleEl=document.getElementById('pkg-title-label');
+  var banner=document.getElementById('pkg-savings-banner');
+  var savingsText=document.getElementById('pkg-savings-text');
+  var featEl=document.getElementById('pkg-features');
+  if(tierEl)tierEl.textContent=isPro?'Pro Package':'Core Package';
+  if(titleEl)titleEl.textContent=isPro?'Core + ZIPLEVEL\u00ae Foundation Survey':'Complete Home Inspection';
+  var coreF=['Full TREC Home Inspection — every major system, roof to foundation','Infrared Thermal Imaging — included at no extra charge','Moisture Meter Testing throughout the property','Photo-rich report delivered within 24 hours','Interactive summary webpage','Repair Request Builder included','Foundation: Visual assessment with spot elevation readings and drainage review'];
+  var proF=['Everything in Core, plus:','ZIPLEVEL\u00ae Precision Elevation Survey — a $350+ standalone value','Full foundation footprint mapped with precision instruments','Scaled CAD drawing included in your report','Documented baseline for future monitoring and warranty claims','Protection against unnecessary repair proposals'];
+  var features=isPro?proF:coreF;
+  if(featEl){
+    featEl.innerHTML=features.map(function(f){
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(10,22,40,.05)">'
+        +'<span style="color:'+(isPro?'var(--orange)':'rgba(10,22,40,.3)')+';flex-shrink:0;margin-top:3px;font-size:11px">'+(isPro?'✦':'·')+'</span>'
+        +'<span style="font-family:\'Crimson Pro\',serif!important;font-size:17px!important;color:var(--text-mid)!important;line-height:1.5">'+f+'</span></div>';
+    }).join('');
+  }
+  if(banner&&savingsText){
+    if(isPro){banner.style.display='block';savingsText.innerHTML='ZIPLEVEL\u00ae foundation survey included — a <strong>$350+ standalone value</strong>. Fort Bend County clay soils demand this. Most inspectors charge extra. We include it in Pro.';}
+    else{banner.style.display='none';}
+  }
+  if(S.sqft){
+    var table=isPro?RESALE_PRO:RESALE_CORE;
+    var price=lookup(table,S.sqft);
+    var priceEl=document.getElementById('pkg-price-display');
+    if(priceEl)priceEl.textContent=price?fmt(price):(S.sqft>6000?'Custom Quote':'--');
+  }
 }
 
-function pickPhase(n) {
-  S.phase = n;
-  [1,2,3,4].forEach(i=>{
-    document.getElementById('rb-ph'+i).classList.toggle('selected',i===n);
-  });
-  onDetailsChange();
-}
+function onDetailsChange(){
+  var sqftVal=parseInt(document.getElementById('inp-sqft').value);
+  S.sqft=sqftVal&&sqftVal>=100?sqftVal:null;
+  var yearEl=document.getElementById('inp-year');
+  if(yearEl){var yv=parseInt(yearEl.value);S.year=yv&&yv>=1800&&yv<=2026?yv:null;}
 
-function pickFoundLevel(l) {
-  S.foundLevel = l;
-  ['A','B'].forEach(x=>{
-    document.getElementById('rb-lvl'+x).classList.toggle('selected',x===l);
-  });
-  onDetailsChange();
-}
+  if(S.service==='resale'&&S.sqft)updateSliderDisplay(S.resalePkg==='pro'?1:0);
+  if(S.service==='phase'&&S.phase&&S.sqft)showPhaseDiscountBanner();
 
-function pickMoldType(t) {
-  S.moldType = t;
-  ['iaq','assess'].forEach(x=>{
-    document.getElementById('rb-mold-'+x).classList.toggle('selected',x===t);
-  });
-  onDetailsChange();
-}
+  var calc=calcBase();
+  var previewEl=document.getElementById('price-preview');
+  var customWrap=document.getElementById('custom-quote-wrap');
 
-// ── PRICE CALCULATION ────────────────────────────────────
-function calcBase() {
-  const sqft = S.sqft;
-  const svc = S.service;
-  if(!sqft) return {price:null,lines:[],label:'',detail:'',custom:false};
-
-  if(sqft > 6000) return {price:null,lines:[],label:'',detail:'',custom:true};
-
-  let price = null;
-  let lines = [];
-  let label = '';
-  let detail = '';
-
-  if(svc === 'resale') {
-    if(!S.resalePkg) return {price:null,lines:[],label:'',detail:'',custom:false};
-    const table = S.resalePkg === 'core' ? RESALE_CORE : RESALE_PRO;
-    const base = lookup(table, sqft);
-    if(!base) return {price:null,lines:[],label:'',detail:'',custom:true};
-    price = base;
-    label = S.resalePkg === 'core' ? 'Resale — Core Package' : 'Resale — Pro Package';
-    detail = S.resalePkg === 'core' ? 'Full TREC inspection · Infrared imaging · Moisture testing' : 'Full TREC + ZIPLEVEL® Foundation Survey · Infrared · Moisture';
-    lines.push({name:'Base Inspection', val:fmt(base)});
-    const af = ageFee(S.year);
-    if(af > 0) lines.push({name:'Property age adjustment ('+S.year+')', val:'+'+fmt(af), cls:'surcharge'});
-    const cf = crawlFee();
-    if(cf > 0) lines.push({name:'Crawlspace / Pier & Beam access', val:'+'+fmt(cf), cls:'surcharge'});
-    price = base + af + cf;
-  }
-  else if(svc === 'phase' || svc === 'warranty') {
-    const ph = S.phase;
-    if(!ph) return {price:null,lines:[],label:'',detail:'',custom:false};
-    const tables = [null,PHASE1,PHASE2,PHASE3,PHASE4];
-    const phNames = ['','Pre-Pour Foundation','Pre-Drywall Framing','Final New Construction','Builder Warranty (MEPS)'];
-    const base = lookup(tables[ph], sqft);
-    if(!base) return {price:null,lines:[],label:'',detail:'',custom:true};
-    price = base;
-    label = 'Phase '+ph+' — '+phNames[ph];
-    detail = ph===4 ? 'MEPS inspection — Mechanical, Electrical, Plumbing, Structural' : 'ICC Code-Certified · ZIPLEVEL® included · Report in 24hr';
-    lines.push({name:'Phase '+ph+' Inspection', val:fmt(base)});
-    const cf = crawlFee();
-    if(cf > 0) lines.push({name:'Crawlspace / Pier & Beam access', val:'+'+fmt(cf), cls:'surcharge'});
-    price = base + cf;
-  }
-  else if(svc === 'foundation') {
-    if(!S.foundLevel) return {price:null,lines:[],label:'',detail:'',custom:false};
-    const table = S.foundLevel === 'A' ? FOUND_A : FOUND_B;
-    const base = lookup(table, sqft);
-    if(!base) return {price:null,lines:[],label:'',detail:'',custom:true};
-    price = base;
-    label = 'Foundation Inspection — Level '+S.foundLevel;
-    detail = S.foundLevel==='A' ? 'Visual assessment · Spot elevation · Drainage review' : 'ZIPLEVEL® full survey · CAD drawing · Deflection analysis';
-    lines.push({name:'Level '+S.foundLevel+' Foundation Inspection', val:fmt(base)});
-    const cf = crawlFee();
-    if(cf > 0) lines.push({name:'Crawlspace / Pier & Beam access', val:'+'+fmt(cf), cls:'surcharge'});
-    price = base + cf;
-  }
-  else if(svc === 'mold') {
-    if(!S.moldType) return {price:null,lines:[],label:'',detail:'',custom:false};
-    if(S.moldType === 'iaq') {
-      price = 375;
-      label = 'Mold IAQ Sampling';
-      detail = '3 samples (1 outdoor baseline + 2 indoor) · Certified lab · Written report';
-      lines.push({name:'IAQ Sampling — 3 samples', val:fmt(375)});
-    } else {
-      // assessment scales by sqft modestly
-      const assessBase = sqft <= 2000 ? 475 : sqft <= 3000 ? 525 : sqft <= 4000 ? 575 : sqft <= 5000 ? 625 : sqft <= 6000 ? 675 : null;
-      if(!assessBase) return {price:null,lines:[],label:'',detail:'',custom:true};
-      price = assessBase;
-      label = 'Mold Assessment + IAQ Sampling';
-      detail = 'Physical building inspection + 3 air samples + certified lab results';
-      lines.push({name:'Mold Assessment + 3 IAQ Samples', val:fmt(assessBase)});
-    }
-  }
-  else if(svc === 'termite') {
-    const base = lookup(WDI_STANDALONE, sqft);
-    if(!base) return {price:null,lines:[],label:'',detail:'',custom:true};
-    price = base;
-    label = 'WDI Termite Inspection';
-    detail = 'TDA-licensed · Wood-destroying insect report · Official form';
-    lines.push({name:'WDI Termite Inspection', val:fmt(base)});
-  }
-  else if(svc === 'prelisting') {
-    const base = lookup(PRELISTING, sqft);
-    if(!base) return {price:null,lines:[],label:'',detail:'',custom:true};
-    price = base;
-    label = 'Pre-Listing Inspection (MEPS)';
-    detail = 'Mechanical · Electrical · Plumbing · Structural';
-    lines.push({name:'Pre-Listing MEPS Inspection', val:fmt(base)});
-    const af = ageFee(S.year);
-    if(af > 0) lines.push({name:'Property age adjustment ('+S.year+')', val:'+'+fmt(af), cls:'surcharge'});
-    const cf = crawlFee();
-    if(cf > 0) lines.push({name:'Crawlspace / Pier & Beam access', val:'+'+fmt(cf), cls:'surcharge'});
-    price = base + af + cf;
-  }
-
-  return {price, lines, label, detail, custom:false};
-}
-
-function calcTotal() {
-  const base = calcBase();
-  if(base.custom) return {total:null,lines:[...base.lines],label:base.label,detail:base.detail,custom:true};
-  if(base.price == null) return {total:null,lines:[],label:base.label,detail:base.detail,custom:false};
-
-  let total = base.price;
-  let lines = [...base.lines];
-  const svc = S.service;
-  const sqft = S.sqft;
-
-  // Mold add-on
-  if(S.addons.mold && ['resale','phase','prelisting'].includes(svc)) {
-    lines.push({name:'Mold IAQ Sampling (3 samples)', val:fmt(275), cls:''});
-    lines.push({name:'  ↳ Standalone value: $375', val:'Save $100', cls:'discount'});
-    total += 275;
-    // Extra samples
-    if(S.addons.extraSamples > 0) {
-      const extraCost = S.addons.extraSamples * 75;
-      lines.push({name:'Additional IAQ Samples (×'+S.addons.extraSamples+')', val:'+'+fmt(extraCost)});
-      total += extraCost;
-    }
-  }
-
-  // WDI add-on
-  if(S.addons.wdi && ['resale','phase','prelisting'].includes(svc)) {
-    if(S.military) {
-      lines.push({name:'🇺🇸 WDI Termite Inspection', val:'Complimentary', cls:'discount'});
-      lines.push({name:'  ↳ Military/First Responder benefit', val:'—', cls:'discount'});
-    } else {
-      const wdiAdd = lookup(WDI_ADDON, sqft) || 95;
-      const wdiStand = lookup(WDI_STANDALONE, sqft) || 195;
-      const saved = wdiStand - wdiAdd;
-      lines.push({name:'WDI Termite Inspection', val:fmt(wdiAdd), cls:''});
-      lines.push({name:'  ↳ Standalone: '+fmt(wdiStand), val:'Save '+fmt(saved), cls:'discount'});
-      total += wdiAdd;
-    }
-  }
-
-  // Repair estimate
-  if(S.addons.repair && svc === 'resale') {
-    lines.push({name:'Repair Estimate Report', val:fmt(130), cls:''});
-    lines.push({name:'  ↳ Standalone: $149', val:'Save $19', cls:'discount'});
-    total += 130;
-  }
-
-  // Coupon
-  if(S.coupon) {
-    lines.push({name:S.coupon.label, val:'-'+fmt(S.coupon.amount), cls:'discount'});
-    total = Math.max(0, total - S.coupon.amount);
-  }
-
-  return {total, lines, label:base.label, detail:base.detail, custom:false};
-}
-
-// ── DETAILS CHANGE ───────────────────────────────────────
-function onDetailsChange() {
-  const sqftVal = parseInt(document.getElementById('inp-sqft').value);
-  S.sqft = sqftVal && sqftVal >= 100 ? sqftVal : null;
-
-  const yearVal = parseInt(document.getElementById('inp-year').value);
-  S.year = yearVal && yearVal >= 1800 && yearVal <= 2026 ? yearVal : null;
-
-  // Update package prices live
-  if(S.service === 'resale' && S.sqft) {
-    const core = lookup(RESALE_CORE, S.sqft);
-    const pro = lookup(RESALE_PRO, S.sqft);
-    const coreEl = document.getElementById('pkg-price-core');
-    const proEl = document.getElementById('pkg-price-pro');
-    if(coreEl) coreEl.textContent = core ? fmt(core) : S.sqft > 6000 ? 'Custom' : '—';
-    if(proEl) proEl.textContent = pro ? fmt(pro) : S.sqft > 6000 ? 'Custom' : '—';
-  }
-
-  const calc = calcBase();
-  const previewEl = document.getElementById('price-preview');
-  const customWrap = document.getElementById('custom-quote-wrap');
-
-  if(calc.custom) {
-    previewEl.style.display = 'block';
-    customWrap.style.display = 'block';
-    document.getElementById('pc-svc-name').textContent = '';
-    document.getElementById('pc-svc-detail').textContent = '';
-    document.getElementById('pc-lines').innerHTML = '';
-    document.getElementById('pc-total').textContent = 'Custom';
-    document.getElementById('next-4').disabled = true;
+  if(calc.custom){
+    if(previewEl)previewEl.style.display='block';
+    if(customWrap)customWrap.style.display='block';
+    var te=document.getElementById('pc-total');if(te)te.textContent='Custom Quote';
+    var n4=document.getElementById('next-4');if(n4)n4.disabled=true;
     return;
   }
+  if(customWrap)customWrap.style.display='none';
 
-  customWrap.style.display = 'none';
-
-  // Check if we have enough to show a price
-  const ready = checkStep4Ready();
-  if(calc.price != null) {
-    previewEl.style.display = 'block';
-    document.getElementById('pc-svc-name').textContent = calc.label;
-    document.getElementById('pc-svc-detail').textContent = calc.detail;
-    document.getElementById('pc-lines').innerHTML = calc.lines.map(l=>
-      `<div class="pc-line${l.cls?' '+l.cls:''}"><span class="pc-line-name">${l.name}</span><span class="pc-line-val">${l.val}</span></div>`
-    ).join('');
-    document.getElementById('pc-total').textContent = fmt(calc.price);
+  var ready=checkStep4Ready();
+  if(calc.price!=null){
+    if(previewEl)previewEl.style.display='block';
+    var ne=document.getElementById('pc-svc-name');if(ne)ne.textContent=calc.label;
+    var de=document.getElementById('pc-svc-detail');if(de)de.textContent=calc.detail;
+    var le=document.getElementById('pc-lines');
+    if(le)le.innerHTML=calc.lines.map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
+    var te2=document.getElementById('pc-total');if(te2)te2.textContent=fmt(calc.price);
   } else {
-    previewEl.style.display = 'none';
+    if(previewEl)previewEl.style.display='none';
   }
-
-  document.getElementById('next-4').disabled = !ready;
+  var n4b=document.getElementById('next-4');if(n4b)n4b.disabled=!ready;
 }
 
-function checkStep4Ready() {
-  const svc = S.service;
-  if(!S.sqft || S.sqft < 100) return false;
-  if(S.sqft > 6000) return false;
-  if(['resale'].includes(svc) && !S.resalePkg) return false;
-  if(['resale','prelisting'].includes(svc) && !S.year) return false;
-  if(['resale','phase','foundation','warranty','prelisting'].includes(svc) && !S.foundation) return false;
-  if(svc === 'phase' && !S.phase) return false;
-  if(svc === 'foundation' && !S.foundLevel) return false;
-  if(svc === 'mold' && !S.moldType) return false;
+function showPhaseDiscountBanner(){
+  var existing=document.getElementById('phase-discount-banner');
+  if(existing)existing.remove();
+  var phase=S.phase;
+  if(phase>=3)return;
+  var discPhases=phase===1?'Phases 1, 2, and 3':phase===2?'Phases 2 and 3':'';
+  var totalSaved=phase===1?'$75':phase===2?'$50':'';
+  if(!discPhases)return;
+  var banner=document.createElement('div');
+  banner.id='phase-discount-banner';
+  banner.style.cssText='background:rgba(26,107,58,.08);border:1px solid rgba(168,213,184,.25);border-left:4px solid #6ecf95;padding:16px 20px;margin-top:18px';
+  banner.innerHTML='<div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:#3a9e5f!important;margin-bottom:6px">Multi-Phase Savings Unlocked</div>'
+    +'<div style="font-family:\'Crimson Pro\',serif!important;font-size:18px!important;color:#2d7a4a!important;line-height:1.55">Starting at Phase '+phase+' saves you <strong>$25 on '+discPhases+'</strong> — <strong>'+totalSaved+' total savings</strong> across your build. Your discounted rates are locked in and noted in your booking confirmation.</div>';
+  var phaseSection=document.getElementById('phase-section');
+  if(phaseSection)phaseSection.appendChild(banner);
+}
+
+function pickFoundation(f){
+  S.foundation=f;
+  ['slab','crawl'].forEach(function(x){var el=document.getElementById('rb-'+x);if(el)el.classList.toggle('selected',x===f);});
+  onDetailsChange();
+}
+
+function pickPhase(n){
+  S.phase=n;
+  [1,2,3,4].forEach(function(i){var el=document.getElementById('rb-ph'+i);if(el)el.classList.toggle('selected',i===n);});
+  onDetailsChange();
+}
+
+function pickFoundLevel(l){
+  S.foundLevel=l;
+  ['A','B'].forEach(function(x){var el=document.getElementById('rb-lvl'+x);if(el)el.classList.toggle('selected',x===l);});
+  onDetailsChange();
+}
+
+function pickMoldType(t){
+  S.moldType=t;
+  ['iaq','assess'].forEach(function(x){var el=document.getElementById('rb-mold-'+x);if(el)el.classList.toggle('selected',x===t);});
+  onDetailsChange();
+}
+
+function checkStep4Ready(){
+  var svc=S.service;
+  if(!S.sqft||S.sqft<100)return false;
+  if(S.sqft>6000)return false;
+  if(svc==='resale'&&!S.resalePkg)return false;
+  if((svc==='resale'||svc==='prelisting')&&!S.year)return false;
+  if((svc==='resale'||svc==='phase'||svc==='foundation'||svc==='warranty'||svc==='prelisting')&&!S.foundation)return false;
+  if(svc==='phase'&&!S.phase)return false;
+  if(svc==='foundation'&&!S.foundLevel)return false;
+  if(svc==='mold'&&!S.moldType)return false;
   return true;
 }
 
-// ── STEP 5: ADD-ONS ──────────────────────────────────────
-function buildAddons() {
-  const wrap = document.getElementById('addons-wrap');
-  wrap.innerHTML = '';
-  const svc = S.service;
-  const sqft = S.sqft;
+function calcBase(){
+  var sqft=S.sqft,svc=S.service;
+  if(!sqft)return{price:null,lines:[],label:'',detail:'',custom:false};
+  if(sqft>6000)return{price:null,lines:[],label:'',detail:'',custom:true};
+  var price=null,lines=[],label='',detail='';
 
-  const addons = [];
-
-  // Mold IAQ (resale, phases 3&4, prelisting, warranty)
-  if(['resale','prelisting'].includes(svc) || (svc==='phase' && [3,4].includes(S.phase)) || svc==='warranty') {
-    addons.push({
-      id:'mold', icon:'🧪',
-      eye:'Add-On · Same Visit · Certified Lab',
-      title:'Mold & IAQ Air Sampling',
-      desc:'3 samples (1 outdoor baseline + 2 indoor) with certified lab analysis. Reveals hidden mold and elevated spore counts no visual inspection can detect.',
-      addPrice:275, wasPrice:375, save:100
-    });
+  if(svc==='resale'){
+    if(!S.resalePkg)return{price:null,lines:[],label:'',detail:'',custom:false};
+    var table=S.resalePkg==='core'?RESALE_CORE:RESALE_PRO;
+    var base=lookup(table,sqft);
+    if(!base)return{price:null,lines:[],label:'',detail:'',custom:true};
+    label=S.resalePkg==='core'?'Resale — Core Package':'Resale — Pro Package';
+    detail=S.resalePkg==='core'?'Full TREC · Infrared · Moisture testing':'Full TREC + ZIPLEVEL Foundation Survey · Infrared · Moisture';
+    lines.push({name:'Base Inspection',val:fmt(base)});
+    price=base+ageFee(S.year)+crawlFee();
+  } else if(svc==='phase'||svc==='warranty'){
+    var ph=S.phase;
+    if(!ph)return{price:null,lines:[],label:'',detail:'',custom:false};
+    var tables=[null,PHASE1,PHASE2,PHASE3,PHASE4];
+    var phNames=['','Pre-Pour Foundation','Pre-Drywall Framing','Final New Construction','Builder Warranty (MEPS)'];
+    var base2=lookup(tables[ph],sqft);
+    if(!base2)return{price:null,lines:[],label:'',detail:'',custom:true};
+    label='Phase '+ph+' — '+phNames[ph];
+    detail=ph===4?'MEPS — Mechanical, Electrical, Plumbing, Structural':'ICC Code-Certified · ZIPLEVEL included · Report in 24hr';
+    var disc=getPhaseDiscount(ph);
+    lines.push({name:'Phase '+ph+' Inspection',val:fmt(base2)});
+    if(disc>0)lines.push({name:'Multi-phase discount',val:'-'+fmt(disc),cls:'discount'});
+    price=base2-disc+crawlFee();
+  } else if(svc==='foundation'){
+    if(!S.foundLevel)return{price:null,lines:[],label:'',detail:'',custom:false};
+    var ftable=S.foundLevel==='A'?FOUND_A:FOUND_B;
+    var fbase=lookup(ftable,sqft);
+    if(!fbase)return{price:null,lines:[],label:'',detail:'',custom:true};
+    label='Foundation Inspection — Level '+S.foundLevel;
+    detail=S.foundLevel==='A'?'Visual assessment · Spot elevation · Drainage review':'ZIPLEVEL full survey · CAD drawing · Deflection analysis';
+    lines.push({name:'Level '+S.foundLevel+' Foundation Inspection',val:fmt(fbase)});
+    price=fbase+crawlFee();
+  } else if(svc==='mold'){
+    if(!S.moldType)return{price:null,lines:[],label:'',detail:'',custom:false};
+    if(S.moldType==='iaq'){price=375;label='Mold IAQ Sampling';detail='3 samples · Certified lab · Written report';lines.push({name:'IAQ Sampling (3 samples)',val:fmt(375)});}
+    else{var ab=sqft<=2000?475:sqft<=3000?525:sqft<=4000?575:sqft<=5000?625:sqft<=6000?675:null;if(!ab)return{price:null,lines:[],label:'',detail:'',custom:true};price=ab;label='Mold Assessment + IAQ Sampling';detail='Physical inspection + 3 air samples + certified lab';lines.push({name:'Mold Assessment + 3 IAQ Samples',val:fmt(ab)});}
+  } else if(svc==='termite'){
+    var tbase=lookup(WDI_STANDALONE,sqft);if(!tbase)return{price:null,lines:[],label:'',detail:'',custom:true};
+    price=tbase;label='WDI Termite Inspection';detail='TDA-licensed · Official WDI report';
+    lines.push({name:'WDI Termite Inspection',val:fmt(tbase)});
+  } else if(svc==='prelisting'){
+    var pbase=lookup(PRELISTING,sqft);if(!pbase)return{price:null,lines:[],label:'',detail:'',custom:true};
+    label='Pre-Listing Inspection (MEPS)';detail='Mechanical · Electrical · Plumbing · Structural';
+    lines.push({name:'Pre-Listing MEPS Inspection',val:fmt(pbase)});
+    price=pbase+ageFee(S.year)+crawlFee();
   }
+  return{price:price,lines:lines,label:label,detail:detail,custom:false};
+}
 
-  // WDI (resale, phase 3, prelisting) — not if military (it's free)
-  if(['resale','prelisting'].includes(svc) || (svc==='phase' && S.phase===3)) {
-    const wdiAdd = lookup(WDI_ADDON, sqft) || 95;
-    const wdiStand = lookup(WDI_STANDALONE, sqft) || 195;
-    const saved = wdiStand - wdiAdd;
-    addons.push({
-      id:'wdi', icon:'🪲',
-      eye:'Add-On · TDA Licensed · Same Visit',
-      title: S.military ? '🇺🇸 WDI Termite Inspection — Complimentary' : 'WDI Termite Inspection',
-      desc:'Official wood-destroying insect report. Required by most lenders. Identifies active infestations, prior damage, and conditions that invite future activity.',
-      addPrice: S.military ? 0 : wdiAdd,
-      wasPrice: S.military ? null : wdiStand,
-      save: S.military ? null : saved,
-      military: S.military
-    });
+function calcTotal(){
+  var base=calcBase();
+  if(base.custom)return{total:null,lines:base.lines.slice(),label:base.label,detail:base.detail,custom:true};
+  if(base.price==null)return{total:null,lines:[],label:base.label,detail:base.detail,custom:false};
+  var total=base.price,lines=base.lines.slice(),svc=S.service,sqft=S.sqft;
+
+  if(S.addons.mold&&(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty')){
+    lines.push({name:'Mold IAQ Sampling (3 samples)',val:fmt(275)});
+    lines.push({name:'Standalone $375 — you save',val:fmt(100),cls:'discount'});
+    total+=275;
+    if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*75;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
-
-  // Repair estimate (resale only)
-  if(svc === 'resale') {
-    addons.push({
-      id:'repair', icon:'📋',
-      eye:'Exclusive to Imperial Pro · Resale Only',
-      title:'Repair Estimate Report',
-      desc:'Every defect priced out line by line with minimum-to-maximum repair cost ranges. Most inspectors hand you a list of problems — we hand you the leverage.',
-      addPrice:130, wasPrice:149, save:19
-    });
+  if(S.addons.wdi&&(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty')){
+    if(S.military){lines.push({name:'WDI Termite Inspection',val:'Complimentary',cls:'discount'});lines.push({name:'Military/First Responder benefit',val:'--',cls:'discount'});}
+    else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var saved=ws-wa;lines.push({name:'WDI Termite Inspection',val:fmt(wa)});lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});total+=wa;}
   }
+  if(S.addons.repair&&svc==='resale'){lines.push({name:'Repair Estimate Report',val:fmt(130)});lines.push({name:'Standalone $149 — you save',val:fmt(19),cls:'discount'});total+=130;}
+  if(S.coupon){lines.push({name:S.coupon.label,val:'-'+fmt(S.coupon.amount),cls:'discount'});total=Math.max(0,total-S.coupon.amount);}
+  return{total:total,lines:lines,label:base.label,detail:base.detail,custom:false};
+}
 
-  if(addons.length === 0) {
-    wrap.innerHTML = '<p style="font-family:\'Crimson Pro\',serif!important;font-size:clamp(14px,1.3vw,16px)!important;color:var(--text-muted)!important;font-style:italic!important">No additional add-ons available for this service type. Your price is ready to confirm.</p>';
-    return;
+function buildAddons(){
+  var wrap=document.getElementById('addons-wrap');
+  wrap.innerHTML='';
+  var svc=S.service,sqft=S.sqft,addons=[];
+
+  if(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty'){
+    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold & IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
   }
+  if(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty'){
+    var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
+    addons.push({id:'wdi',icon:'🪲',eye:'TDA Licensed · Same Visit · Official Report',title:S.military?'WDI Termite Inspection — Complimentary':'WDI Termite Inspection',desc:'Official wood-destroying insect report. Required by most lenders. Identifies active infestations, prior damage, and conditions that invite future activity.',addPrice:S.military?0:wa,wasPrice:S.military?null:ws,save:S.military?null:sv,military:S.military});
+  }
+  if(svc==='resale'){addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.',addPrice:130,wasPrice:149,save:19});}
 
-  addons.forEach(addon => {
-    const on = S.addons[addon.id] || addon.military;
-    const card = document.createElement('div');
-    card.className = 'addon-toggle' + (on?' on':'');
-    card.id = 'atog-'+addon.id;
-    card.innerHTML = `
-      <div class="addon-toggle-inner" onclick="window.IPtoggleAddon('${addon.id}')">
-        <div class="toggle-switch"><div class="toggle-knob"></div></div>
-        <div class="addon-toggle-body">
-          <div class="addon-toggle-eye">${addon.eye}</div>
-          <div class="addon-toggle-title">${addon.icon} &nbsp;${addon.title}</div>
-          <div class="addon-toggle-desc">${addon.desc}</div>
-        </div>
-        <div class="addon-toggle-price">
-          ${addon.military ? `<div class="atp-num" style="font-size:clamp(16px,1.8vw,22px)!important;color:#6ecf95!important">Complimentary</div>` :
-          `<div class="atp-add">Add for</div>
-           <div class="atp-num">${fmt(addon.addPrice)}</div>
-           ${addon.wasPrice ? `<span class="atp-was">${fmt(addon.wasPrice)}</span><span class="atp-save">Save ${fmt(addon.save)}</span>` : ''}`}
-        </div>
-      </div>
-      ${addon.id==='mold' ? `<div id="extra-samples-wrap" style="display:${on?'block':'none'};padding:12px 20px 16px 80px;border-top:1px solid rgba(184,154,110,.1)">
-        <div style="font-family:'Montserrat',sans-serif!important;font-size:.42rem!important;font-weight:700!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:rgba(250,250,248,.35)!important;margin-bottom:10px">Need more samples? — $75 each</div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <button onclick="window.IPchangeExtraSamples(-1)" style="width:32px;height:32px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
-          <span id="extra-count" style="font-family:'Cormorant Garamond',serif!important;font-size:24px!important;font-weight:600!important;color:#fafaf8!important;min-width:24px;text-align:center">0</span>
-          <button onclick="window.IPchangeExtraSamples(1)" style="width:32px;height:32px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
-          <span style="font-family:'Crimson Pro',serif!important;font-size:13px!important;color:rgba(250,250,248,.4)!important">additional samples (3 included)</span>
-        </div>
-      </div>` : ''}
-    `;
+  if(addons.length===0){wrap.innerHTML='<p style="font-family:\'Crimson Pro\',serif!important;font-size:18px!important;color:var(--text-muted)!important;font-style:italic!important;padding:20px 0">No add-ons available for this service. Your price is ready to confirm.</p>';renderSummary();return;}
+
+  addons.forEach(function(addon){
+    var on=S.addons[addon.id]||addon.military;
+    var card=document.createElement('div');
+    card.className='addon-toggle'+(on?' on':'');
+    card.id='atog-'+addon.id;
+    var priceHtml=addon.military
+      ?'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(16px,2vw,22px)!important;color:#6ecf95!important;font-weight:700">Complimentary</div><div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;color:#6ecf95!important;letter-spacing:.12em!important;text-transform:uppercase">Military benefit</div>'
+      :'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:rgba(250,250,248,.3)!important;text-decoration:line-through">'+fmt(addon.wasPrice)+'</div>'
+       +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.1em!important;color:rgba(250,250,248,.5)!important;margin:2px 0">→</div>'
+       +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(26px,3vw,36px)!important;font-weight:700!important;color:rgba(250,250,248,.6)!important;line-height:1;letter-spacing:-.02em;transition:color .25s">'+fmt(addon.addPrice)+'</div>'
+       +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#6ecf95!important;margin-top:2px">Save '+fmt(addon.save)+'</div>';
+    card.innerHTML='<div class="addon-toggle-inner" onclick="window.IPtoggleAddon(\''+addon.id+\')'+"\">"
+      +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
+      +'<div class="addon-toggle-body">'
+      +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:var(--tan)!important;margin-bottom:5px">'+addon.eye+'</div>'
+      +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(18px,2vw,24px)!important;font-weight:700!important;color:#fafaf8!important;margin-bottom:6px;line-height:1.1">'+addon.icon+' &nbsp;'+addon.title+'</div>'
+      +'<div style="font-family:\'Crimson Pro\',serif!important;font-size:17px!important;color:rgba(250,250,248,.5)!important;line-height:1.6">'+addon.desc+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;padding-left:16px">'+priceHtml+'</div>'
+      +'</div>'
+      +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
+        +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:rgba(250,250,248,.35)!important;margin-bottom:12px">Need more samples? $75 each</div>'
+        +'<div style="display:flex;align-items:center;gap:14px">'
+        +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">-</button>'
+        +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif!important;font-size:30px!important;font-weight:600!important;color:#fafaf8!important;min-width:32px;text-align:center">0</span>'
+        +'<button onclick="window.IPchangeExtraSamples(1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">+</button>'
+        +'<span style="font-family:\'Crimson Pro\',serif!important;font-size:16px!important;color:rgba(250,250,248,.45)!important">additional samples (3 always included)</span>'
+        +'</div></div>':'');
     wrap.appendChild(card);
-    // Force military WDI on
-    if(addon.military) S.addons.wdi = true;
+    if(addon.military)S.addons.wdi=true;
   });
-
   renderSummary();
 }
 
-function toggleAddon(id) {
-  if(id==='wdi' && S.military) return; // can't toggle free WDI
-  S.addons[id] = !S.addons[id];
-  const card = document.getElementById('atog-'+id);
-  card.classList.toggle('on', S.addons[id]);
-  if(id==='mold') {
-    const esWrap = document.getElementById('extra-samples-wrap');
-    if(esWrap) esWrap.style.display = S.addons.mold ? 'block' : 'none';
-    if(!S.addons.mold) { S.addons.extraSamples = 0; const ec=document.getElementById('extra-count'); if(ec) ec.textContent='0'; }
-  }
+function toggleAddon(id){
+  if(id==='wdi'&&S.military)return;
+  S.addons[id]=!S.addons[id];
+  var card=document.getElementById('atog-'+id);
+  if(card)card.classList.toggle('on',S.addons[id]);
+  if(id==='mold'){var esWrap=document.getElementById('extra-samples-wrap');if(esWrap)esWrap.style.display=S.addons.mold?'block':'none';if(!S.addons.mold){S.addons.extraSamples=0;var ec=document.getElementById('extra-count');if(ec)ec.textContent='0';}}
   renderSummary();
 }
 
-function changeExtraSamples(delta) {
-  const newVal = Math.max(0, Math.min(6, (S.addons.extraSamples||0) + delta));
-  S.addons.extraSamples = newVal;
-  const ec = document.getElementById('extra-count');
-  if(ec) ec.textContent = newVal;
+function changeExtraSamples(delta){
+  var nv=Math.max(0,Math.min(6,(S.addons.extraSamples||0)+delta));
+  S.addons.extraSamples=nv;
+  var ec=document.getElementById('extra-count');if(ec)ec.textContent=nv;
   renderSummary();
 }
 
-function renderSummary() {
-  const calc = calcTotal();
-  document.getElementById('summary-svc').textContent = calc.label;
-  document.getElementById('summary-detail').textContent = calc.detail;
-  document.getElementById('summary-lines').innerHTML = (calc.lines||[]).map(l=>
-    `<div class="pc-line${l.cls?' '+l.cls:''}"><span class="pc-line-name">${l.name}</span><span class="pc-line-val">${l.val}</span></div>`
-  ).join('');
-  document.getElementById('summary-total').textContent = calc.total != null ? fmt(calc.total) : '—';
-  const milNote = document.getElementById('summary-military-note');
-  milNote.style.display = S.military ? 'block' : 'none';
+function renderSummary(){
+  var calc=calcTotal();
+  var se=document.getElementById('summary-svc');if(se)se.textContent=calc.label;
+  var de=document.getElementById('summary-detail');if(de)de.textContent=calc.detail;
+  var le=document.getElementById('summary-lines');
+  if(le)le.innerHTML=(calc.lines||[]).map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
+  var te=document.getElementById('summary-total');if(te)te.textContent=calc.total!=null?fmt(calc.total):'--';
+  var mn=document.getElementById('summary-military-note');if(mn)mn.style.display=S.military?'block':'none';
   renderFinalSummary();
 }
 
-// ── COUPON ───────────────────────────────────────────────
-function toggleCoupon() {
-  const field = document.getElementById('coupon-field');
-  const icon = document.getElementById('coupon-toggle-icon');
-  const isOpen = field.classList.contains('open');
-  field.classList.toggle('open', !isOpen);
-  icon.textContent = isOpen ? '＋' : '−';
+function toggleCoupon(){
+  var field=document.getElementById('coupon-field');
+  var icon=document.getElementById('coupon-toggle-icon');
+  var isOpen=field.classList.contains('open');
+  field.classList.toggle('open',!isOpen);
+  if(icon)icon.textContent=isOpen?'+':'-';
 }
 
-function applyCoupon() {
-  const val = document.getElementById('coupon-inp').value.trim().toUpperCase();
-  const msg = document.getElementById('coupon-msg');
-  msg.style.display = 'block';
-  if(COUPONS[val]) {
-    S.coupon = COUPONS[val];
-    msg.className = 'coupon-msg ok';
-    msg.textContent = '✓ Code applied — ' + COUPONS[val].label + ': -' + fmt(COUPONS[val].amount) + ' off';
-  } else {
-    S.coupon = null;
-    msg.className = 'coupon-msg err';
-    msg.textContent = 'Code not recognized. Check spelling and try again.';
-  }
+function applyCoupon(){
+  var val=document.getElementById('coupon-inp').value.trim().toUpperCase();
+  var msg=document.getElementById('coupon-msg');
+  msg.style.display='block';
+  if(COUPONS[val]){S.coupon=COUPONS[val];msg.className='coupon-msg ok';msg.textContent='Code applied: '+COUPONS[val].label+' — -'+fmt(COUPONS[val].amount)+' off';}
+  else{S.coupon=null;msg.className='coupon-msg err';msg.textContent='Code not recognized. Check spelling and try again.';}
   renderSummary();
 }
 
-// ── STEP 6 FINAL SUMMARY ─────────────────────────────────
-function renderFinalSummary() {
-  const calc = calcTotal();
-  document.getElementById('final-lines').innerHTML = (calc.lines||[]).map(l=>
-    `<div class="pc-line${l.cls?' '+l.cls:''}"><span class="pc-line-name">${l.name}</span><span class="pc-line-val">${l.val}</span></div>`
-  ).join('');
-  document.getElementById('final-total').textContent = calc.total != null ? fmt(calc.total) : '—';
+function validateDates(){
+  var d1=document.getElementById('inp-date1').value;
+  var d2=document.getElementById('inp-date2').value;
+  var errEl=document.getElementById('date-err');
+  var isWeekend=function(d){var day=new Date(d+'T12:00:00').getDay();return day===0||day===6;};
+  var err='';
+  if(d1&&isWeekend(d1))err='That date falls on a weekend. Please select a Monday through Friday date.';
+  if(!err&&d2&&isWeekend(d2))err='That date falls on a weekend. Please select a Monday through Friday date.';
+  if(errEl){errEl.textContent=err;errEl.style.display=err?'block':'none';}
 }
 
-// ── DATE VALIDATION ──────────────────────────────────────
-function validateDates() {
-  const d1 = document.getElementById('inp-date1').value;
-  const d2 = document.getElementById('inp-date2').value;
-  const errEl = document.getElementById('date-err');
-  const isWeekend = d => { const day = new Date(d+'T12:00:00').getDay(); return day===0||day===6; };
-  let err = '';
-  if(d1 && isWeekend(d1)) err = 'Your 1st preferred date falls on a weekend. We are available Monday-Friday only.';
-  if(!err && d2 && isWeekend(d2)) err = 'Your 2nd preferred date falls on a weekend. We are available Monday-Friday only.';
-  errEl.textContent = err;
-  errEl.style.display = err ? 'block' : 'none';
+function toggleDate3(){
+  var inp=document.getElementById('inp-date3');
+  var btn=document.getElementById('date3-toggle');
+  var isHidden=inp.style.display==='none';
+  inp.style.display=isHidden?'block':'none';
+  if(btn)btn.textContent=isHidden?'- Remove 3rd date':'+ Add a 3rd preferred date';
 }
 
-function toggleDate3() {
-  const inp = document.getElementById('inp-date3');
-  const btn = document.getElementById('date3-toggle');
-  const isHidden = inp.style.display === 'none';
-  inp.style.display = isHidden ? 'block' : 'none';
-  btn.textContent = isHidden ? '− Remove 3rd date' : '＋ Add a 3rd preferred date';
-}
+function buildSubmissionData(){
+  var calc=calcTotal();
+  var roleLabels={homebuyer:'Homebuyer',homeowner:'Homeowner',agent:'Real Estate Agent'};
+  var svcLabels={resale:'Resale Home Inspection',phase:'New Construction Phase Inspection',foundation:'Standalone Foundation Inspection',mold:'Mold / IAQ Inspection',termite:'WDI Termite Inspection',prelisting:'Pre-Listing Inspection (MEPS)',warranty:'Builder Warranty Inspection (MEPS)'};
+  var phaseLabels={1:'Phase 1 - Pre-Pour Foundation',2:'Phase 2 - Pre-Drywall Framing',3:'Phase 3 - Final New Construction',4:'Phase 4 - Builder Warranty (MEPS)'};
+  var pkgLabels={core:'Core (Visual Foundation Assessment)',pro:'Pro (ZIPLEVEL Precision Survey)'};
+  var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
+  var addonList=[];
+  if(S.addons.mold){var ms='Mold IAQ Sampling - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $75 each';addonList.push(ms);}
+  if(S.addons.wdi){if(S.military){addonList.push('WDI Termite - COMPLIMENTARY (Military/First Responder)');}else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
+  if(S.addons.repair)addonList.push('Repair Estimate Report - $130 (standalone: $149, save $19)');
+  var pdNote=S.service==='phase'&&S.phase<3?'YES - $25 off applied. Client entitled to $25 off remaining phases. Honor at next booking.':'No';
 
-// ── FORM SUBMISSION ──────────────────────────────────────
-function buildSubmissionData() {
-  const calc = calcTotal();
-  const roleLabels = {homebuyer:'Homebuyer',homeowner:'Homeowner',agent:'Real Estate Agent'};
-  const svcLabels = {
-    resale:'Resale Home Inspection',
-    phase:'New Construction Phase Inspection',
-    foundation:'Standalone Foundation Inspection',
-    mold:'Mold / IAQ Inspection',
-    termite:'WDI Termite Inspection',
-    prelisting:'Pre-Listing Inspection (MEPS)',
-    warranty:'Builder Warranty Inspection (MEPS)'
-  };
-  const phaseLabels = {1:'Phase 1 — Pre-Pour Foundation',2:'Phase 2 — Pre-Drywall Framing',3:'Phase 3 — Final New Construction',4:'Phase 4 — Builder Warranty (MEPS)'};
-  const pkgLabels = {core:'Core (Visual Foundation Assessment)',pro:'Pro (ZIPLEVEL® Precision Survey)'};
-
-  // Build clean price breakdown string
-  const breakdown = (calc.lines||[]).map(function(l){
-    return '  ' + l.name + ': ' + l.val;
-  }).join('\n');
-
-  // Build add-ons string
-  const addonList = [];
-  if(S.addons.mold) {
-    var moldStr = 'Mold IAQ Sampling — $275 (standalone value: $375, save $100)';
-    if(S.addons.extraSamples > 0) moldStr += ' + ' + S.addons.extraSamples + ' extra sample(s) at $75 each';
-    addonList.push(moldStr);
-  }
-  if(S.addons.wdi) {
-    if(S.military) {
-      addonList.push('WDI Termite Inspection — COMPLIMENTARY (Military/First Responder)');
-    } else {
-      const wdiAdd = lookup(WDI_ADDON, S.sqft)||95;
-      const wdiStand = lookup(WDI_STANDALONE, S.sqft)||195;
-      addonList.push('WDI Termite Inspection — $'+wdiAdd+' (standalone: $'+wdiStand+', save $'+(wdiStand-wdiAdd)+')');
-    }
-  }
-  if(S.addons.repair) addonList.push('Repair Estimate Report — $130 (standalone: $149, save $19)');
-
-  return {
-    _subject: '⭐ New Booking Request — ' + (svcLabels[S.service]||S.service) + ' | Imperial Pro Inspection',
-    _replyto: document.getElementById('inp-email').value,
-
-    '━━ CLIENT INFORMATION ━━': '─────────────────────────',
-    'Client Name':    document.getElementById('inp-fname').value + ' ' + document.getElementById('inp-lname').value,
-    'Email':          document.getElementById('inp-email').value,
-    'Phone':          document.getElementById('inp-phone').value,
-    'Role':           roleLabels[S.role]||S.role,
-    'Military / First Responder': S.military ? '✅ YES — WDI Termite complimentary applied' : 'No',
-
-    '━━ PROPERTY INFORMATION ━━': '─────────────────────────',
-    'Property Address': document.getElementById('inp-address').value,
-    'City':            document.getElementById('inp-city').value,
-    'State / ZIP':     'TX ' + document.getElementById('inp-zip').value,
-    'Square Footage':  S.sqft ? S.sqft + ' sq ft' : 'Not provided',
-    'Year Built':      S.year || 'Not provided',
-    'Foundation Type': S.foundation === 'crawl' ? 'Crawlspace / Pier & Beam (+$100)' : 'Slab',
-
-    '━━ SERVICE SELECTED ━━': '─────────────────────────',
-    'Service Type':    svcLabels[S.service]||S.service,
-    'Package / Level': S.resalePkg ? pkgLabels[S.resalePkg]||S.resalePkg :
-                       S.foundLevel ? 'Level ' + S.foundLevel :
-                       S.moldType ? (S.moldType==='iaq'?'IAQ Sampling (3 samples)':'Assessment + IAQ Sampling') :
-                       S.phase ? phaseLabels[S.phase]||('Phase '+S.phase) : 'N/A',
-    'Add-Ons Selected': addonList.length ? addonList.join(' | ') : 'None',
-    'Coupon Applied':  S.coupon ? S.coupon.label + ' — -$' + S.coupon.amount : 'None',
-
-    '━━ PRICE BREAKDOWN ━━': '─────────────────────────',
-    'Line Items': '\n' + breakdown,
-    'ESTIMATED TOTAL': calc.total != null ? fmt(calc.total) : 'CUSTOM QUOTE REQUIRED',
-    'Pricing Note': 'Quote based on client-provided info. Verify sqft, year built, and foundation type before confirming.',
-
-    '━━ SCHEDULING ━━': '─────────────────────────',
-    '1st Preferred Date': document.getElementById('inp-date1').value || 'Not provided',
-    '2nd Preferred Date': document.getElementById('inp-date2').value || 'Not provided',
-    '3rd Preferred Date': document.getElementById('inp-date3').value || 'Not provided',
-    'Access Notes':       document.getElementById('inp-notes').value || 'None',
-
-    '━━ AGENT INFORMATION ━━': '─────────────────────────',
-    'Agent Name':  document.getElementById('inp-agent-name').value || 'N/A',
-    'Agent Email': document.getElementById('inp-agent-email').value || 'N/A',
+  return{
+    _subject:'New Booking - '+(svcLabels[S.service]||S.service)+' | Imperial Pro',
+    _replyto:document.getElementById('inp-email').value,
+    'CLIENT NAME':document.getElementById('inp-fname').value+' '+document.getElementById('inp-lname').value,
+    'EMAIL':document.getElementById('inp-email').value,
+    'PHONE':document.getElementById('inp-phone').value,
+    'ROLE':roleLabels[S.role]||S.role,
+    'MILITARY':S.military?'YES - WDI Termite complimentary applied':'No',
+    'ADDRESS':document.getElementById('inp-address').value+', '+document.getElementById('inp-city').value+', TX '+document.getElementById('inp-zip').value,
+    'SQUARE FOOTAGE':S.sqft?S.sqft+' sq ft':'Not provided',
+    'YEAR BUILT':S.year||'Not provided',
+    'FOUNDATION TYPE':S.foundation==='crawl'?'Crawlspace / Pier & Beam (+$100 applied silently)':'Slab',
+    'SERVICE TYPE':svcLabels[S.service]||S.service,
+    'PACKAGE':S.resalePkg?pkgLabels[S.resalePkg]||S.resalePkg:S.foundLevel?'Level '+S.foundLevel:S.moldType?S.moldType:S.phase?phaseLabels[S.phase]||('Phase '+S.phase):'N/A',
+    'ADD-ONS':addonList.length?addonList.join(' | '):'None',
+    'COUPON':S.coupon?S.coupon.label+' - -$'+S.coupon.amount:'None',
+    'MULTI-PHASE DISCOUNT':pdNote,
+    'LINE ITEMS':'\n'+breakdown,
+    'ESTIMATED TOTAL':calc.total!=null?fmt(calc.total):'CUSTOM QUOTE REQUIRED',
+    'PRICING NOTE':'Verify sqft, year built, foundation type before confirming. Age and crawlspace surcharges applied silently.',
+    '1ST PREFERRED DATE':document.getElementById('inp-date1').value||'Not provided',
+    '2ND PREFERRED DATE':document.getElementById('inp-date2').value||'Not provided',
+    '3RD PREFERRED DATE':document.getElementById('inp-date3').value||'Not provided',
+    'ACCESS NOTES':document.getElementById('inp-notes').value||'None',
+    'AGENT NAME':document.getElementById('inp-agent-name').value||'N/A',
+    'AGENT EMAIL':document.getElementById('inp-agent-email').value||'N/A'
   };
 }
 
-function validateStep6() {
-  const req = ['inp-fname','inp-lname','inp-email','inp-phone','inp-address','inp-city','inp-zip','inp-date1','inp-date2'];
-  for(const id of req) {
-    const el = document.getElementById(id);
-    if(!el||!el.value.trim()) { el.focus(); return false; }
-  }
-  const d1 = document.getElementById('inp-date1').value;
-  const d2 = document.getElementById('inp-date2').value;
-  const isWeekend = d => { const day = new Date(d+'T12:00:00').getDay(); return day===0||day===6; };
-  if(isWeekend(d1)||isWeekend(d2)) return false;
+function validateStep6(){
+  var req=['inp-fname','inp-lname','inp-email','inp-phone','inp-address','inp-city','inp-zip','inp-date1','inp-date2'];
+  for(var i=0;i<req.length;i++){var el=document.getElementById(req[i]);if(!el||!el.value.trim()){if(el)el.focus();return false;}}
+  var d1=document.getElementById('inp-date1').value;
+  var d2=document.getElementById('inp-date2').value;
+  var isWeekend=function(d){var day=new Date(d+'T12:00:00').getDay();return day===0||day===6;};
+  if(isWeekend(d1)||isWeekend(d2))return false;
   return true;
 }
 
-async function submitForm() {
-  if(!validateStep6()) {
-    alert('Please fill in all required fields and ensure preferred dates are on weekdays (Monday–Friday).');
-    return;
-  }
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting…';
-
-  const data = buildSubmissionData();
-
-  try {
-    const res = await fetch('https://formspree.io/f/maqpzzbw', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify(data)
-    });
-    if(res.ok) {
-      document.getElementById('progress-wrap').style.display = 'none';
-      document.querySelectorAll('.step-section').forEach(s=>s.style.display='none');
-      const sw = document.getElementById('success-wrap');
-      sw.classList.add('show');
+async function submitForm(){
+  if(!validateStep6()){alert('Please fill in all required fields and make sure your preferred dates are weekdays (Monday through Friday).');return;}
+  var btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  var data=buildSubmissionData();
+  try{
+    var res=await fetch('https://formspree.io/f/maqpzzbw',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)});
+    if(res.ok){
+      document.getElementById('progress-wrap').style.display='none';
+      document.querySelectorAll('.step-section').forEach(function(s){s.style.display='none';});
+      var sw=document.getElementById('success-wrap');if(sw)sw.classList.add('show');
       scrollToWizard();
     } else {
-      btn.disabled = false;
-      btn.textContent = 'Submit My Booking Request →';
-      alert('Something went wrong. Please try again or call us at (281) 715-9755.');
+      btn.disabled=false;btn.textContent='Submit My Booking Request';
+      alert('Something went wrong. Please try again or call (281) 715-9755.');
     }
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = 'Submit My Booking Request →';
+  } catch(e){
+    btn.disabled=false;btn.textContent='Submit My Booking Request';
     alert('Network error. Please try again or call (281) 715-9755.');
   }
 }
 
-// ── EXPORT TO window SO onclick="" CAN ALWAYS REACH THEM ──
-window.IPgoStep             = goStep;
-window.IPpickPropertyType   = pickPropertyType;
-window.IPpickRole           = pickRole;
-window.IPtoggleMilitary     = toggleMilitary;
-window.IPpickService        = pickService;
-window.IPpickFoundation     = pickFoundation;
-window.IPpickPhase          = pickPhase;
-window.IPpickFoundLevel     = pickFoundLevel;
-window.IPpickMoldType       = pickMoldType;
-window.IPpickResalePkg      = pickResalePkg;
-window.IPtoggleAddon        = toggleAddon;
-window.IPchangeExtraSamples = changeExtraSamples;
-window.IPtoggleCoupon       = toggleCoupon;
-window.IPapplyCoupon        = applyCoupon;
-window.IPtoggleDate3        = toggleDate3;
-window.IPsubmitForm         = submitForm;
-window.IPonDetailsChange    = onDetailsChange;
-window.IPvalidateDates      = validateDates;
+function renderFinalSummary(){
+  var calc=calcTotal();
+  var le=document.getElementById('final-lines');
+  if(le)le.innerHTML=(calc.lines||[]).map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
+  var te=document.getElementById('final-total');if(te)te.textContent=calc.total!=null?fmt(calc.total):'--';
+}
 
-// ── DATE MINIMUMS ────────────────────────────────────────
-(function setDateMins(){
-  var tomorrow = new Date();
+window.IPgoStep=goStep;
+window.IPpickPropertyType=pickPropertyType;
+window.IPpickRole=pickRole;
+window.IPtoggleMilitary=toggleMilitary;
+window.IPpickService=pickService;
+window.IPpickFoundation=pickFoundation;
+window.IPpickPhase=pickPhase;
+window.IPpickFoundLevel=pickFoundLevel;
+window.IPpickMoldType=pickMoldType;
+window.IPonSliderChange=onSliderChange;
+window.IPtoggleAddon=toggleAddon;
+window.IPchangeExtraSamples=changeExtraSamples;
+window.IPtoggleCoupon=toggleCoupon;
+window.IPapplyCoupon=applyCoupon;
+window.IPtoggleDate3=toggleDate3;
+window.IPsubmitForm=submitForm;
+window.IPonDetailsChange=onDetailsChange;
+window.IPvalidateDates=validateDates;
+
+// Date minimums + weekend blocking
+(function(){
+  var tomorrow=new Date();
   tomorrow.setDate(tomorrow.getDate()+1);
-  var mn = tomorrow.toISOString().split('T')[0];
+  var mn=tomorrow.toISOString().split('T')[0];
   ['inp-date1','inp-date2','inp-date3'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.min = mn;
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.min=mn;
+    el.addEventListener('change',function(){
+      var d=new Date(this.value+'T12:00:00');
+      var day=d.getDay();
+      var errEl=document.getElementById('date-err');
+      if(day===0||day===6){
+        this.value='';
+        if(errEl){errEl.textContent='Weekends are not available. Please select a Monday through Friday date.';errEl.style.display='block';}
+      } else {
+        if(errEl){errEl.textContent='';errEl.style.display='none';}
+      }
+    });
   });
 })();
 
-// ── INIT ─────────────────────────────────────────────────
+// Update addon toggle CSS for green
+(function(){
+  if(document.getElementById('addon-green-style'))return;
+  var st=document.createElement('style');
+  st.id='addon-green-style';
+  st.textContent='.addon-toggle.on{border-color:rgba(110,207,149,.35)!important}'
+    +'.addon-toggle.on .toggle-switch{background:#3a9e5f!important;border-color:#6ecf95!important}'
+    +'.addon-toggle.on .addon-toggle-eye{color:#6ecf95!important}'
+    +'.addon-toggle.on .atp-num{color:var(--tan-light)!important}';
+  document.head.appendChild(st);
+})();
+
+// Military toggle green CSS
+(function(){
+  if(document.getElementById('mil-green-style'))return;
+  var st=document.createElement('style');
+  st.id='mil-green-style';
+  st.textContent='#mil-wrap.active{background:rgba(26,107,58,.08)!important;border-color:rgba(110,207,149,.4)!important;border-left-color:#6ecf95!important}'
+    +'#mil-wrap.active .mil-check{background:#3a9e5f!important;border-color:#6ecf95!important}'
+    +'#mil-wrap .mil-title{font-size:16px!important}'
+    +'#mil-wrap .mil-desc{font-size:15px!important}';
+  document.head.appendChild(st);
+})();
+
 updateProgress(1);
