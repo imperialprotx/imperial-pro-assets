@@ -104,9 +104,6 @@ function pickRole(r){
   var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
 }
-  var n2=document.getElementById('next-2');
-  if(n2){n2.classList.remove('btn-inactive');n2.disabled=false;n2.removeAttribute('disabled');n2.style.opacity='1';n2.style.cursor='pointer';n2.style.pointerEvents='auto';}
-}
 
 function toggleMilitary(){
   S.military=!S.military;
@@ -440,6 +437,52 @@ function calcTotal(){
   return{total:total,lines:lines,label:base.label,detail:base.detail,custom:false};
 }
 
+function buildAddonHTML(id, addon, on, priceHtml) {
+  var inner = document.createElement('div');
+  inner.className = 'addon-toggle-inner';
+  inner.setAttribute('onclick', 'window.IPtoggleAddon("' + id + '")');
+  inner.style.cssText = 'display:flex;align-items:flex-start;gap:16px;padding:18px 20px;cursor:pointer';
+
+  var sw = document.createElement('div');
+  sw.className = 'toggle-switch';
+  sw.innerHTML = '<div class="toggle-knob"></div>';
+
+  var body = document.createElement('div');
+  body.style.cssText = 'flex:1;min-width:0';
+  body.innerHTML =
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tan);margin-bottom:5px">' + addon.eye + '</div>' +
+    '<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:#fafaf8;margin-bottom:6px;line-height:1.15">' + addon.icon + ' ' + addon.title + '</div>' +
+    '<div style="font-size:16px;color:rgba(250,250,248,.5);line-height:1.6">' + addon.desc + '</div>';
+
+  var price = document.createElement('div');
+  price.style.cssText = 'text-align:right;flex-shrink:0;padding-left:12px';
+  price.innerHTML = priceHtml;
+
+  inner.appendChild(sw);
+  inner.appendChild(body);
+  inner.appendChild(price);
+
+  var container = document.createElement('div');
+  container.appendChild(inner);
+
+  if(id === 'mold') {
+    var samples = document.createElement('div');
+    samples.id = 'extra-samples-wrap';
+    samples.style.cssText = 'display:' + (on ? 'block' : 'none') + ';padding:14px 20px;border-top:1px solid rgba(184,154,110,.1)';
+    samples.innerHTML =
+      '<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.4);margin-bottom:10px">Need more samples? $75 each</div>' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+      '<button onclick="window.IPchangeExtraSamples(-1)" type="button" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">-</button>' +
+      '<span id="extra-count" style="font-size:26px;font-weight:600;color:#fafaf8;min-width:28px;text-align:center">0</span>' +
+      '<button onclick="window.IPchangeExtraSamples(1)" type="button" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">+</button>' +
+      '<span style="font-size:15px;color:rgba(250,250,248,.4)">additional samples (3 included)</span>' +
+      '</div>';
+    container.appendChild(samples);
+  }
+
+  return container.innerHTML;
+}
+
 function buildAddons(){
   var wrap=document.getElementById('addons-wrap');
   wrap.innerHTML='';
@@ -467,23 +510,8 @@ function buildAddons(){
        +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.1em!important;color:rgba(250,250,248,.5)!important;margin:2px 0">→</div>'
        +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(26px,3vw,36px)!important;font-weight:700!important;color:rgba(250,250,248,.6)!important;line-height:1;letter-spacing:-.02em;transition:color .25s">'+fmt(addon.addPrice)+'</div>'
        +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#6ecf95!important;margin-top:2px">Save '+fmt(addon.save)+'</div>';
-    card.innerHTML='<div class="addon-toggle-inner" onclick="window.IPtoggleAddon(\''+addon.id+\')'+"\">"
-      +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
-      +'<div class="addon-toggle-body">'
-      +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:var(--tan)!important;margin-bottom:5px">'+addon.eye+'</div>'
-      +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(18px,2vw,24px)!important;font-weight:700!important;color:#fafaf8!important;margin-bottom:6px;line-height:1.1">'+addon.icon+' &nbsp;'+addon.title+'</div>'
-      +'<div style="font-family:\'Crimson Pro\',serif!important;font-size:17px!important;color:rgba(250,250,248,.5)!important;line-height:1.6">'+addon.desc+'</div>'
-      +'</div>'
-      +'<div style="text-align:right;flex-shrink:0;padding-left:16px">'+priceHtml+'</div>'
-      +'</div>'
-      +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
-        +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:rgba(250,250,248,.35)!important;margin-bottom:12px">Need more samples? $75 each</div>'
-        +'<div style="display:flex;align-items:center;gap:14px">'
-        +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">-</button>'
-        +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif!important;font-size:30px!important;font-weight:600!important;color:#fafaf8!important;min-width:32px;text-align:center">0</span>'
-        +'<button onclick="window.IPchangeExtraSamples(1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">+</button>'
-        +'<span style="font-family:\'Crimson Pro\',serif!important;font-size:16px!important;color:rgba(250,250,248,.45)!important">additional samples (3 always included)</span>'
-        +'</div></div>':'');
+    var toggleId = addon.id;
+    card.innerHTML = buildAddonHTML(toggleId, addon, on, priceHtml);
     wrap.appendChild(card);
     if(addon.military)S.addons.wdi=true;
   });
