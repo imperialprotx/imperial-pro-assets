@@ -206,74 +206,72 @@ function buildResaleSlider(){
   var proFrom=fmt(575);
 
   var el=document.createElement('div');
-  el.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px';
+  el.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start';
   el.id='pkg-two-cards';
   el.innerHTML=
     // CORE CARD
     '<button type="button" id="pkg-core" onclick="window.IPselectPkg(\'core\')" style="'
       +'background:#fafaf8;border:2.5px solid rgba(10,22,40,.12);padding:0;cursor:pointer;text-align:left;'
-      +'display:flex;flex-direction:column;transition:border-color .25s;position:relative;overflow:hidden">'
-    +'<div style="padding:22px 22px 0">'
-    +'<div style="font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#7a8a98;margin-bottom:6px">Core</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,24px);font-weight:700;color:#1a2a3a;line-height:1.1;margin-bottom:12px">Complete Home Inspection</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#1a2a3a;line-height:1;letter-spacing:-.02em" id="price-core">from '+coreFrom+'</div>'
-    +'<div style="font-size:11px;color:#7a8a98;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;margin-top:3px">starting price</div>'
-    +'<div style="height:1px;background:rgba(10,22,40,.08);margin-bottom:14px"></div>'
-    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Full TREC Home Inspection</div>'
-    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
-    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Moisture Meter Testing</div>'
-    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
-    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Repair Request Builder</div>'
-    +'<div style="height:1px;background:rgba(10,22,40,.08);margin:14px 0"></div>'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7a8a98;margin-bottom:6px">Foundation</div>'
-    +'<div style="font-size:15px;color:#384758;line-height:1.55;margin-bottom:20px">Visual assessment — spot elevation readings, drainage review, professional opinion on current performance.</div>'
+      +'display:flex;flex-direction:column;width:100%;transition:all .25s;position:relative;overflow:hidden">'
+    +'<div style="padding:28px 28px 0">'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#7a8a98;margin-bottom:8px">Core</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(20px,2.2vw,26px);font-weight:700;color:#1a2a3a;line-height:1.1;margin-bottom:16px">Complete Home Inspection</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(32px,4.5vw,48px);font-weight:700;color:#1a2a3a;line-height:1;letter-spacing:-.02em" id="price-core">from '+coreFrom+'</div>'
+    +'<div style="font-size:11px;color:#7a8a98;letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px;margin-top:4px">starting price</div>'
+    +'<div style="height:1px;background:rgba(10,22,40,.08);margin-bottom:18px"></div>'
+    +'<div style="font-size:16px;color:#384758;line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Full TREC Home Inspection</div>'
+    +'<div style="font-size:16px;color:#384758;line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
+    +'<div style="font-size:16px;color:#384758;line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Moisture Meter Testing</div>'
+    +'<div style="font-size:16px;color:#384758;line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
+    +'<div style="font-size:16px;color:#384758;line-height:1.65;margin-bottom:20px">&#10003;&nbsp; Repair Request Builder</div>'
+    +'<div style="height:1px;background:rgba(10,22,40,.08);margin-bottom:18px"></div>'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a8a98;margin-bottom:8px">Foundation Evaluation</div>'
+    +'<div style="font-size:16px;color:#384758;line-height:1.6;margin-bottom:28px">Visual assessment with spot elevation readings, drainage review, and a professional performance opinion.</div>'
     +'</div>'
-    +'<div style="margin-top:auto;padding:14px 22px;background:rgba(10,22,40,.04);border-top:1px solid rgba(10,22,40,.08)">'
-    +'<div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a8a98;text-align:center">Select Core</div>'
+    +'<div style="padding:16px 28px;background:rgba(10,22,40,.04);border-top:1px solid rgba(10,22,40,.08);width:100%">'
+    +'<div style="font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7a8a98;text-align:center">Select Core</div>'
     +'</div>'
     +'</button>'
 
     // PRO CARD
     +'<button type="button" id="pkg-pro" onclick="window.IPselectPkg(\'pro\')" style="'
       +'background:#071828;border:2.5px solid #c8531a;padding:0;cursor:pointer;text-align:left;'
-      +'display:flex;flex-direction:column;transition:border-color .25s;position:relative;overflow:hidden">'
-    +'<div style="background:#c8531a;padding:7px 22px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fafaf8;text-align:center">&#9670; Most Popular</div>'
-    +'<div style="padding:18px 22px 0">'
-    +'<div style="font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#b89a6e;margin-bottom:6px">Pro</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,24px);font-weight:700;color:#fafaf8;line-height:1.1;margin-bottom:12px">Core + Foundation Survey</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#fafaf8;line-height:1;letter-spacing:-.02em" id="price-pro">from '+proFrom+'</div>'
-    +'<div style="font-size:11px;color:rgba(184,154,110,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;margin-top:3px">starting price</div>'
-    +'<div style="height:1px;background:rgba(184,154,110,.15);margin-bottom:14px"></div>'
-    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Everything in Core, plus:</div>'
-    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
-    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Moisture Meter Testing</div>'
-    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
-    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Repair Request Builder</div>'
-    +'<div style="height:1px;background:rgba(184,154,110,.15);margin:14px 0"></div>'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#b89a6e;margin-bottom:6px">Foundation — Upgraded</div>'
-    +'<div style="font-size:15px;color:rgba(250,250,248,.75);line-height:1.55;margin-bottom:6px">ZIPLEVEL&reg; Precision Elevation Survey — full footprint mapped, scaled CAD drawing, deflection analysis.</div>'
-    +'<div style="background:rgba(110,207,149,.12);border-left:3px solid #6ecf95;padding:10px 12px;margin-bottom:16px">'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-bottom:2px">$350+ Standalone Value — Included</div>'
-    +'<div style="font-size:14px;color:rgba(110,207,149,.85);line-height:1.5">The standard for Fort Bend County clay soils. Most inspectors charge extra.</div>'
+      +'display:flex;flex-direction:column;width:100%;transition:all .25s;position:relative;overflow:hidden">'
+    +'<div style="background:#c8531a;padding:9px 28px;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#fafaf8;text-align:center">&#9670; Most Popular</div>'
+    +'<div style="padding:24px 28px 0">'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#b89a6e;margin-bottom:8px">Pro</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(20px,2.2vw,26px);font-weight:700;color:#fafaf8;line-height:1.1;margin-bottom:16px">Core + Advanced Foundation Survey</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(32px,4.5vw,48px);font-weight:700;color:#fafaf8;line-height:1;letter-spacing:-.02em" id="price-pro">from '+proFrom+'</div>'
+    +'<div style="font-size:11px;color:rgba(184,154,110,.6);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px;margin-top:4px">starting price</div>'
+    +'<div style="height:1px;background:rgba(184,154,110,.15);margin-bottom:18px"></div>'
+    +'<div style="font-size:16px;color:rgba(250,250,248,.75);line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Everything in Core, plus:</div>'
+    +'<div style="font-size:16px;color:rgba(250,250,248,.75);line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
+    +'<div style="font-size:16px;color:rgba(250,250,248,.75);line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Moisture Meter Testing</div>'
+    +'<div style="font-size:16px;color:rgba(250,250,248,.75);line-height:1.65;margin-bottom:8px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
+    +'<div style="font-size:16px;color:rgba(250,250,248,.75);line-height:1.65;margin-bottom:20px">&#10003;&nbsp; Repair Request Builder</div>'
+    +'<div style="height:1px;background:rgba(184,154,110,.15);margin-bottom:18px"></div>'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b89a6e;margin-bottom:8px">Foundation — Advanced Survey</div>'
+    +'<div style="font-size:16px;color:rgba(250,250,248,.75);line-height:1.6;margin-bottom:14px">ZIPLEVEL&reg; precision elevation survey — full footprint mapped, scaled CAD drawing included in your report.</div>'
+    +'<img src="https://d24naddg1rhy2p.cloudfront.net/239069/1608/0/houston-foundation-elevation-surveys.png" alt="Actual ZIPLEVEL Foundation Elevation Survey" style="width:100%;display:block;opacity:.85;margin-bottom:10px">'
+    +'<a href="https://www.ruleyourhome.com/foundation-elevation-survey-houston-texas.html" target="_blank" onclick="event.stopPropagation()" style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b89a6e;border-bottom:1px solid rgba(184,154,110,.3);padding-bottom:1px;display:inline-block;margin-bottom:20px">What is a foundation elevation survey? &#8594;</a>'
+    +'<div style="background:rgba(110,207,149,.12);border-left:3px solid #6ecf95;padding:12px 14px;margin-bottom:24px">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6ecf95">$350+ Standalone Value — Included</div>'
     +'</div>'
     +'</div>'
-    +'<div style="margin-top:auto;padding:14px 22px;background:#c8531a;border-top:none">'
-    +'<div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fafaf8;text-align:center">Select Pro &#10148;</div>'
+    +'<div style="padding:16px 28px;background:#c8531a;width:100%">'
+    +'<div style="font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#fafaf8;text-align:center">Select Pro &#10148;</div>'
     +'</div>'
     +'</button>';
 
-  // Responsive: stack on mobile
   if(!document.getElementById('pkg-cards-style')){
     var st=document.createElement('style');
     st.id='pkg-cards-style';
-    st.textContent='@media(max-width:560px){#pkg-two-cards{grid-template-columns:1fr!important}}';
+    st.textContent='@media(max-width:600px){#pkg-two-cards{grid-template-columns:1fr!important}}';
     document.head.appendChild(st);
   }
 
   wrap.innerHTML='';
   wrap.appendChild(el);
-
-  // Default Pro selected
   S.resalePkg='pro';
   applyPkgSelection('pro');
 }
@@ -415,7 +413,11 @@ function calcBase(){
     label=S.resalePkg==='core'?'Resale — Core Package':'Resale — Pro Package';
     detail=S.resalePkg==='core'?'Full TREC · Infrared · Moisture testing':'Full TREC + ZIPLEVEL Foundation Survey · Infrared · Moisture';
     lines.push({name:'Base Inspection',val:fmt(base)});
-    price=base+ageFee(S.year)+crawlFee();
+    var af=ageFee(S.year);
+    var cf=crawlFee();
+    if(af>0)lines.push({name:'Property age ('+S.year+')',val:'+'+fmt(af),cls:'surcharge'});
+    if(cf>0)lines.push({name:'Crawlspace / Pier & Beam access',val:'+'+fmt(cf),cls:'surcharge'});
+    price=base+af+cf;
   } else if(svc==='phase'||svc==='warranty'){
     var ph=S.phase;
     if(!ph)return{price:null,lines:[],label:'',detail:'',custom:false};
@@ -450,7 +452,10 @@ function calcBase(){
     var pbase=lookup(PRELISTING,sqft);if(!pbase)return{price:null,lines:[],label:'',detail:'',custom:true};
     label='Pre-Listing Inspection (MEPS)';detail='Mechanical · Electrical · Plumbing · Structural';
     lines.push({name:'Pre-Listing MEPS Inspection',val:fmt(pbase)});
-    price=pbase+ageFee(S.year)+crawlFee();
+    var paf=ageFee(S.year);var pcf=crawlFee();
+    if(paf>0)lines.push({name:'Property age ('+S.year+')',val:'+'+fmt(paf),cls:'surcharge'});
+    if(pcf>0)lines.push({name:'Crawlspace / Pier & Beam access',val:'+'+fmt(pcf),cls:'surcharge'});
+    price=pbase+paf+pcf;
   }
   return{price:price,lines:lines,label:label,detail:detail,custom:false};
 }
