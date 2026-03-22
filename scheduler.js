@@ -70,19 +70,35 @@ function goStep(n){
   S.step=n;updateProgress(n);scrollToWizard();
 }
 
+function highlightCard(ids, selectedId){
+  ids.forEach(function(x){
+    var el=document.getElementById(x);
+    if(!el)return;
+    if(x===selectedId){
+      el.style.cssText+='border-color:#c8531a!important;background:rgba(200,83,26,.05)!important;transform:translateY(-2px)!important;box-shadow:0 12px 40px rgba(200,83,26,.14)!important;';
+      el.classList.add('selected');
+    } else {
+      el.style.borderColor='rgba(10,22,40,.1)';
+      el.style.background='#fafaf8';
+      el.style.transform='none';
+      el.style.boxShadow='none';
+      el.classList.remove('selected');
+    }
+  });
+}
+
 function pickPropertyType(t){
   S.propType=t;
-  ['residential','commercial'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===t);});
+  highlightCard(['cc-residential','cc-commercial'],'cc-'+t);
   if(t==='commercial'){window.location.href='https://www.commercialpropertyinspectionstx.com/Contact.html';return;}
-  var n1=document.getElementById('next-1');
-  if(n1){n1.classList.remove('btn-inactive');n1.removeAttribute('disabled');n1.style.opacity='1';n1.style.cursor='pointer';n1.style.pointerEvents='auto';}
 }
 
 function pickRole(r){
   S.role=r;
-  ['homebuyer','homeowner','agent'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===r);});
+  highlightCard(['cc-homebuyer','cc-homeowner','cc-agent'],'cc-'+r);
   var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
+}
   var n2=document.getElementById('next-2');
   if(n2){n2.classList.remove('btn-inactive');n2.disabled=false;n2.removeAttribute('disabled');n2.style.opacity='1';n2.style.cursor='pointer';n2.style.pointerEvents='auto';}
 }
@@ -140,11 +156,22 @@ function pickService(svc){
   S.service=svc;
   S.addons={mold:false,wdi:false,repair:false,extraSamples:0};
   S.resalePkg='pro';S.phase=null;S.foundLevel=null;S.moldType=null;
-  document.querySelectorAll('[id^="svc-"]').forEach(function(c){c.classList.remove('selected');});
-  var el=document.getElementById('svc-'+svc);if(el)el.classList.add('selected');
+  document.querySelectorAll('[id^="svc-"]').forEach(function(c){
+    c.classList.remove('selected');
+    c.style.borderColor='rgba(10,22,40,.1)';
+    c.style.background='#fafaf8';
+    c.style.transform='none';
+    c.style.boxShadow='none';
+  });
+  var el=document.getElementById('svc-'+svc);
+  if(el){
+    el.classList.add('selected');
+    el.style.borderColor='#c8531a';
+    el.style.background='rgba(200,83,26,.05)';
+    el.style.transform='translateY(-2px)';
+    el.style.boxShadow='0 12px 40px rgba(200,83,26,.14)';
+  }
   configStep4();
-  var n3=document.getElementById('next-3');
-  if(n3){n3.classList.remove('btn-inactive');n3.disabled=false;n3.removeAttribute('disabled');n3.style.opacity='1';n3.style.cursor='pointer';n3.style.pointerEvents='auto';}
 }
 
 function configStep4(){
