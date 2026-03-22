@@ -58,7 +58,6 @@ function updateProgress(step){
 }
 
 function goStep(n){
-  // Validate before advancing
   if(n===2 && !S.propType){ alert('Please select Residential or Commercial to continue.'); return; }
   if(n===3 && !S.role){ alert('Please select your role to continue.'); return; }
   if(n===4 && !S.service){ alert('Please select a service to continue.'); return; }
@@ -67,7 +66,13 @@ function goStep(n){
   document.querySelectorAll('.step-section').forEach(function(s){s.classList.remove('active');});
   var el=document.getElementById('step-'+n);
   if(el)el.classList.add('active');
-  S.step=n;updateProgress(n);scrollToWizard();
+  S.step=n;
+  updateProgress(n);
+  // Re-apply all selection highlights after DOM switch
+  if(S.propType) highlightCard(['cc-residential','cc-commercial'],'cc-'+S.propType);
+  if(S.role) highlightCard(['cc-homebuyer','cc-homeowner','cc-agent'],'cc-'+S.role);
+  var wt=document.getElementById('wizard-top');
+  if(wt) wt.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function highlightCard(ids, selectedId){
