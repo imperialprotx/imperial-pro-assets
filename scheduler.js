@@ -748,8 +748,8 @@ function validateDates() {
   const errEl = document.getElementById('date-err');
   const isWeekend = d => { const day = new Date(d+'T12:00:00').getDay(); return day===0||day===6; };
   let err = '';
-  if(d1 && isWeekend(d1)) err = 'Your 1st preferred date falls on a weekend. We're available Monday–Friday only.';
-  if(!err && d2 && isWeekend(d2)) err = 'Your 2nd preferred date falls on a weekend. We're available Monday–Friday only.';
+  if(d1 && isWeekend(d1)) err = 'Your 1st preferred date falls on a weekend. We are available Monday-Friday only.';
+  if(!err && d2 && isWeekend(d2)) err = 'Your 2nd preferred date falls on a weekend. We are available Monday-Friday only.';
   errEl.textContent = err;
   errEl.style.display = err ? 'block' : 'none';
 }
