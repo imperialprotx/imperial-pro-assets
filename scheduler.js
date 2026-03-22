@@ -202,75 +202,107 @@ function configStep4(){
 
 function buildResaleSlider(){
   var wrap=document.getElementById('pkg-cards-wrap');
-  wrap.innerHTML='<div style="background:var(--white);border:2px solid rgba(10,22,40,.1);padding:clamp(20px,2.5vw,32px)">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">'
-    +'<div><div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:var(--orange)!important;margin-bottom:6px" id="pkg-tier-label">Pro Package</div>'
-    +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(20px,2.5vw,28px)!important;font-weight:700!important;color:var(--text-dark)!important;line-height:1.1" id="pkg-title-label">Core + ZIPLEVEL Foundation Survey</div></div>'
-    +'<div style="text-align:right;flex-shrink:0"><div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(36px,5vw,52px)!important;font-weight:700!important;color:var(--text-dark)!important;line-height:1;letter-spacing:-.03em" id="pkg-price-display">Enter sq ft above</div>'
-    +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;color:var(--text-muted)!important;letter-spacing:.1em!important;text-transform:uppercase!important;margin-top:4px">estimated starting price</div></div></div>'
-    +'<div style="margin-bottom:20px">'
-    +'<div style="display:flex;justify-content:space-between;margin-bottom:10px">'
-    +'<span style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:600!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--text-muted)!important">Core</span>'
-    +'<span style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--orange)!important">Pro ✦ Most Popular</span></div>'
-    +'<div style="position:relative;height:52px;display:flex;align-items:center">'
-    +'<div style="position:absolute;left:0;right:0;height:8px;background:rgba(10,22,40,.1);border-radius:4px">'
-    +'<div id="slider-fill" style="height:100%;background:var(--orange);border-radius:4px;width:100%;transition:width .3s ease"></div></div>'
-    +'<input type="range" min="0" max="1" step="1" value="1" id="pkg-slider" style="position:relative;z-index:1;width:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;height:52px;margin:0" oninput="window.IPonSliderChange(this.value)"></div></div>'
-    +'<div id="pkg-features" style="border-top:1px solid rgba(10,22,40,.08);padding-top:16px"></div>'
-    +'<div id="pkg-savings-banner" style="display:none;margin-top:16px;background:rgba(26,107,58,.08);border:1px solid rgba(168,213,184,.3);border-left:4px solid #6ecf95;padding:14px 18px">'
-    +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:#3a9e5f!important;margin-bottom:5px">Included Value</div>'
-    +'<div id="pkg-savings-text" style="font-family:\'Crimson Pro\',serif!important;font-size:16px!important;color:#2d7a4a!important;line-height:1.55"></div></div></div>';
+  var coreFrom=fmt(475);
+  var proFrom=fmt(575);
 
-  // Add slider thumb styles
-  if(!document.getElementById('slider-style')){
+  var el=document.createElement('div');
+  el.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px';
+  el.id='pkg-two-cards';
+  el.innerHTML=
+    // CORE CARD
+    '<button type="button" id="pkg-core" onclick="window.IPselectPkg(\'core\')" style="'
+      +'background:#fafaf8;border:2.5px solid rgba(10,22,40,.12);padding:0;cursor:pointer;text-align:left;'
+      +'display:flex;flex-direction:column;transition:border-color .25s;position:relative;overflow:hidden">'
+    +'<div style="padding:22px 22px 0">'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#7a8a98;margin-bottom:6px">Core</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,24px);font-weight:700;color:#1a2a3a;line-height:1.1;margin-bottom:12px">Complete Home Inspection</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#1a2a3a;line-height:1;letter-spacing:-.02em" id="price-core">from '+coreFrom+'</div>'
+    +'<div style="font-size:11px;color:#7a8a98;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;margin-top:3px">starting price</div>'
+    +'<div style="height:1px;background:rgba(10,22,40,.08);margin-bottom:14px"></div>'
+    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Full TREC Home Inspection</div>'
+    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
+    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Moisture Meter Testing</div>'
+    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
+    +'<div style="font-size:15px;color:#384758;line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Repair Request Builder</div>'
+    +'<div style="height:1px;background:rgba(10,22,40,.08);margin:14px 0"></div>'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7a8a98;margin-bottom:6px">Foundation</div>'
+    +'<div style="font-size:15px;color:#384758;line-height:1.55;margin-bottom:20px">Visual assessment — spot elevation readings, drainage review, professional opinion on current performance.</div>'
+    +'</div>'
+    +'<div style="margin-top:auto;padding:14px 22px;background:rgba(10,22,40,.04);border-top:1px solid rgba(10,22,40,.08)">'
+    +'<div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a8a98;text-align:center">Select Core</div>'
+    +'</div>'
+    +'</button>'
+
+    // PRO CARD
+    +'<button type="button" id="pkg-pro" onclick="window.IPselectPkg(\'pro\')" style="'
+      +'background:#071828;border:2.5px solid #c8531a;padding:0;cursor:pointer;text-align:left;'
+      +'display:flex;flex-direction:column;transition:border-color .25s;position:relative;overflow:hidden">'
+    +'<div style="background:#c8531a;padding:7px 22px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fafaf8;text-align:center">&#9670; Most Popular</div>'
+    +'<div style="padding:18px 22px 0">'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#b89a6e;margin-bottom:6px">Pro</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,24px);font-weight:700;color:#fafaf8;line-height:1.1;margin-bottom:12px">Core + Foundation Survey</div>'
+    +'<div style="font-family:Georgia,serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#fafaf8;line-height:1;letter-spacing:-.02em" id="price-pro">from '+proFrom+'</div>'
+    +'<div style="font-size:11px;color:rgba(184,154,110,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;margin-top:3px">starting price</div>'
+    +'<div style="height:1px;background:rgba(184,154,110,.15);margin-bottom:14px"></div>'
+    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Everything in Core, plus:</div>'
+    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
+    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Moisture Meter Testing</div>'
+    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
+    +'<div style="font-size:15px;color:rgba(250,250,248,.7);line-height:1.6;margin-bottom:6px">&#10003;&nbsp; Repair Request Builder</div>'
+    +'<div style="height:1px;background:rgba(184,154,110,.15);margin:14px 0"></div>'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#b89a6e;margin-bottom:6px">Foundation — Upgraded</div>'
+    +'<div style="font-size:15px;color:rgba(250,250,248,.75);line-height:1.55;margin-bottom:6px">ZIPLEVEL&reg; Precision Elevation Survey — full footprint mapped, scaled CAD drawing, deflection analysis.</div>'
+    +'<div style="background:rgba(110,207,149,.12);border-left:3px solid #6ecf95;padding:10px 12px;margin-bottom:16px">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-bottom:2px">$350+ Standalone Value — Included</div>'
+    +'<div style="font-size:14px;color:rgba(110,207,149,.85);line-height:1.5">The standard for Fort Bend County clay soils. Most inspectors charge extra.</div>'
+    +'</div>'
+    +'</div>'
+    +'<div style="margin-top:auto;padding:14px 22px;background:#c8531a;border-top:none">'
+    +'<div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fafaf8;text-align:center">Select Pro &#10148;</div>'
+    +'</div>'
+    +'</button>';
+
+  // Responsive: stack on mobile
+  if(!document.getElementById('pkg-cards-style')){
     var st=document.createElement('style');
-    st.id='slider-style';
-    st.textContent='#pkg-slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#c8531a;cursor:pointer;border:3px solid #fafaf8;box-shadow:0 2px 8px rgba(200,83,26,.4);}'
-      +'#pkg-slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#c8531a;cursor:pointer;border:3px solid #fafaf8;box-shadow:0 2px 8px rgba(200,83,26,.4);}';
+    st.id='pkg-cards-style';
+    st.textContent='@media(max-width:560px){#pkg-two-cards{grid-template-columns:1fr!important}}';
     document.head.appendChild(st);
   }
-  updateSliderDisplay(1);
+
+  wrap.innerHTML='';
+  wrap.appendChild(el);
+
+  // Default Pro selected
+  S.resalePkg='pro';
+  applyPkgSelection('pro');
 }
 
-function onSliderChange(val){
-  var v=parseInt(val);
-  S.resalePkg=v===1?'pro':'core';
-  var fill=document.getElementById('slider-fill');
-  if(fill)fill.style.width=v===1?'100%':'0%';
-  updateSliderDisplay(v);
+function selectPkg(pkg){
+  S.resalePkg=pkg;
+  applyPkgSelection(pkg);
   onDetailsChange();
 }
 
-function updateSliderDisplay(val){
-  var isPro=(parseInt(val)===1);
-  var tierEl=document.getElementById('pkg-tier-label');
-  var titleEl=document.getElementById('pkg-title-label');
-  var banner=document.getElementById('pkg-savings-banner');
-  var savingsText=document.getElementById('pkg-savings-text');
-  var featEl=document.getElementById('pkg-features');
-  if(tierEl)tierEl.textContent=isPro?'Pro Package':'Core Package';
-  if(titleEl)titleEl.textContent=isPro?'Core + ZIPLEVEL\u00ae Foundation Survey':'Complete Home Inspection';
-  var coreF=['Full TREC Home Inspection — every major system, roof to foundation','Infrared Thermal Imaging — included at no extra charge','Moisture Meter Testing throughout the property','Photo-rich report delivered within 24 hours','Interactive summary webpage','Repair Request Builder included','Foundation: Visual assessment with spot elevation readings and drainage review'];
-  var proF=['Everything in Core, plus:','ZIPLEVEL\u00ae Precision Elevation Survey — a $350+ standalone value','Full foundation footprint mapped with precision instruments','Scaled CAD drawing included in your report','Documented baseline for future monitoring and warranty claims','Protection against unnecessary repair proposals'];
-  var features=isPro?proF:coreF;
-  if(featEl){
-    featEl.innerHTML=features.map(function(f){
-      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(10,22,40,.05)">'
-        +'<span style="color:'+(isPro?'var(--orange)':'rgba(10,22,40,.3)')+';flex-shrink:0;margin-top:3px;font-size:11px">'+(isPro?'✦':'·')+'</span>'
-        +'<span style="font-family:\'Crimson Pro\',serif!important;font-size:17px!important;color:var(--text-mid)!important;line-height:1.5">'+f+'</span></div>';
-    }).join('');
-  }
-  if(banner&&savingsText){
-    if(isPro){banner.style.display='block';savingsText.innerHTML='ZIPLEVEL\u00ae foundation survey included — a <strong>$350+ standalone value</strong>. Fort Bend County clay soils demand this. Most inspectors charge extra. We include it in Pro.';}
-    else{banner.style.display='none';}
-  }
-  if(S.sqft){
-    var table=isPro?RESALE_PRO:RESALE_CORE;
-    var price=lookup(table,S.sqft);
-    var priceEl=document.getElementById('pkg-price-display');
-    if(priceEl)priceEl.textContent=price?fmt(price):(S.sqft>6000?'Custom Quote':'--');
+function applyPkgSelection(pkg){
+  var core=document.getElementById('pkg-core');
+  var pro=document.getElementById('pkg-pro');
+  if(!core||!pro)return;
+  if(pkg==='core'){
+    core.style.borderColor='#c8531a';
+    core.style.boxShadow='0 8px 32px rgba(200,83,26,.18)';
+    pro.style.borderColor='rgba(10,22,40,.15)';
+    pro.style.boxShadow='none';
+  } else {
+    pro.style.borderColor='#c8531a';
+    pro.style.boxShadow='0 8px 32px rgba(200,83,26,.28)';
+    core.style.borderColor='rgba(10,22,40,.12)';
+    core.style.boxShadow='none';
   }
 }
+
+function onSliderChange(val){}
+function updateSliderDisplay(val){}
 
 function onDetailsChange(){
   var sqftVal=parseInt(document.getElementById('inp-sqft').value);
@@ -278,7 +310,14 @@ function onDetailsChange(){
   var yearEl=document.getElementById('inp-year');
   if(yearEl){var yv=parseInt(yearEl.value);S.year=yv&&yv>=1800&&yv<=2026?yv:null;}
 
-  if(S.service==='resale'&&S.sqft)updateSliderDisplay(S.resalePkg==='pro'?1:0);
+  if(S.service==='resale'&&S.sqft){
+    var coreP=lookup(RESALE_CORE,S.sqft);
+    var proP=lookup(RESALE_PRO,S.sqft);
+    var cEl=document.getElementById('price-core');
+    var pEl=document.getElementById('price-pro');
+    if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
+    if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
+  }
   if(S.service==='phase'&&S.phase&&S.sqft)showPhaseDiscountBanner();
 
   var calc=calcBase();
@@ -489,7 +528,11 @@ function buildAddons(){
   var svc=S.service,sqft=S.sqft,addons=[];
 
   if(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty'){
-    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold & IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
+    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold & IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100,showSamples:true});
+  }
+  // Standalone mold — offer extra samples
+  if(svc==='mold'){
+    addons.push({id:'mold-extra',icon:'🧪',eye:'Additional Samples · $75 Each',title:'Add More Air Samples',desc:'Your service already includes 3 samples (1 outdoor baseline + 2 indoor). Add more samples to cover additional rooms, floors, or areas of concern.',addPrice:75,wasPrice:null,save:null,samplesOnly:true});
   }
   if(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty'){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
@@ -500,18 +543,34 @@ function buildAddons(){
   if(addons.length===0){wrap.innerHTML='<p style="font-family:\'Crimson Pro\',serif!important;font-size:18px!important;color:var(--text-muted)!important;font-style:italic!important;padding:20px 0">No add-ons available for this service. Your price is ready to confirm.</p>';renderSummary();return;}
 
   addons.forEach(function(addon){
+    // Samples-only card for standalone mold
+    if(addon.samplesOnly){
+      var sc=document.createElement('div');
+      sc.style.cssText='background:#0d1e33;border:1px solid rgba(184,154,110,.14);padding:20px;margin-bottom:10px';
+      sc.innerHTML='<div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#b89a6e;margin-bottom:8px">'+addon.eye+'</div>'
+        +'<div style="font-size:clamp(16px,1.8vw,20px);font-weight:700;color:#fafaf8;margin-bottom:6px">'+addon.icon+' '+addon.title+'</div>'
+        +'<div style="font-size:15px;color:rgba(250,250,248,.5);line-height:1.6;margin-bottom:14px">'+addon.desc+'</div>'
+        +'<div style="display:flex;align-items:center;gap:12px">'
+        +'<button onclick="window.IPchangeExtraSamples(-1)" type="button" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">-</button>'
+        +'<span id="extra-count" style="font-size:26px;font-weight:600;color:#fafaf8;min-width:28px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
+        +'<button onclick="window.IPchangeExtraSamples(1)" type="button" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">+</button>'
+        +'<span style="font-size:15px;color:rgba(250,250,248,.4)">additional samples at $75 each</span>'
+        +'</div>';
+      wrap.appendChild(sc);
+      return;
+    }
+
     var on=S.addons[addon.id]||addon.military;
     var card=document.createElement('div');
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
     var priceHtml=addon.military
-      ?'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(16px,2vw,22px)!important;color:#6ecf95!important;font-weight:700">Complimentary</div><div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;color:#6ecf95!important;letter-spacing:.12em!important;text-transform:uppercase">Military benefit</div>'
-      :'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:rgba(250,250,248,.3)!important;text-decoration:line-through">'+fmt(addon.wasPrice)+'</div>'
-       +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.1em!important;color:rgba(250,250,248,.5)!important;margin:2px 0">→</div>'
-       +'<div style="font-family:\'Cormorant Garamond\',serif!important;font-size:clamp(26px,3vw,36px)!important;font-weight:700!important;color:rgba(250,250,248,.6)!important;line-height:1;letter-spacing:-.02em;transition:color .25s">'+fmt(addon.addPrice)+'</div>'
-       +'<div style="font-family:\'Montserrat\',sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#6ecf95!important;margin-top:2px">Save '+fmt(addon.save)+'</div>';
-    var toggleId = addon.id;
-    card.innerHTML = buildAddonHTML(toggleId, addon, on, priceHtml);
+      ?'<div style="font-size:clamp(16px,2vw,20px);color:#6ecf95;font-weight:700">Complimentary</div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-top:2px">Military benefit</div>'
+      :'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.3);text-decoration:line-through">'+fmt(addon.wasPrice)+'</div>'
+       +'<div style="font-size:13px;font-weight:700;color:rgba(250,250,248,.5);margin:2px 0">to</div>'
+       +'<div style="font-size:clamp(26px,3vw,34px);font-weight:700;color:rgba(250,250,248,.6);line-height:1;transition:color .25s">'+fmt(addon.addPrice)+'</div>'
+       +'<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6ecf95;margin-top:3px">Save '+fmt(addon.save)+'</div>';
+    card.innerHTML = buildAddonHTML(addon.id, addon, on, priceHtml);
     wrap.appendChild(card);
     if(addon.military)S.addons.wdi=true;
   });
@@ -663,6 +722,7 @@ function renderFinalSummary(){
 }
 
 window.IPgoStep=goStep;
+window.IPselectPkg=selectPkg;
 window.IPpickPropertyType=pickPropertyType;
 window.IPpickRole=pickRole;
 window.IPtoggleMilitary=toggleMilitary;
