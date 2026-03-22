@@ -70,7 +70,8 @@ function pickPropertyType(t){
   S.propType=t;
   ['residential','commercial'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===t);});
   if(t==='commercial'){window.location.href='https://www.commercialpropertyinspectionstx.com/Contact.html';return;}
-  var n1=document.getElementById('next-1');if(n1)n1.disabled=false;
+  var n1=document.getElementById('next-1');
+  if(n1){n1.classList.remove('btn-inactive');n1.removeAttribute('disabled');n1.style.opacity='1';n1.style.cursor='pointer';n1.style.pointerEvents='auto';}
 }
 
 function pickRole(r){
@@ -78,7 +79,8 @@ function pickRole(r){
   ['homebuyer','homeowner','agent'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===r);});
   var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
-  var n2=document.getElementById('next-2');if(n2)n2.disabled=false;
+  var n2=document.getElementById('next-2');
+  if(n2){n2.classList.remove('btn-inactive');n2.disabled=false;n2.removeAttribute('disabled');n2.style.opacity='1';n2.style.cursor='pointer';n2.style.pointerEvents='auto';}
 }
 
 function toggleMilitary(){
@@ -137,7 +139,8 @@ function pickService(svc){
   document.querySelectorAll('[id^="svc-"]').forEach(function(c){c.classList.remove('selected');});
   var el=document.getElementById('svc-'+svc);if(el)el.classList.add('selected');
   configStep4();
-  var n3=document.getElementById('next-3');if(n3)n3.disabled=false;
+  var n3=document.getElementById('next-3');
+  if(n3){n3.classList.remove('btn-inactive');n3.disabled=false;n3.removeAttribute('disabled');n3.style.opacity='1';n3.style.cursor='pointer';n3.style.pointerEvents='auto';}
 }
 
 function configStep4(){
@@ -266,7 +269,7 @@ function onDetailsChange(){
   } else {
     if(previewEl)previewEl.style.display='none';
   }
-  var n4b=document.getElementById('next-4');if(n4b)n4b.disabled=!ready;
+  var n4b=document.getElementById('next-4');if(n4b){if(ready){n4b.classList.remove('btn-inactive');n4b.removeAttribute('disabled');n4b.style.opacity='1';n4b.style.cursor='pointer';n4b.style.pointerEvents='auto';}else{n4b.classList.add('btn-inactive');}}
 }
 
 function showPhaseDiscountBanner(){
