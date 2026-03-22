@@ -70,7 +70,7 @@ function pickPropertyType(t){
   S.propType=t;
   ['residential','commercial'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===t);});
   if(t==='commercial'){window.location.href='https://www.commercialpropertyinspectionstx.com/Contact.html';return;}
-  setTimeout(function(){goStep(2);},300);
+  var n1=document.getElementById('next-1');if(n1)n1.disabled=false;
 }
 
 function pickRole(r){
@@ -78,7 +78,7 @@ function pickRole(r){
   ['homebuyer','homeowner','agent'].forEach(function(x){var el=document.getElementById('cc-'+x);if(el)el.classList.toggle('selected',x===r);});
   var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
-  setTimeout(function(){goStep(3);},300);
+  var n2=document.getElementById('next-2');if(n2)n2.disabled=false;
 }
 
 function toggleMilitary(){
@@ -137,7 +137,7 @@ function pickService(svc){
   document.querySelectorAll('[id^="svc-"]').forEach(function(c){c.classList.remove('selected');});
   var el=document.getElementById('svc-'+svc);if(el)el.classList.add('selected');
   configStep4();
-  setTimeout(function(){goStep(4);},300);
+  var n3=document.getElementById('next-3');if(n3)n3.disabled=false;
 }
 
 function configStep4(){
