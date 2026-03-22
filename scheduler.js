@@ -147,9 +147,12 @@ function buildStep3Cards(){
   var grid=document.createElement('div');
   grid.className='choice-grid-2';
   defs.forEach(function(def){
-    var card=document.createElement('div');
+    var card=document.createElement('button');
+    card.type='button';
     card.className='choice-card';
     card.id='svc-'+def.id;
+    card.style.textAlign='left';
+    card.style.width='100%';
     card.innerHTML='<div class="cc-icon">'+def.icon+'</div><div class="cc-title">'+def.title+'</div><div class="cc-desc">'+def.desc+'</div><div class="cc-tag">'+def.tag+'</div>';
     card.setAttribute('onclick',"window.IPpickService('"+def.id+"')");
     grid.appendChild(card);
