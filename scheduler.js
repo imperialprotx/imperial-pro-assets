@@ -927,4 +927,3 @@ window.IPvalidateDates      = validateDates;
 
 // ── INIT ─────────────────────────────────────────────────
 updateProgress(1);
-</script>
