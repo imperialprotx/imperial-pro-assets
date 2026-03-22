@@ -600,11 +600,11 @@ function buildAddons(){
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
     var priceHtml=addon.military
-      ?'<div style="font-size:clamp(16px,2vw,20px);color:#6ecf95;font-weight:700">Complimentary</div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-top:2px">Military benefit</div>'
-      :'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.3);text-decoration:line-through">'+fmt(addon.wasPrice)+'</div>'
-       +'<div style="font-size:13px;font-weight:700;color:rgba(250,250,248,.5);margin:2px 0">to</div>'
-       +'<div style="font-size:clamp(26px,3vw,34px);font-weight:700;color:rgba(250,250,248,.6);line-height:1;transition:color .25s">'+fmt(addon.addPrice)+'</div>'
-       +'<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6ecf95;margin-top:3px">Save '+fmt(addon.save)+'</div>';
+      ?'<div style="font-size:clamp(16px,2vw,20px);color:#6ecf95;font-weight:700">Complimentary</div>'
+       +'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-top:2px">Military benefit</div>'
+      :'<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6ecf95;margin-bottom:4px">Save '+fmt(addon.save)+'</div>'
+       +'<div style="font-size:clamp(28px,3.5vw,40px);font-weight:700;color:#fafaf8;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
+       +'<div style="font-size:11px;color:rgba(250,250,248,.3);margin-top:4px;text-decoration:line-through">'+fmt(addon.wasPrice)+' alone</div>';
     card.innerHTML = buildAddonHTML(addon.id, addon, on, priceHtml);
     wrap.appendChild(card);
     if(addon.military)S.addons.wdi=true;
