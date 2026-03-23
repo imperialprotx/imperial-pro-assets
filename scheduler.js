@@ -92,10 +92,16 @@ function highlightCard(ids, selectedId){
   });
 }
 
+function scrollToBtn(id){
+  var btn=document.getElementById(id);
+  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},150);
+}
+
 function pickPropertyType(t){
   S.propType=t;
   highlightCard(['cc-residential','cc-commercial'],'cc-'+t);
   if(t==='commercial'){window.location.href='https://www.commercialpropertyinspectionstx.com/Contact.html';return;}
+  scrollToBtn('next-1');
 }
 
 function pickRole(r){
@@ -103,6 +109,7 @@ function pickRole(r){
   highlightCard(['cc-homebuyer','cc-homeowner','cc-agent'],'cc-'+r);
   var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
+  scrollToBtn('next-2');
 }
 
 function toggleMilitary(){
@@ -177,6 +184,7 @@ function pickService(svc){
     el.style.boxShadow='0 12px 40px rgba(200,83,26,.14)';
   }
   configStep4();
+  scrollToBtn('next-3');
 }
 
 function configStep4(){
@@ -201,101 +209,7 @@ function configStep4(){
 }
 
 function buildResaleSlider(){
-  var wrap=document.getElementById('pkg-cards-wrap');
-  var coreFrom=fmt(475);
-  var proFrom=fmt(575);
-
-  // Inject info popover styles once
-  if(!document.getElementById('pkg-cards-style')){
-    var st=document.createElement('style');
-    st.id='pkg-cards-style';
-    st.textContent=
-      '#pkg-two-cards{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}'
-      +'@media(max-width:600px){#pkg-two-cards{grid-template-columns:1fr!important}}'
-      +'#pkg-info-panel{display:none;background:#071828;border:1px solid rgba(184,154,110,.2);padding:24px;margin-top:16px}'
-      +'#pkg-info-panel.open{display:block}'
-      +'.info-btn{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#b89a6e;color:#071828;font-size:10px;font-weight:700;cursor:pointer;border:none;vertical-align:middle;margin-left:6px;flex-shrink:0;line-height:1}'
-      +'.info-btn:hover{background:#cdb48a}'
-      +'#pkg-core *,#pkg-pro *{pointer-events:none!important}'
-      +'.info-btn{pointer-events:auto!important}'
-      +'a.survey-link{pointer-events:auto!important}';
-    document.head.appendChild(st);
-  }
-
-  var cardStyle='background:{BG};border:2.5px solid {BD};padding:0;cursor:pointer;text-align:left;display:flex;flex-direction:column;width:100%;transition:all .25s;position:relative;overflow:hidden';
-
-  el=document.createElement('div');
-  el.id='pkg-two-cards';
-  el.innerHTML=
-    // CORE
-    '<button type="button" id="pkg-core" onclick="window.IPselectPkg(\'core\')" style="'+cardStyle.replace('{BG}','#fafaf8').replace('{BD}','rgba(10,22,40,.12')+');">'
-    +'<div style="padding:28px 28px 0;flex:1">'
-    +'<div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#7a8a98;margin-bottom:8px">Core</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(20px,2vw,26px);font-weight:700;color:#1a2a3a;line-height:1.1;margin-bottom:18px">Complete Home Inspection</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(34px,4.5vw,50px);font-weight:700;color:#1a2a3a;line-height:1;letter-spacing:-.02em" id="price-core">from '+coreFrom+'</div>'
-    +'<div style="font-size:11px;color:#7a8a98;letter-spacing:.12em;text-transform:uppercase;margin-bottom:22px;margin-top:5px">starting price</div>'
-    +'<div style="height:1px;background:rgba(10,22,40,.08);margin-bottom:20px"></div>'
-    +'<div style="font-size:16px;color:#384758;line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Full TREC Home Inspection</div>'
-    +'<div style="font-size:16px;color:#384758;line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
-    +'<div style="font-size:16px;color:#384758;line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Moisture Meter Testing</div>'
-    +'<div style="font-size:16px;color:#384758;line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
-    +'<div style="font-size:16px;color:#384758;line-height:1.7;margin-bottom:22px">&#10003;&nbsp; Repair Request Builder</div>'
-    +'<div style="height:1px;background:rgba(10,22,40,.08);margin-bottom:20px"></div>'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7a8a98;margin-bottom:10px">Foundation Evaluation</div>'
-    +'<div style="font-size:16px;color:#384758;line-height:1.65;margin-bottom:28px">Visual assessment with spot elevation readings, drainage review, and a professional performance opinion.</div>'
-    +'</div>'
-    +'<div style="padding:18px 28px;background:rgba(10,22,40,.04);border-top:1px solid rgba(10,22,40,.08);width:100%">'
-    +'<div style="font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#7a8a98;text-align:center">Select Core</div>'
-    +'</div>'
-    +'</button>'
-
-    // PRO
-    +'<button type="button" id="pkg-pro" onclick="window.IPselectPkg(\'pro\')" style="'+cardStyle.replace('{BG}','#071828').replace('{BD}','#c8531a')+');">'
-    +'<div style="background:#c8531a;padding:10px 28px;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#fafaf8;text-align:center">&#9670; Most Popular</div>'
-    +'<div style="padding:24px 28px 0;flex:1">'
-    +'<div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#b89a6e;margin-bottom:8px">Pro</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(20px,2vw,26px);font-weight:700;color:#fafaf8;line-height:1.1;margin-bottom:18px">Core + Advanced Foundation Survey</div>'
-    +'<div style="font-family:Georgia,serif;font-size:clamp(34px,4.5vw,50px);font-weight:700;color:#fafaf8;line-height:1;letter-spacing:-.02em" id="price-pro">from '+proFrom+'</div>'
-    +'<div style="font-size:11px;color:rgba(184,154,110,.6);letter-spacing:.12em;text-transform:uppercase;margin-bottom:22px;margin-top:5px">starting price</div>'
-    +'<div style="height:1px;background:rgba(184,154,110,.15);margin-bottom:20px"></div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.8);line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Everything in Core, plus:</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.8);line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Infrared Thermal Imaging</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.8);line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Moisture Meter Testing</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.8);line-height:1.7;margin-bottom:9px">&#10003;&nbsp; Photo-Rich Report in 24hrs</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.8);line-height:1.7;margin-bottom:22px">&#10003;&nbsp; Repair Request Builder</div>'
-    +'<div style="height:1px;background:rgba(184,154,110,.15);margin-bottom:20px"></div>'
-    +'<div style="display:flex;align-items:center;gap:0;margin-bottom:10px">'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b89a6e">Foundation — Advanced Survey</div>'
-    +'<button type="button" class="info-btn" onclick="window.IPtoggleSurveyInfo(event)" title="What is a foundation elevation survey?">i</button>'
-    +'</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.8);line-height:1.65;margin-bottom:14px">ZIPLEVEL&reg; precision elevation survey — full footprint mapped, scaled CAD drawing in your report.</div>'
-    +'<div style="background:rgba(110,207,149,.12);border-left:3px solid #6ecf95;padding:12px 14px;margin-bottom:28px">'
-    +'<div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95">$350+ Standalone Value — Included</div>'
-    +'</div>'
-    +'</div>'
-    +'<div style="padding:18px 28px;background:#c8531a;width:100%">'
-    +'<div style="font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#fafaf8;text-align:center">Select Pro &#10148;</div>'
-    +'</div>'
-    +'</button>';
-
-  // Info panel below cards
-  var infoPanel=document.createElement('div');
-  infoPanel.id='pkg-info-panel';
-  infoPanel.innerHTML=
-    '<div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap">'
-    +'<img src="https://d24naddg1rhy2p.cloudfront.net/239069/1608/0/houston-foundation-elevation-surveys.png" alt="ZIPLEVEL Foundation Elevation Survey" style="width:220px;flex-shrink:0;opacity:.9;display:block">'
-    +'<div style="flex:1;min-width:200px">'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#b89a6e;margin-bottom:10px">What is a Foundation Elevation Survey?</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.7);line-height:1.7;margin-bottom:16px">A ZIPLEVEL&reg; precision elevation survey maps the exact elevation of every point across your foundation slab. The result is a scaled CAD drawing that shows how level — or unlevel — your foundation actually is. This is the same instrument structural engineers rely on.</div>'
-    +'<div style="font-size:16px;color:rgba(250,250,248,.7);line-height:1.7;margin-bottom:16px">In Fort Bend County, where clay soils shift seasonally, this data is your baseline. It protects you from unnecessary repair proposals and gives you documented evidence for warranty claims or future monitoring.</div>'
-    +'<a href="https://www.ruleyourhome.com/foundation-elevation-survey-houston-texas.html" target="_blank" class="survey-link" style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b89a6e;border-bottom:1px solid rgba(184,154,110,.3);padding-bottom:2px;text-decoration:none">Full details on our foundation survey &#8594;</a>'
-    +'</div>'
-    +'</div>';
-
-  wrap.innerHTML='';
-  wrap.appendChild(el);
-  wrap.appendChild(infoPanel);
-
+  // Cards are static HTML — just set default and apply selection
   S.resalePkg='pro';
   applyPkgSelection('pro');
 }
@@ -303,7 +217,7 @@ function buildResaleSlider(){
 function toggleSurveyInfo(e){
   if(e){e.stopPropagation();e.preventDefault();}
   var panel=document.getElementById('pkg-info-panel');
-  if(panel)panel.classList.toggle('open');
+  if(panel)panel.style.display=(panel.style.display==='none'||!panel.style.display)?'block':'none';
 }
 
 function selectPkg(pkg){
@@ -502,6 +416,12 @@ function calcTotal(){
     total+=275;
     if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*75;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
+  // Standalone mold — extra samples billed on top of base price
+  if(svc==='mold'&&S.addons.extraSamples>0){
+    var esc=S.addons.extraSamples*75;
+    lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $75 each',val:'+'+fmt(esc)});
+    total+=esc;
+  }
   if(S.addons.wdi&&(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty')){
     if(S.military){lines.push({name:'WDI Termite Inspection',val:'Complimentary',cls:'discount'});lines.push({name:'Military/First Responder benefit',val:'--',cls:'discount'});}
     else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var saved=ws-wa;lines.push({name:'WDI Termite Inspection',val:fmt(wa)});lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});total+=wa;}
@@ -600,11 +520,11 @@ function buildAddons(){
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
     var priceHtml=addon.military
-      ?'<div style="font-size:clamp(16px,2vw,20px);color:#6ecf95;font-weight:700">Complimentary</div>'
-       +'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-top:2px">Military benefit</div>'
-      :'<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6ecf95;margin-bottom:4px">Save '+fmt(addon.save)+'</div>'
-       +'<div style="font-size:clamp(28px,3.5vw,40px);font-weight:700;color:#fafaf8;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
-       +'<div style="font-size:11px;color:rgba(250,250,248,.3);margin-top:4px;text-decoration:line-through">'+fmt(addon.wasPrice)+' alone</div>';
+      ?'<div style="font-size:clamp(16px,2vw,20px);color:#6ecf95;font-weight:700;line-height:1.2">Complimentary</div>'
+       +'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-top:4px">Military benefit</div>'
+      :'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-bottom:6px">&#10003; Save '+fmt(addon.save)+'</div>'
+       +'<div style="font-size:clamp(30px,3.8vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
+       +'<div style="font-size:11px;color:rgba(250,250,248,.25);margin-top:5px">reg. '+fmt(addon.wasPrice)+'</div>';
     card.innerHTML = buildAddonHTML(addon.id, addon, on, priceHtml);
     wrap.appendChild(card);
     if(addon.military)S.addons.wdi=true;
@@ -807,8 +727,7 @@ window.IPvalidateDates=validateDates;
   st.id='addon-green-style';
   st.textContent='.addon-toggle.on{border-color:rgba(110,207,149,.35)!important}'
     +'.addon-toggle.on .toggle-switch{background:#3a9e5f!important;border-color:#6ecf95!important}'
-    +'.addon-toggle.on .addon-toggle-eye{color:#6ecf95!important}'
-    +'.addon-toggle.on .atp-num{color:var(--tan-light)!important}';
+    +'.addon-toggle.on .addon-toggle-eye{color:#6ecf95!important}';
   document.head.appendChild(st);
 })();
 
