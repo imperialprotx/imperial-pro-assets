@@ -58,9 +58,6 @@ function updateProgress(step){
 }
 
 function goStep(n){
-  if(n===2 && !S.propType){ alert('Please select Residential or Commercial to continue.'); return; }
-  if(n===3 && !S.role){ alert('Please select your role to continue.'); return; }
-  if(n===4 && !S.service){ alert('Please select a service to continue.'); return; }
   if(n===5) buildAddons();
   if(n===6) renderFinalSummary();
   document.querySelectorAll('.step-section').forEach(function(s){s.classList.remove('active');});
