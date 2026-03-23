@@ -129,7 +129,7 @@ var SERVICE_DEFS={
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. Required by most lenders. Identifies active infestations and conditions that invite future activity.',tag:'✦ TDA Licensed'},
   ],
   homeowner:[
-    {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS Scope · Phase 4 Pricing'},
+    {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural — plus a ZIPLEVEL® foundation elevation survey. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS · ZIPLEVEL® Survey'},
     {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment or Level B full ZIPLEVEL precision survey with CAD drawing and deflection analysis.',tag:'✦ Level A · Level B'},
     {id:'mold',icon:'🧪',title:'Mold / IAQ Inspection',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ IAQ Sampling · Assessment'},
@@ -236,21 +236,36 @@ function selectPkg(pkg){
 function applyPkgSelection(pkg){
   var core=document.getElementById('pkg-core');
   var pro=document.getElementById('pkg-pro');
+  var coreLabel=document.getElementById('core-select-label');
+  var coreBadge=document.getElementById('core-selected-badge');
+  var proLabel=document.getElementById('pro-select-label');
+  var proBadge=document.getElementById('pro-selected-badge');
   if(!core||!pro)return;
+
   if(pkg==='core'){
-    core.style.borderColor='#c8531a';
-    core.style.boxShadow='0 8px 32px rgba(200,83,26,.18)';
+    // Core selected
+    core.style.borderColor='#6ecf95';
+    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.25)';
+    core.style.opacity='1';
     pro.style.borderColor='rgba(10,22,40,.15)';
     pro.style.boxShadow='none';
-    pro.style.opacity='.7';
-    core.style.opacity='1';
+    pro.style.opacity='.55';
+    if(coreLabel)coreLabel.style.display='none';
+    if(coreBadge)coreBadge.style.display='block';
+    if(proLabel)proLabel.style.display='block';
+    if(proBadge)proBadge.style.display='none';
   } else {
-    pro.style.borderColor='#c8531a';
-    pro.style.boxShadow='0 8px 32px rgba(200,83,26,.28)';
-    core.style.borderColor='rgba(10,22,40,.12)';
-    core.style.boxShadow='none';
-    core.style.opacity='.7';
+    // Pro selected
+    pro.style.borderColor='#6ecf95';
+    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.25)';
     pro.style.opacity='1';
+    core.style.borderColor='rgba(110,140,180,.2)';
+    core.style.boxShadow='none';
+    core.style.opacity='.55';
+    if(proLabel)proLabel.style.display='none';
+    if(proBadge)proBadge.style.display='block';
+    if(coreLabel)coreLabel.style.display='block';
+    if(coreBadge)coreBadge.style.display='none';
   }
 }
 
@@ -399,7 +414,7 @@ function calcBase(){
     var base2=lookup(tables[ph],sqft);
     if(!base2)return{price:null,lines:[],label:'',detail:'',custom:true};
     label='Phase '+ph+' — '+phNames[ph];
-    detail=ph===4?'MEPS — Mechanical, Electrical, Plumbing, Structural':'ICC Code-Certified · ZIPLEVEL included · Report in 24hr';
+    detail=ph===4?'MEPS · ZIPLEVEL® Foundation Survey · Mechanical · Electrical · Plumbing · Structural':'ICC Code-Certified · ZIPLEVEL included · Report in 24hr';
     var disc=getPhaseDiscount(ph);
     lines.push({name:'Phase '+ph+' Inspection',val:fmt(base2)});
     if(disc>0)lines.push({name:'Multi-phase discount',val:'-'+fmt(disc),cls:'discount'});
@@ -611,6 +626,7 @@ function getValueItems(svc, pkg, phase){
   if(svc==='warranty'){
     base=[
       {title:'Builder Warranty Inspection (MEPS)',sub:'Mechanical, Electrical, Plumbing, and Structural — scoped to your warranty coverage window',tag:null},
+      {title:'ZIPLEVEL® Foundation Elevation Survey',sub:'Precision elevation data documents your foundation\'s current state — critical evidence if settlement issues arise during your warranty period',tag:'$350+ value'},
       {title:'Documented Deficiency Report',sub:'Written evidence for warranty claims your builder is required to address',tag:'Included'},
     ];
   }
