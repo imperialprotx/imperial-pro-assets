@@ -256,7 +256,8 @@ function applyPkgSelection(pkg){
 function onSliderChange(val){}
 function updateSliderDisplay(val){}
 
-function onDetailsChange(){
+function onDetailsChange(doScroll){
+  if(doScroll===undefined)doScroll=true;
   var sqftVal=parseInt(document.getElementById('inp-sqft').value);
   var prevSqft=S.sqft;
   S.sqft=sqftVal&&sqftVal>=100?sqftVal:null;
@@ -265,7 +266,7 @@ function onDetailsChange(){
   if(yearEl){var yv=parseInt(yearEl.value);S.year=yv&&yv>=1800&&yv<=2026?yv:null;}
 
   if(S.service==='resale'){
-    // Update package prices live
+    // Update package prices live on every keystroke
     if(S.sqft){
       var coreP=lookup(RESALE_CORE,S.sqft);
       var proP=lookup(RESALE_PRO,S.sqft);
@@ -274,17 +275,15 @@ function onDetailsChange(){
       if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
       if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
     }
-    // Sequential scroll: sqft entered → scroll to year
-    if(S.sqft && !prevSqft && !S.year){
-      scrollToEl('fg-year');
-      return;
+    // Only scroll when user leaves the field (doScroll=true)
+    if(doScroll){
+      if(S.sqft && !prevSqft && !S.year){
+        scrollToEl('fg-year'); return;
+      }
+      if(S.year && !prevYear && !S.foundation){
+        scrollToEl('fg-foundation'); return;
+      }
     }
-    // Year entered → scroll to foundation
-    if(S.year && !prevYear && !S.foundation){
-      scrollToEl('fg-foundation');
-      return;
-    }
-    // Foundation selected → scroll to packages (handled in pickFoundation)
   }
 
   if(S.service==='phase'&&S.phase&&S.sqft)showPhaseDiscountBanner();
