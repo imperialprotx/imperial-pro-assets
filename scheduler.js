@@ -795,4 +795,27 @@ window.IPvalidateDates=validateDates;
   document.head.appendChild(st);
 })();
 
+// ── WINDOW EXPORTS ───────────────────────────────────────
+window.IPgoStep             = goStep;
+window.IPstartOver          = startOver;
+window.IPselectPkg          = selectPkg;
+window.IPtoggleSurveyInfo   = toggleSurveyInfo;
+window.IPpickPropertyType   = pickPropertyType;
+window.IPpickRole           = pickRole;
+window.IPtoggleMilitary     = toggleMilitary;
+window.IPpickService        = pickService;
+window.IPpickFoundation     = pickFoundation;
+window.IPpickPhase          = pickPhase;
+window.IPpickFoundLevel     = pickFoundLevel;
+window.IPpickMoldType       = pickMoldType;
+window.IPonSliderChange     = onSliderChange;
+window.IPtoggleAddon        = toggleAddon;
+window.IPchangeExtraSamples = changeExtraSamples;
+window.IPtoggleCoupon       = toggleCoupon;
+window.IPapplyCoupon        = applyCoupon;
+window.IPtoggleDate3        = toggleDate3;
+window.IPsubmitForm         = submitForm;
+window.IPonDetailsChange    = onDetailsChange;
+window.IPvalidateDates      = validateDates;
+
 updateProgress(1);
