@@ -303,6 +303,14 @@ function onDetailsChange(){
     if(previewEl)previewEl.style.display='block';
     var ne=document.getElementById('pc-svc-name');if(ne)ne.textContent=calc.label;
     var de=document.getElementById('pc-svc-detail');if(de)de.textContent=calc.detail;
+    // Package badge
+    var badge=document.getElementById('pc-pkg-badge');
+    if(badge){
+      if(S.service==='resale'){badge.style.display='block';badge.textContent=S.resalePkg==='pro'?'Pro Package':'Core Package';}
+      else{badge.style.display='none';}
+    }
+    // Value stack
+    renderValueStack(S.service,S.resalePkg,S.phase);
     var le=document.getElementById('pc-lines');
     if(le)le.innerHTML=calc.lines.map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
     var te2=document.getElementById('pc-total');if(te2)te2.textContent=fmt(calc.price);
@@ -582,6 +590,69 @@ function changeExtraSamples(delta){
   S.addons.extraSamples=nv;
   var ec=document.getElementById('extra-count');if(ec)ec.textContent=nv;
   renderSummary();
+}
+
+function getValueItems(svc, pkg, phase){
+  var base=[
+    {title:'Full TREC Home Inspection',sub:'Every major system — roof, structure, HVAC, electrical, plumbing, and more',tag:null},
+    {title:'Infrared Thermal Imaging',sub:'Detects hidden moisture, insulation gaps, and electrical hot spots invisible to the naked eye',tag:'Included'},
+    {title:'Moisture Meter Testing',sub:'Identifies active moisture intrusion behind walls and under floors',tag:'Included'},
+    {title:'Photo-Rich Digital Report',sub:'Delivered within 24 hours with annotated photos and repair priority ratings',tag:'24hr delivery'},
+    {title:'Repair Request Builder',sub:'One-click tool to share defect summaries directly with your agent',tag:'Included'}
+  ];
+  if(svc==='resale'&&pkg==='core'){
+    base.push({title:'Foundation — Level A Visual Assessment',sub:'Spot elevation readings, drainage review, and professional performance opinion',tag:'$250+ value'});
+  }
+  if(svc==='resale'&&pkg==='pro'){
+    base.push({title:'Foundation — Level B Advanced Survey',sub:'ZIPLEVEL® precision elevation survey — full footprint mapped, scaled CAD drawing in your report',tag:'$350+ value'});
+  }
+  if(svc==='phase'){
+    var phaseNames=['','Pre-Pour Foundation','Pre-Drywall Framing','Final New Construction','Builder Warranty (MEPS)'];
+    var phaseSubs=['',
+      'Catches foundation issues before concrete is poured — the only time corrections are free',
+      'Verifies framing, rough-in plumbing, electrical, and HVAC before walls close',
+      'Full ICC code-certified inspection before your certificate of occupancy',
+      'Covers Mechanical, Electrical, Plumbing, and Structural before warranty expires'
+    ];
+    base=[{title:'Phase '+(phase||'')+(phaseNames[phase]?' — '+phaseNames[phase]:''),sub:phaseSubs[phase]||'',tag:'ICC Certified'}];
+    if(phase>=1&&phase<=3){
+      base.push({title:'ZIPLEVEL® Foundation Reading',sub:'Precision elevation data captured at every phase',tag:'Included'});
+    }
+  }
+  if(svc==='warranty'){
+    base=[
+      {title:'Builder Warranty Inspection (MEPS)',sub:'Mechanical, Electrical, Plumbing, and Structural — scoped to your warranty coverage window',tag:null},
+      {title:'Documented Deficiency Report',sub:'Written evidence for warranty claims your builder is required to address',tag:'Included'},
+    ];
+  }
+  if(svc==='prelisting'){
+    base=[
+      {title:'Pre-Listing MEPS Inspection',sub:'Identify surprises before buyers find them — price with confidence',tag:null},
+      {title:'Infrared Thermal Imaging',sub:'Included at no extra charge',tag:'Included'},
+      {title:'Repair Priority Report',sub:'Helps you decide what to fix, disclose, or price into the sale',tag:'Included'},
+    ];
+  }
+  return base;
+}
+
+function renderValueStack(svc, pkg, phase){
+  var wrap=document.getElementById('pc-value-stack');
+  if(!wrap)return;
+  var items=getValueItems(svc,pkg,phase);
+  wrap.innerHTML='<div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(184,154,110,.5);margin-bottom:12px">What\'s Included</div>';
+  items.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='pc-value-item';
+    div.innerHTML='<div class="pc-value-check">&#10003;</div>'
+      +'<div class="pc-value-body">'
+      +'<div class="pc-value-title">'+item.title+'</div>'
+      +(item.sub?'<div class="pc-value-sub">'+item.sub+'</div>':'')
+      +'</div>'
+      +(item.tag?'<div class="pc-value-tag">'+item.tag+'</div>':'');
+    wrap.appendChild(div);
+    // Staggered animation
+    setTimeout(function(){div.classList.add('visible');},80+i*90);
+  });
 }
 
 function renderSummary(){
