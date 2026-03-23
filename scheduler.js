@@ -225,7 +225,11 @@ function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
   onDetailsChange();
-  scrollToBtn('next-4');
+  // Scroll to top of value card so nothing is missed
+  setTimeout(function(){
+    var el=document.getElementById('price-preview');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  },200);
 }
 
 function applyPkgSelection(pkg){
@@ -650,8 +654,11 @@ function renderValueStack(svc, pkg, phase){
       +'</div>'
       +(item.tag?'<div class="pc-value-tag">'+item.tag+'</div>':'');
     wrap.appendChild(div);
-    // Staggered animation
     setTimeout(function(){div.classList.add('visible');},80+i*90);
+    // After last item animates, nudge scroll to reveal the See Add-Ons button
+    if(i===items.length-1){
+      setTimeout(function(){scrollToBtn('next-4');},80+i*90+600);
+    }
   });
 }
 
