@@ -59,7 +59,7 @@ function updateProgress(step){
 
 function goStep(n){
   if(n===5) buildAddons();
-  if(n===6) renderFinalSummary();
+  if(n===6){renderFinalSummary();setDateMins();}
   document.querySelectorAll('.step-section').forEach(function(s){s.classList.remove('active');});
   var el=document.getElementById('step-'+n);
   if(el)el.classList.add('active');
@@ -671,14 +671,31 @@ function applyCoupon(){
   renderSummary();
 }
 
+function getNextWeekday(){
+  var d=new Date();d.setDate(d.getDate()+1);
+  while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);
+  return d.toISOString().split('T')[0];
+}
+
+function setDateMins(){
+  var min=getNextWeekday();
+  ['inp-date1','inp-date2','inp-date3'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.min=min;
+  });
+}
+
 function validateDates(){
-  var d1=document.getElementById('inp-date1').value;
-  var d2=document.getElementById('inp-date2').value;
+  var isWeekend=function(d){if(!d)return false;var day=new Date(d+'T12:00:00').getDay();return day===0||day===6;};
   var errEl=document.getElementById('date-err');
-  var isWeekend=function(d){var day=new Date(d+'T12:00:00').getDay();return day===0||day===6;};
   var err='';
-  if(d1&&isWeekend(d1))err='That date falls on a weekend. Please select a Monday through Friday date.';
-  if(!err&&d2&&isWeekend(d2))err='That date falls on a weekend. Please select a Monday through Friday date.';
+  ['inp-date1','inp-date2','inp-date3'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el||!el.value)return;
+    if(isWeekend(el.value)){
+      el.value='';
+      err='Weekends are unavailable. Please select a Monday through Friday date.';
+    }
+  });
   if(errEl){errEl.textContent=err;errEl.style.display=err?'block':'none';}
 }
 
