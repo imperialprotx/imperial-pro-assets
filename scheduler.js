@@ -235,11 +235,15 @@ function applyPkgSelection(pkg){
     core.style.boxShadow='0 8px 32px rgba(200,83,26,.18)';
     pro.style.borderColor='rgba(10,22,40,.15)';
     pro.style.boxShadow='none';
+    pro.style.opacity='.7';
+    core.style.opacity='1';
   } else {
     pro.style.borderColor='#c8531a';
     pro.style.boxShadow='0 8px 32px rgba(200,83,26,.28)';
     core.style.borderColor='rgba(10,22,40,.12)';
     core.style.boxShadow='none';
+    core.style.opacity='.7';
+    pro.style.opacity='1';
   }
 }
 
@@ -310,24 +314,28 @@ function pickFoundation(f){
   S.foundation=f;
   ['slab','crawl'].forEach(function(x){var el=document.getElementById('rb-'+x);if(el)el.classList.toggle('selected',x===f);});
   onDetailsChange();
+  scrollToBtn('next-4');
 }
 
 function pickPhase(n){
   S.phase=n;
   [1,2,3,4].forEach(function(i){var el=document.getElementById('rb-ph'+i);if(el)el.classList.toggle('selected',i===n);});
   onDetailsChange();
+  scrollToBtn('next-4');
 }
 
 function pickFoundLevel(l){
   S.foundLevel=l;
   ['A','B'].forEach(function(x){var el=document.getElementById('rb-lvl'+x);if(el)el.classList.toggle('selected',x===l);});
   onDetailsChange();
+  scrollToBtn('next-4');
 }
 
 function pickMoldType(t){
   S.moldType=t;
   ['iaq','assess'].forEach(function(x){var el=document.getElementById('rb-mold-'+x);if(el)el.classList.toggle('selected',x===t);});
   onDetailsChange();
+  scrollToBtn('next-4');
 }
 
 function checkStep4Ready(){
@@ -410,7 +418,8 @@ function calcTotal(){
   if(base.price==null)return{total:null,lines:[],label:base.label,detail:base.detail,custom:false};
   var total=base.price,lines=base.lines.slice(),svc=S.service,sqft=S.sqft;
 
-  if(S.addons.mold&&(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty')){
+  var phaseAllowsAddon=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
+  if(S.addons.mold&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
     lines.push({name:'Mold IAQ Sampling (3 samples)',val:fmt(275)});
     lines.push({name:'Standalone $375 — you save',val:fmt(100),cls:'discount'});
     total+=275;
@@ -422,7 +431,7 @@ function calcTotal(){
     lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $75 each',val:'+'+fmt(esc)});
     total+=esc;
   }
-  if(S.addons.wdi&&(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty')){
+  if(S.addons.wdi&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
     if(S.military){lines.push({name:'WDI Termite Inspection',val:'Complimentary',cls:'discount'});lines.push({name:'Military/First Responder benefit',val:'--',cls:'discount'});}
     else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var saved=ws-wa;lines.push({name:'WDI Termite Inspection',val:fmt(wa)});lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});total+=wa;}
   }
@@ -482,14 +491,17 @@ function buildAddons(){
   wrap.innerHTML='';
   var svc=S.service,sqft=S.sqft,addons=[];
 
-  if(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty'){
+  // Mold: resale, phase 3+4, prelisting, warranty only (NOT phase 1 or 2)
+  var phaseHasMold=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
+  if(svc==='resale'||phaseHasMold||svc==='prelisting'){
     addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold & IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100,showSamples:true});
   }
   // Standalone mold — offer extra samples
   if(svc==='mold'){
     addons.push({id:'mold-extra',icon:'🧪',eye:'Additional Samples · $75 Each',title:'Add More Air Samples',desc:'Your service already includes 3 samples (1 outdoor baseline + 2 indoor). Add more samples to cover additional rooms, floors, or areas of concern.',addPrice:75,wasPrice:null,save:null,samplesOnly:true});
   }
-  if(svc==='resale'||svc==='phase'||svc==='prelisting'||svc==='warranty'){
+  // WDI: resale, phase 3+4, prelisting, warranty only (NOT phase 1 or 2)
+  if(svc==='resale'||phaseHasMold||svc==='prelisting'){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
     addons.push({id:'wdi',icon:'🪲',eye:'TDA Licensed · Same Visit · Official Report',title:S.military?'WDI Termite Inspection — Complimentary':'WDI Termite Inspection',desc:'Official wood-destroying insect report. Required by most lenders. Identifies active infestations, prior damage, and conditions that invite future activity.',addPrice:S.military?0:wa,wasPrice:S.military?null:ws,save:S.military?null:sv,military:S.military});
   }
