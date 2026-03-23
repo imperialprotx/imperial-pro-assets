@@ -257,7 +257,7 @@ function onSliderChange(val){}
 function updateSliderDisplay(val){}
 
 function onDetailsChange(doScroll){
-  if(doScroll===undefined)doScroll=true;
+  if(doScroll===undefined)doScroll=false;
   var sqftVal=parseInt(document.getElementById('inp-sqft').value);
   var prevSqft=S.sqft;
   S.sqft=sqftVal&&sqftVal>=100?sqftVal:null;
@@ -275,14 +275,16 @@ function onDetailsChange(doScroll){
       if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
       if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
     }
-    // Only scroll when user leaves the field (doScroll=true)
+    // Scroll only when doScroll=true AND focus has left the wizard inputs
     if(doScroll){
-      if(S.sqft && !prevSqft && !S.year){
-        scrollToEl('fg-year'); return;
-      }
-      if(S.year && !prevYear && !S.foundation){
-        scrollToEl('fg-foundation'); return;
-      }
+      setTimeout(function(){
+        var focused=document.activeElement;
+        var wizardInputIds=['inp-sqft','inp-year'];
+        var focusedInForm=focused&&wizardInputIds.indexOf(focused.id)>=0;
+        if(focusedInForm)return; // user just tabbed to next field, don't scroll
+        if(S.sqft&&!S.year){scrollToEl('fg-year');return;}
+        if(S.sqft&&S.year&&!S.foundation){scrollToEl('fg-foundation');return;}
+      },150);
     }
   }
 
