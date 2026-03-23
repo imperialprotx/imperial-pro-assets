@@ -254,19 +254,35 @@ function updateSliderDisplay(val){}
 
 function onDetailsChange(){
   var sqftVal=parseInt(document.getElementById('inp-sqft').value);
+  var prevSqft=S.sqft;
   S.sqft=sqftVal&&sqftVal>=100?sqftVal:null;
   var yearEl=document.getElementById('inp-year');
+  var prevYear=S.year;
   if(yearEl){var yv=parseInt(yearEl.value);S.year=yv&&yv>=1800&&yv<=2026?yv:null;}
 
-  if(S.service==='resale'&&S.sqft){
-    var coreP=lookup(RESALE_CORE,S.sqft);
-    var proP=lookup(RESALE_PRO,S.sqft);
-    var cEl=document.getElementById('price-core');
-    var pEl=document.getElementById('price-pro');
-    if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
-    if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
-    scrollToEl('pkg-cards-wrap');
+  if(S.service==='resale'){
+    // Update package prices live
+    if(S.sqft){
+      var coreP=lookup(RESALE_CORE,S.sqft);
+      var proP=lookup(RESALE_PRO,S.sqft);
+      var cEl=document.getElementById('price-core');
+      var pEl=document.getElementById('price-pro');
+      if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
+      if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
+    }
+    // Sequential scroll: sqft entered → scroll to year
+    if(S.sqft && !prevSqft && !S.year){
+      scrollToEl('fg-year');
+      return;
+    }
+    // Year entered → scroll to foundation
+    if(S.year && !prevYear && !S.foundation){
+      scrollToEl('fg-foundation');
+      return;
+    }
+    // Foundation selected → scroll to packages (handled in pickFoundation)
   }
+
   if(S.service==='phase'&&S.phase&&S.sqft)showPhaseDiscountBanner();
 
   var calc=calcBase();
@@ -317,7 +333,12 @@ function pickFoundation(f){
   S.foundation=f;
   ['slab','crawl'].forEach(function(x){var el=document.getElementById('rb-'+x);if(el)el.classList.toggle('selected',x===f);});
   onDetailsChange();
-  scrollToBtn('next-4');
+  // For resale, scroll to package cards. For others, scroll to next-4
+  if(S.service==='resale'){
+    setTimeout(function(){scrollToEl('pkg-cards-wrap');},200);
+  } else {
+    scrollToBtn('next-4');
+  }
 }
 
 function pickPhase(n){
