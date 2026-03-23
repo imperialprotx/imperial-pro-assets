@@ -92,6 +92,10 @@ function highlightCard(ids, selectedId){
   });
 }
 
+function scrollToEl(id){
+  var el=document.getElementById(id);
+  if(el)setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},150);
+}
 function scrollToBtn(id){
   var btn=document.getElementById(id);
   if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},150);
@@ -224,6 +228,7 @@ function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
   onDetailsChange();
+  scrollToBtn('next-4');
 }
 
 function applyPkgSelection(pkg){
@@ -263,6 +268,7 @@ function onDetailsChange(){
     var pEl=document.getElementById('price-pro');
     if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
     if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
+    scrollToEl('pkg-cards-wrap');
   }
   if(S.service==='phase'&&S.phase&&S.sqft)showPhaseDiscountBanner();
 
@@ -505,7 +511,7 @@ function buildAddons(){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
     addons.push({id:'wdi',icon:'🪲',eye:'TDA Licensed · Same Visit · Official Report',title:S.military?'WDI Termite Inspection — Complimentary':'WDI Termite Inspection',desc:'Official wood-destroying insect report. Required by most lenders. Identifies active infestations, prior damage, and conditions that invite future activity.',addPrice:S.military?0:wa,wasPrice:S.military?null:ws,save:S.military?null:sv,military:S.military});
   }
-  if(svc==='resale'){addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.',addPrice:130,wasPrice:149,save:19});}
+  if(svc==='resale'){addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with approximate estimated minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.',addPrice:130,wasPrice:149,save:19});}
 
   if(addons.length===0){wrap.innerHTML='<p style="font-family:\'Crimson Pro\',serif!important;font-size:18px!important;color:var(--text-muted)!important;font-style:italic!important;padding:20px 0">No add-ons available for this service. Your price is ready to confirm.</p>';renderSummary();return;}
 
@@ -602,9 +608,9 @@ function validateDates(){
 function toggleDate3(){
   var inp=document.getElementById('inp-date3');
   var btn=document.getElementById('date3-toggle');
-  var isHidden=inp.style.display==='none';
+  var isHidden=inp.style.display==='none'||inp.style.display==='';
   inp.style.display=isHidden?'block':'none';
-  if(btn)btn.textContent=isHidden?'- Remove 3rd date':'+ Add a 3rd preferred date';
+  if(btn)btn.textContent=isHidden?'− Remove 3rd preferred date':'＋  Add a 3rd preferred date';
 }
 
 function buildSubmissionData(){
@@ -688,9 +694,46 @@ function renderFinalSummary(){
   var te=document.getElementById('final-total');if(te)te.textContent=calc.total!=null?fmt(calc.total):'--';
 }
 
-window.IPgoStep=goStep;
+function startOver(){
+  // Reset all state
+  S.step=1;S.propType=null;S.role=null;S.service=null;S.military=false;
+  S.sqft=null;S.year=null;S.foundation=null;S.phase=null;S.foundLevel=null;
+  S.moldType=null;S.resalePkg='pro';S.addons={mold:false,wdi:false,repair:false,extraSamples:0};
+  S.coupon=null;S.customQuote=false;
+
+  // Clear all selections visually
+  document.querySelectorAll('.choice-card,.selected').forEach(function(el){
+    el.classList.remove('selected');
+    el.style.borderColor='';el.style.boxShadow='';el.style.opacity='';el.style.background='';el.style.transform='';
+  });
+  document.querySelectorAll('.radio-btn').forEach(function(rb){rb.classList.remove('selected');});
+
+  // Clear form inputs
+  ['inp-sqft','inp-year','inp-fname','inp-lname','inp-email','inp-phone',
+   'inp-address','inp-city','inp-zip','inp-date1','inp-date2','inp-date3',
+   'inp-agent-name','inp-agent-email','inp-notes','coupon-inp'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+
+  // Hide all conditional sections
+  ['fg-sqft','fg-year','fg-foundation','fg-phase','fg-found-level','fg-mold-type',
+   'fg-resale-pkg','price-preview','custom-quote-wrap','phase-discount-banner',
+   'pkg-info-panel','coupon-field','coupon-msg','date-err'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+
+  // Reset mil wrap
+  var mw=document.getElementById('mil-wrap');if(mw)mw.classList.remove('active');
+
+  // Show progress bar if hidden (post-success)
+  var pw=document.getElementById('progress-wrap');if(pw)pw.style.display='block';
+
+  // Go back to step 1
+  goStep(1);
+}
 window.IPselectPkg=selectPkg;
 window.IPtoggleSurveyInfo=toggleSurveyInfo;
+window.IPstartOver=startOver;
 window.IPpickPropertyType=pickPropertyType;
 window.IPpickRole=pickRole;
 window.IPtoggleMilitary=toggleMilitary;
