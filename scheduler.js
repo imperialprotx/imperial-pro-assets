@@ -225,11 +225,12 @@ function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
   onDetailsChange();
-  // Scroll to top of value card so nothing is missed
+  // Scroll to value card first, then to See Add-Ons after animation
   setTimeout(function(){
     var el=document.getElementById('price-preview');
     if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
   },200);
+  setTimeout(function(){scrollToBtn('next-4');},1400);
 }
 
 function applyPkgSelection(pkg){
@@ -256,36 +257,19 @@ function applyPkgSelection(pkg){
 function onSliderChange(val){}
 function updateSliderDisplay(val){}
 
-function onDetailsChange(doScroll){
-  if(doScroll===undefined)doScroll=false;
+function onDetailsChange(){
   var sqftVal=parseInt(document.getElementById('inp-sqft').value);
-  var prevSqft=S.sqft;
   S.sqft=sqftVal&&sqftVal>=100?sqftVal:null;
   var yearEl=document.getElementById('inp-year');
-  var prevYear=S.year;
   if(yearEl){var yv=parseInt(yearEl.value);S.year=yv&&yv>=1800&&yv<=2026?yv:null;}
 
-  if(S.service==='resale'){
-    // Update package prices live on every keystroke
-    if(S.sqft){
-      var coreP=lookup(RESALE_CORE,S.sqft);
-      var proP=lookup(RESALE_PRO,S.sqft);
-      var cEl=document.getElementById('price-core');
-      var pEl=document.getElementById('price-pro');
-      if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
-      if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
-    }
-    // Scroll only when doScroll=true AND focus has left the wizard inputs
-    if(doScroll){
-      setTimeout(function(){
-        var focused=document.activeElement;
-        var wizardInputIds=['inp-sqft','inp-year'];
-        var focusedInForm=focused&&wizardInputIds.indexOf(focused.id)>=0;
-        if(focusedInForm)return; // user just tabbed to next field, don't scroll
-        if(S.sqft&&!S.year){scrollToEl('fg-year');return;}
-        if(S.sqft&&S.year&&!S.foundation){scrollToEl('fg-foundation');return;}
-      },150);
-    }
+  if(S.service==='resale'&&S.sqft){
+    var coreP=lookup(RESALE_CORE,S.sqft);
+    var proP=lookup(RESALE_PRO,S.sqft);
+    var cEl=document.getElementById('price-core');
+    var pEl=document.getElementById('price-pro');
+    if(cEl)cEl.textContent=coreP?fmt(coreP):(S.sqft>6000?'Custom':'--');
+    if(pEl)pEl.textContent=proP?fmt(proP):(S.sqft>6000?'Custom':'--');
   }
 
   if(S.service==='phase'&&S.phase&&S.sqft)showPhaseDiscountBanner();
@@ -656,10 +640,6 @@ function renderValueStack(svc, pkg, phase){
       +(item.tag?'<div class="pc-value-tag">'+item.tag+'</div>':'');
     wrap.appendChild(div);
     setTimeout(function(){div.classList.add('visible');},80+i*90);
-    // After last item animates, nudge scroll to reveal the See Add-Ons button
-    if(i===items.length-1){
-      setTimeout(function(){scrollToBtn('next-4');},80+i*90+600);
-    }
   });
 }
 
