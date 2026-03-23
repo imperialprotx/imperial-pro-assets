@@ -68,9 +68,8 @@ function goStep(n){
   if(el)el.classList.add('active');
   S.step=n;
   updateProgress(n);
-  // Re-apply all selection highlights after DOM switch
-  if(S.propType) highlightCard(['cc-residential','cc-commercial'],'cc-'+S.propType);
-  if(S.role) highlightCard(['cc-homebuyer','cc-homeowner','cc-agent'],'cc-'+S.role);
+  try{if(S.propType) highlightCard(['cc-residential','cc-commercial'],'cc-'+S.propType);}catch(e){}
+  try{if(S.role) highlightCard(['cc-homebuyer','cc-homeowner','cc-agent'],'cc-'+S.role);}catch(e){}
   var wt=document.getElementById('wizard-top');
   if(wt) wt.scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -80,13 +79,14 @@ function highlightCard(ids, selectedId){
     var el=document.getElementById(x);
     if(!el)return;
     if(x===selectedId){
-      el.style.cssText+='border-color:#c8531a!important;background:rgba(200,83,26,.05)!important;transform:translateY(-2px)!important;box-shadow:0 12px 40px rgba(200,83,26,.14)!important;';
+      el.style.borderColor='#c8531a';
+      el.style.boxShadow='0 12px 40px rgba(200,83,26,.14)';
+      el.style.transform='translateY(-2px)';
       el.classList.add('selected');
     } else {
-      el.style.borderColor='rgba(10,22,40,.1)';
-      el.style.background='#fafaf8';
-      el.style.transform='none';
-      el.style.boxShadow='none';
+      el.style.borderColor='';
+      el.style.boxShadow='';
+      el.style.transform='';
       el.classList.remove('selected');
     }
   });
