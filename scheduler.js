@@ -131,7 +131,7 @@ var SERVICE_DEFS={
   homeowner:[
     {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural — plus a ZIPLEVEL® foundation elevation survey. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS · ZIPLEVEL® Survey'},
     {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
-    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment or Level B full ZIPLEVEL precision survey with CAD drawing and deflection analysis.',tag:'✦ Level A · Level B'},
+    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment with spot elevation readings and drainage review, or Level B full ZIPLEVEL® precision survey with scaled CAD drawing.',tag:'✦ Level A · Level B'},
     {id:'mold',icon:'🧪',title:'Mold / IAQ Inspection',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ IAQ Sampling · Assessment'},
     {id:'termite',icon:'🪲',title:'WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.',tag:'✦ TDA Licensed'},
   ],
@@ -632,9 +632,41 @@ function getValueItems(svc, pkg, phase){
   }
   if(svc==='prelisting'){
     base=[
-      {title:'Pre-Listing MEPS Inspection',sub:'Identify surprises before buyers find them — price with confidence',tag:null},
-      {title:'Infrared Thermal Imaging',sub:'Included at no extra charge',tag:'Included'},
-      {title:'Repair Priority Report',sub:'Helps you decide what to fix, disclose, or price into the sale',tag:'Included'},
+      {title:'Pre-Listing MEPS Inspection',sub:'Mechanical, Electrical, Plumbing, and Structural — scoped to what matters most for listing disclosure and buyer negotiations',tag:null},
+      {title:'Infrared Thermal Imaging',sub:'Included at no extra charge — finds hidden moisture and electrical issues before buyers do',tag:'Included'},
+      {title:'Moisture Meter Testing',sub:'Documents active moisture intrusion so there are no surprises during buyer due diligence',tag:'Included'},
+      {title:'Photo-Rich Report in 24hrs',sub:'Annotated photos and repair priority ratings — ready for your agent and listing disclosure review',tag:'24hr delivery'},
+      {title:'Repair Priority Guidance',sub:'Helps you decide what to fix, disclose, or price into the sale — on your terms',tag:'Included'},
+    ];
+  }
+  if(svc==='termite'||svc==='wdi'){
+    base=[
+      {title:'Official WDI Inspection Report',sub:'Texas-licensed TDA inspector — identifies active infestations, prior damage, and conditions conducive to future activity',tag:'TDA Licensed'},
+      {title:'Report Delivered Within 24 Hours',sub:'Digital delivery — ready for your lender, agent, or personal records',tag:'24hr delivery'},
+      {title:'Texas Official SPCS/T-5 Form',sub:'The state-required Wood-Destroying Insect Report form accepted by all Texas lenders',tag:'Included'},
+      {title:'HUD NPMA-33 Form Available',sub:'Federal form available upon request for FHA, VA, and HUD-backed loans',tag:'On request'},
+      {title:'Treatment & Protection Plans Available',sub:'If active infestation or damage is found, we connect you with licensed treatment providers',tag:'Available'},
+      {title:'Objective Findings — Every Time',sub:'Independent report with no financial interest in treatment outcomes',tag:'Unbiased'},
+    ];
+  }
+  if(svc==='foundation'){
+    var isLevelB=S.foundLevel==='B';
+    base=[
+      {title:'Foundation '+(isLevelB?'Level B — ZIPLEVEL® Precision Survey':'Level A — Visual Assessment'),sub:isLevelB?'ZIPLEVEL® precision instrument maps every point across your slab — full footprint documented with precision readings':'Spot elevation readings taken at key points across your foundation with professional assessment',tag:isLevelB?'$350+ value':'$250+ value'},
+    ];
+    if(isLevelB){
+      base.push({title:'Scaled CAD Drawing',sub:'Professional scaled drawing of your foundation included in your report — a visual record, not just numbers',tag:'Included'});
+    }
+    base.push({title:'Drainage & Performance Review',sub:'Drainage analysis and a professional opinion on current foundation performance',tag:'Included'});
+    base.push({title:'Written Report Delivered Within 24hrs',sub:'Photo-supported findings with inspector commentary',tag:'24hr delivery'});
+    base.push({title:'Documented Baseline',sub:'Protects you from inflated repair estimates and creates a record for future monitoring or resale',tag:'Included'});
+  }
+  if(svc==='mold'){
+    base=[
+      {title:'Air Sampling — 3 Samples Included',sub:'1 outdoor baseline + 2 indoor samples collected in the same visit by a certified inspector',tag:'Certified lab'},
+      {title:'Certified Lab Analysis',sub:'Samples sent to an independent accredited laboratory — results typically returned within 24–48 hours',tag:'Independent'},
+      {title:'Written Mold Assessment Report',sub:'Inspector findings, lab results, and recommendations delivered in a single clear report',tag:'Included'},
+      {title:'Identifies Hidden Mold & Elevated Spore Counts',sub:'Detects issues no visual inspection can find — behind walls, in HVAC, or in areas with no visible growth',tag:'Included'},
     ];
   }
   return base;
