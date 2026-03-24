@@ -126,7 +126,7 @@ var SERVICE_DEFS={
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'Building with a builder. ICC-certified inspections at every critical stage. The only ICC-certified inspector in Fort Bend County.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Foundation evaluation only. Level A is a thorough visual assessment. Level B is a full ZIPLEVEL precision survey with CAD drawing — the same tool foundation engineers use.',tag:'✦ Level A · Level B'},
     {id:'mold',icon:'🧪',title:'Standalone Mold / IAQ Inspection',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ IAQ Sampling · Assessment'},
-    {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. Required by most lenders. Identifies active infestations and conditions that invite future activity.',tag:'✦ TDA Licensed'},
+    {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'Performed by our inspector — TDA-licensed wood-destroying insect inspection. Required by most lenders. Official Texas WDI report, same visit, no subcontractors.',tag:'✦ TDA Licensed · In-House'},
   ],
   homeowner:[
     {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural — plus a ZIPLEVEL® foundation elevation survey. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS · ZIPLEVEL® Survey'},
@@ -539,7 +539,7 @@ function buildAddons(){
   // WDI: resale, phase 3+4, prelisting, warranty only (NOT phase 1 or 2)
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
-    addons.push({id:'wdi',icon:'🪲',eye:'TDA Licensed · Same Visit · Official Report',title:S.military?'WDI Termite Inspection — Complimentary':'WDI Termite Inspection',desc:'Official wood-destroying insect report. Required by most lenders. Identifies active infestations, prior damage, and conditions that invite future activity.',addPrice:S.military?0:wa,wasPrice:S.military?null:ws,save:S.military?null:sv,military:S.military});
+    addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:S.military?'WDI Termite Inspection — Complimentary':'WDI Termite Inspection',desc:'Yes — termite inspection is performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No second appointment, no subcontractors.',addPrice:S.military?0:wa,wasPrice:S.military?null:ws,save:S.military?null:sv,military:S.military});
   }
   if(svc==='resale'){addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with approximate estimated minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.',addPrice:130,wasPrice:149,save:19});}
 
