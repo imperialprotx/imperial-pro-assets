@@ -608,7 +608,7 @@ function getValueItems(svc, pkg, phase){
     base.push({title:'Foundation — Level A Visual Assessment',sub:'Spot elevation readings, drainage review, and professional performance opinion',tag:'$250+ value'});
   }
   if(svc==='resale'&&pkg==='pro'){
-    base.push({title:'Foundation — Level B Advanced Survey',sub:'ZIPLEVEL® precision elevation survey — full footprint mapped, scaled CAD drawing in your report',tag:'$350+ value'});
+    base.push({title:'Foundation — Level B Advanced Assessment',sub:'ZIPLEVEL® precision data collection — full footprint mapped, scaled CAD drawing, data-supported professional opinion on foundation performance',tag:'$350+ value'});
   }
   if(svc==='phase'){
     var phaseNames=['','Pre-Pour Foundation','Pre-Drywall Framing','Final New Construction','Builder Warranty (MEPS)'];
@@ -652,7 +652,7 @@ function getValueItems(svc, pkg, phase){
   if(svc==='foundation'){
     var isLevelB=S.foundLevel==='B';
     base=[
-      {title:'Foundation '+(isLevelB?'Level B — ZIPLEVEL® Precision Survey':'Level A — Visual Assessment'),sub:isLevelB?'ZIPLEVEL® precision instrument maps every point across your slab — full footprint documented with precision readings':'Spot elevation readings taken at key points across your foundation with professional assessment',tag:isLevelB?'$350+ value':'$250+ value'},
+      {title:'Foundation '+(isLevelB?'Level B — Advanced Assessment':'Level A — Visual Assessment'),sub:isLevelB?'ZIPLEVEL® precision data collection across your full foundation footprint — CAD drawing included, data-supported professional opinion on performance and risk':'Spot elevation readings at key points, drainage review, and a professional visual opinion on current foundation performance',tag:isLevelB?'$350+ value':'$250+ value'},
     ];
     if(isLevelB){
       base.push({title:'Scaled CAD Drawing',sub:'Professional scaled drawing of your foundation included in your report — a visual record, not just numbers',tag:'Included'});
