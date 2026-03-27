@@ -217,16 +217,25 @@ function toggleSurveyInfo(e){
   if(panel)panel.style.display=(panel.style.display==='none'||!panel.style.display)?'block':'none';
 }
 
+function agentToggle(isYes){
+  var yBtn=document.getElementById('agent-yes-btn');
+  var nBtn=document.getElementById('agent-no-btn');
+  var agentWrap=document.getElementById('agent-detail-wrap');
+  var refWrap=document.getElementById('referral-detail-wrap');
+  if(yBtn)yBtn.style.cssText=isYes?'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--navy);border:2px solid var(--navy);color:#fafaf8;cursor:pointer':'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
+  if(nBtn)nBtn.style.cssText=!isYes?'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--navy);border:2px solid var(--navy);color:#fafaf8;cursor:pointer':'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
+  if(agentWrap)agentWrap.style.display=isYes?'block':'none';
+  if(refWrap)refWrap.style.display=!isYes?'block':'none';
+}
+
 function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
   onDetailsChange();
-  // Scroll to value card first, then to See Add-Ons after animation
-  setTimeout(function(){
-    var el=document.getElementById('price-preview');
-    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
-  },200);
-  setTimeout(function(){scrollToBtn('next-4');},1400);
+  // value card → promo unlock → See Add-Ons
+  setTimeout(function(){var el=document.getElementById('price-preview');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},200);
+  setTimeout(function(){var promo=document.getElementById('promo-unlock-wrap');if(promo)promo.scrollIntoView({behavior:'smooth',block:'center'});},1300);
+  setTimeout(function(){scrollToBtn('next-4');},2200);
 }
 
 function applyPkgSelection(pkg){
@@ -317,7 +326,18 @@ function onDetailsChange(){
   } else {
     if(previewEl)previewEl.style.display='none';
   }
-  var n4b=document.getElementById('next-4');if(n4b){if(ready){n4b.classList.remove('btn-inactive');n4b.removeAttribute('disabled');n4b.style.opacity='1';n4b.style.cursor='pointer';n4b.style.pointerEvents='auto';}else{n4b.classList.add('btn-inactive');}}
+  var n4b=document.getElementById('next-4');
+  if(n4b){
+    if(ready){
+      n4b.style.opacity='1';
+      n4b.style.cursor='pointer';
+      n4b.style.pointerEvents='auto';
+    } else {
+      n4b.style.opacity='.4';
+      n4b.style.cursor='not-allowed';
+      n4b.style.pointerEvents='none';
+    }
+  }
 }
 
 function showPhaseDiscountBanner(){
@@ -819,9 +839,10 @@ function buildSubmissionData(){
     '2ND PREFERRED DATE':document.getElementById('inp-date2').value||'Not provided',
     '3RD PREFERRED DATE':document.getElementById('inp-date3').value||'Not provided',
     'ACCESS NOTES':document.getElementById('inp-notes').value||'None',
-    'AGENT NAME':document.getElementById('inp-agent-name').value||'N/A',
-    'AGENT EMAIL':document.getElementById('inp-agent-email').value||'N/A',
-    'REFERRED BY':document.getElementById('inp-referral')?document.getElementById('inp-referral').value||'N/A':'N/A'
+    'REFERRED BY AGENT':document.getElementById('agent-yes-btn')&&document.getElementById('agent-yes-btn').style.background.includes('navy')?'YES':'NO',
+    'AGENT NAME':document.getElementById('inp-agent-name')?document.getElementById('inp-agent-name').value||'N/A':'N/A',
+    'AGENT EMAIL':document.getElementById('inp-agent-email')?document.getElementById('inp-agent-email').value||'N/A':'N/A',
+    'REFERRAL SOURCE':document.getElementById('inp-referral')?document.getElementById('inp-referral').value||'N/A':'N/A'
   };
 }
 
@@ -1005,6 +1026,7 @@ window.IPpickMoldType       = pickMoldType;
 window.IPonSliderChange     = onSliderChange;
 window.IPtoggleAddon        = toggleAddon;
 window.IPchangeExtraSamples = changeExtraSamples;
+window.IPagentToggle        = agentToggle;
 window.IPunlockPromo        = unlockPromo;
 window.IPtoggleCoupon       = toggleCoupon;
 window.IPapplyCoupon        = applyCoupon;
