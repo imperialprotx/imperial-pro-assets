@@ -195,7 +195,7 @@ function configStep4(){
   var yi=document.getElementById('inp-year');if(yi)yi.value='';
   document.querySelectorAll('.radio-btn').forEach(function(rb){rb.classList.remove('selected');});
   show('price-preview',false);show('custom-quote-wrap',false);
-  var n4=document.getElementById('next-4');if(n4)n4.disabled=true;
+  var n4=document.getElementById('next-4');if(n4){n4.setAttribute('disabled','disabled');n4.style.opacity='.4';n4.style.pointerEvents='none';}
 }
 
 function buildResaleSlider(){
@@ -225,10 +225,8 @@ function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
   onDetailsChange();
-  // value card → promo unlock → See Add-Ons
   setTimeout(function(){var el=document.getElementById('price-preview');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},200);
-  setTimeout(function(){var promo=document.getElementById('promo-unlock-wrap');if(promo)promo.scrollIntoView({behavior:'smooth',block:'center'});},1300);
-  setTimeout(function(){scrollToBtn('next-4');},2200);
+  setTimeout(function(){scrollToBtn('next-4');},1400);
 }
 
 function applyPkgSelection(pkg){
@@ -295,7 +293,7 @@ function onDetailsChange(){
     if(previewEl)previewEl.style.display='block';
     if(customWrap)customWrap.style.display='block';
     var te=document.getElementById('pc-total');if(te)te.textContent='Custom Quote';
-    var n4=document.getElementById('next-4');if(n4)n4.disabled=true;
+    var n4=document.getElementById('next-4');if(n4){n4.setAttribute('disabled','disabled');n4.style.opacity='.4';n4.style.pointerEvents='none';}
     return;
   }
   if(customWrap)customWrap.style.display='none';
@@ -322,15 +320,18 @@ function onDetailsChange(){
   var n4b=document.getElementById('next-4');
   if(n4b){
     if(ready){
+      n4b.removeAttribute('disabled');
       n4b.style.opacity='1';
       n4b.style.cursor='pointer';
       n4b.style.pointerEvents='auto';
     } else {
+      n4b.setAttribute('disabled','disabled');
       n4b.style.opacity='.4';
       n4b.style.cursor='not-allowed';
       n4b.style.pointerEvents='none';
     }
   }
+  showPromoIfEligible();
 }
 
 function showPhaseDiscountBanner(){
@@ -824,17 +825,17 @@ function startOver(){
     var el=document.getElementById(id);if(el)el.style.display='none';
   });
   S.promoDiscount=false;
-  // Reset promo toggle UI
-  var wrap=document.getElementById('promo-mil-wrap');
-  var check=document.getElementById('promo-check');
-  var mark=document.getElementById('promo-check-mark');
-  var label=document.getElementById('promo-toggle-label');
-  var msg=document.getElementById('promo-claimed-msg');
-  if(wrap){wrap.style.background='rgba(110,207,149,.06)';wrap.style.borderColor='rgba(110,207,149,.2)';wrap.style.borderLeftColor='#6ecf95';}
-  if(check){check.style.background='';check.style.borderColor='rgba(110,207,149,.4)';}
-  if(mark)mark.style.display='none';
-  if(label){label.textContent='Claim It';label.style.color='#6ecf95';}
-  if(msg)msg.style.display='none';
+  window._promoClaimed=false;
+  var promoBtn=document.getElementById('promo-claim-btn');
+  var promoMsg=document.getElementById('promo-claimed-msg');
+  var promoWrap=document.getElementById('promo-unlock-wrap');
+  if(promoBtn){
+    promoBtn.textContent='Claim $25 Off →';
+    promoBtn.style.background='rgba(110,207,149,.15)';
+    promoBtn.onclick=function(){window.IPclaimDiscount();};
+  }
+  if(promoMsg)promoMsg.style.display='none';
+  if(promoWrap)promoWrap.style.display='none';
 
   // Reset mil wrap
   var mw=document.getElementById('mil-wrap');if(mw)mw.classList.remove('active');
@@ -899,26 +900,30 @@ window.IPvalidateDates=validateDates;
 })();
 
 // ── WINDOW EXPORTS ───────────────────────────────────────
-function claimDiscount(){
-  S.promoDiscount=S.promoDiscount?false:true;
-  var wrap=document.getElementById('promo-mil-wrap');
-  var check=document.getElementById('promo-check');
-  var mark=document.getElementById('promo-check-mark');
-  var label=document.getElementById('promo-toggle-label');
-  var msg=document.getElementById('promo-claimed-msg');
-  if(S.promoDiscount){
-    if(wrap){wrap.style.background='rgba(200,83,26,.1)';wrap.style.borderColor='rgba(200,83,26,.4)';wrap.style.borderLeftColor='var(--orange)';}
-    if(check){check.style.background='var(--orange)';check.style.borderColor='var(--orange)';}
-    if(mark)mark.style.display='block';
-    if(label){label.textContent='Claimed!';label.style.color='var(--orange)';}
-    if(msg)msg.style.display='block';
-  } else {
-    if(wrap){wrap.style.background='rgba(110,207,149,.06)';wrap.style.borderColor='rgba(110,207,149,.2)';wrap.style.borderLeftColor='#6ecf95';}
-    if(check){check.style.background='';check.style.borderColor='rgba(110,207,149,.4)';}
-    if(mark)mark.style.display='none';
-    if(label){label.textContent='Claim It';label.style.color='#6ecf95';}
-    if(msg)msg.style.display='none';
+function showPromoIfEligible(){
+  var svc=S.service;
+  var eligible=svc==='resale'||svc==='phase'||svc==='warranty';
+  var wrap=document.getElementById('promo-unlock-wrap');
+  if(wrap)wrap.style.display=eligible?'block':'none';
+  if(!eligible&&S.promoDiscount){
+    S.promoDiscount=false;
+    renderSummary();
   }
+}
+
+function claimDiscount(){
+  S.promoDiscount=true;
+  window._promoClaimed=true;
+  var btn=document.getElementById('promo-claim-btn');
+  var msg=document.getElementById('promo-claimed-msg');
+  if(btn){
+    btn.textContent='✓ Claimed';
+    btn.style.background='rgba(110,207,149,.25)';
+    btn.style.color='#6ecf95';
+    btn.style.borderColor='#6ecf95';
+    btn.onclick=null; // one-time
+  }
+  if(msg)msg.style.display='block';
   renderSummary();
 }
 
