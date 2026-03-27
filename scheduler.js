@@ -472,7 +472,7 @@ function calcTotal(){
     lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});
     total+=wa;
   }
-  if(S.addons.repair&&svc==='resale'){lines.push({name:'Repair Estimate Report',val:fmt(149)});total+=149;}
+  if(S.addons.repair&&svc==='resale'){lines.push({name:'Repair Estimate Report',val:fmt(130)});lines.push({name:'Standalone $149 — you save',val:fmt(19),cls:'discount'});total+=130;}
   if(S.promoDiscount){lines.push({name:'Online Booking Discount',val:'-$25',cls:'discount'});total=Math.max(0,total-25);}
   if(S.coupon){lines.push({name:S.coupon.label,val:'-'+fmt(S.coupon.amount),cls:'discount'});total=Math.max(0,total-S.coupon.amount);}
   return{total:total,lines:lines,label:base.label,detail:base.detail,custom:false};
@@ -485,16 +485,19 @@ function buildAddons(){
   var svc=S.service,sqft=S.sqft,addons=[];
   var phaseHasMold=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
 
+  // Mold: resale, qualifying phases, prelisting
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
     addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
   }
-  var wdiShows=(svc==='resale'&&S.resalePkg!=='pro')||phaseHasMold||svc==='prelisting';
+  // WDI: phases and prelisting ONLY — not resale (Pro already bundles it, Core clients had their choice)
+  var wdiShows=phaseHasMold||svc==='prelisting';
   if(wdiShows){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
     addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No subcontractors.',addPrice:wa,wasPrice:ws,save:sv});
   }
+  // Repair: resale only, $130 (save $19 vs standalone $149)
   if(svc==='resale'){
-    addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.<br><br><strong style="color:rgba(184,154,110,.8);font-size:13px">Includes:</strong> Executive Summary · Deficiency Schedule · Condition Assessment Summary · RUL Estimates',addPrice:149,wasPrice:null,save:null});
+    addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with estimated minimum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.<br><span style="display:block;margin-top:10px;font-size:13px;color:rgba(184,154,110,.7);font-family:\'Montserrat\',sans-serif;letter-spacing:.1em;text-transform:uppercase">Includes: Executive Summary · Deficiency Schedule · Condition Assessment Summary · RUL Estimates</span>',addPrice:130,wasPrice:149,save:19});
   }
 
   var noMsg=document.getElementById('no-addons-msg');
@@ -509,11 +512,17 @@ function buildAddons(){
     var card=document.createElement('div');
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
+
+    // Elegant price block matching inspection card style
     var priceHtml=addon.wasPrice
-      ?'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.3);text-decoration:line-through">'+fmt(addon.wasPrice)+'</div>'
-       +'<div style="font-size:clamp(26px,3vw,36px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
-       +'<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6ecf95;margin-top:2px">Save '+fmt(addon.save)+'</div>'
-      :'<div style="font-size:clamp(26px,3vw,36px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>';
+      ?'<div style="text-align:right">'
+       +'<div style="font-family:\'Montserrat\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(110,207,149,.5);text-decoration:line-through;margin-bottom:2px">'+fmt(addon.wasPrice)+'</div>'
+       +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(32px,3.5vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
+       +'<div style="font-family:\'Montserrat\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6ecf95;margin-top:4px">Save '+fmt(addon.save)+'</div>'
+       +'</div>'
+      :'<div style="text-align:right">'
+       +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(32px,3.5vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
+       +'</div>';
 
     card.innerHTML='<div class="addon-toggle-inner" id="atog-'+addon.id+'-inner" onclick="window.IPtoggleAddon(\''+addon.id+'\')">'
       +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
@@ -522,13 +531,13 @@ function buildAddons(){
       +'<div class="addon-toggle-title">'+addon.icon+' '+addon.title+'</div>'
       +'<div class="addon-toggle-desc">'+addon.desc+'</div>'
       +'</div>'
-      +'<div style="text-align:right;flex-shrink:0;padding-left:12px">'+priceHtml+'</div>'
+      +'<div style="flex-shrink:0;padding-left:20px">'+priceHtml+'</div>'
       +'</div>'
       +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
         +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $75 each</div>'
         +'<div style="display:flex;align-items:center;gap:14px">'
         +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">-</button>'
-        +'<span id="extra-count" style="font-size:28px;font-weight:600;color:#fafaf8;min-width:32px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
+        +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif;font-size:28px;font-weight:600;color:#fafaf8;min-width:32px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
         +'<button onclick="window.IPchangeExtraSamples(1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">+</button>'
         +'<span style="font-size:15px;color:rgba(250,250,248,.4)">additional samples (3 always included)</span>'
         +'</div></div>':'');
@@ -539,8 +548,12 @@ function buildAddons(){
 
 function toggleAddon(id){
   S.addons[id]=!S.addons[id];
+  // Toggle .on on outer wrapper (for JS-injected cards)
   var card=document.getElementById('atog-'+id);
   if(card)card.classList.toggle('on',S.addons[id]);
+  // Toggle .on on inner div (for static HTML fallback cards)
+  var inner=document.getElementById('atog-'+id+'-inner');
+  if(inner)inner.classList.toggle('on',S.addons[id]);
   if(id==='mold'){
     var esWrap=document.getElementById('extra-samples-wrap');
     if(esWrap)esWrap.style.display=S.addons.mold?'block':'none';
@@ -825,16 +838,9 @@ function startOver(){
     var el=document.getElementById(id);if(el)el.style.display='none';
   });
   S.promoDiscount=false;
-  window._promoClaimed=false;
-  var promoBtn=document.getElementById('promo-claim-btn');
-  var promoMsg=document.getElementById('promo-claimed-msg');
+  var promoCard=document.getElementById('promo-discount-card');
   var promoWrap=document.getElementById('promo-unlock-wrap');
-  if(promoBtn){
-    promoBtn.textContent='Claim $25 Off →';
-    promoBtn.style.background='rgba(110,207,149,.15)';
-    promoBtn.onclick=function(){window.IPclaimDiscount();};
-  }
-  if(promoMsg)promoMsg.style.display='none';
+  if(promoCard)promoCard.classList.remove('on');
   if(promoWrap)promoWrap.style.display='none';
 
   // Reset mil wrap
@@ -912,18 +918,9 @@ function showPromoIfEligible(){
 }
 
 function claimDiscount(){
-  S.promoDiscount=true;
-  window._promoClaimed=true;
-  var btn=document.getElementById('promo-claim-btn');
-  var msg=document.getElementById('promo-claimed-msg');
-  if(btn){
-    btn.textContent='✓ Claimed';
-    btn.style.background='rgba(110,207,149,.25)';
-    btn.style.color='#6ecf95';
-    btn.style.borderColor='#6ecf95';
-    btn.onclick=null; // one-time
-  }
-  if(msg)msg.style.display='block';
+  S.promoDiscount=!S.promoDiscount;
+  var card=document.getElementById('promo-discount-card');
+  if(card)card.classList.toggle('on',S.promoDiscount);
   renderSummary();
 }
 
@@ -970,10 +967,12 @@ updateProgress(1);
     var mold = closest(target, 'atog-mold-inner') || closest(target, 'atog-mold');
     var wdi  = closest(target, 'atog-wdi-inner')  || closest(target, 'atog-wdi');
     var rep  = closest(target, 'atog-repair-inner')|| closest(target, 'atog-repair');
+    var promo= closest(target, 'promo-discount-card');
 
     if(mold){ e.preventDefault(); window.IPtoggleAddon('mold'); return; }
     if(wdi){  e.preventDefault(); window.IPtoggleAddon('wdi');  return; }
     if(rep){  e.preventDefault(); window.IPtoggleAddon('repair'); return; }
+    if(promo){ e.preventDefault(); window.IPclaimDiscount(); return; }
   }
 
   document.addEventListener('click',     handle, true);
