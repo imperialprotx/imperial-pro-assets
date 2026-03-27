@@ -514,7 +514,7 @@ function buildAddons(){
        +'<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6ecf95;margin-top:2px">Save '+fmt(addon.save)+'</div>'
       :'<div style="font-size:clamp(26px,3vw,36px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>';
 
-    card.innerHTML='<div class="addon-toggle-inner" onclick="window.IPtoggleAddon(\''+addon.id+'\')">'
+    card.innerHTML='<div class="addon-toggle-inner" id="atog-'+addon.id+'-inner" onclick="window.IPtoggleAddon(\''+addon.id+'\')">'
       +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
       +'<div class="addon-toggle-body">'
       +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
@@ -856,7 +856,6 @@ window.IPpickPhase=pickPhase;
 window.IPpickFoundLevel=pickFoundLevel;
 window.IPpickMoldType=pickMoldType;
 window.IPonSliderChange=onSliderChange;
-window.IPtoggleAddon=toggleAddon;
 window.IPchangeExtraSamples=changeExtraSamples;
 window.IPtoggleCoupon=toggleCoupon;
 window.IPapplyCoupon=applyCoupon;
@@ -963,15 +962,15 @@ updateProgress(1);
     var target = e.target;
 
     // Walk up the DOM to find a clickable addon card
-    var mold = closest(target, 'atog-mold-inner');
-    var wdi  = closest(target, 'atog-wdi-inner');
-    var rep  = closest(target, 'atog-repair-inner');
+    var mold = closest(target, 'atog-mold-inner') || closest(target, 'atog-mold');
+    var wdi  = closest(target, 'atog-wdi-inner')  || closest(target, 'atog-wdi');
+    var rep  = closest(target, 'atog-repair-inner')|| closest(target, 'atog-repair');
 
-    if(mold){ e.preventDefault(); IPtoggleAddon('mold'); return; }
-    if(wdi){  e.preventDefault(); IPtoggleAddon('wdi');  return; }
-    if(rep){  e.preventDefault(); IPtoggleAddon('repair'); return; }
+    if(mold){ e.preventDefault(); window.IPtoggleAddon('mold'); return; }
+    if(wdi){  e.preventDefault(); window.IPtoggleAddon('wdi');  return; }
+    if(rep){  e.preventDefault(); window.IPtoggleAddon('repair'); return; }
   }
 
   document.addEventListener('click',     handle, true);
-  document.addEventListener('touchend',  handle, true);
+  document.addEventListener('touchend',  handle, {capture:true, passive:false});
 })();
