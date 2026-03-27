@@ -19,7 +19,7 @@ const WDI_ADDON_PRO=75;
 const AGE_SURCHARGE=[{from:1977,to:9999,fee:0},{from:1967,to:1976,fee:25},{from:1957,to:1966,fee:35},{from:1947,to:1956,fee:50},{from:1937,to:1946,fee:75},{from:1927,to:1936,fee:100},{from:1917,to:1926,fee:135},{from:1907,to:1916,fee:250},{from:0,to:1906,fee:375}];
 const COUPONS={'JADI':{amount:25,label:'Promo Code JADI'},'SAVE25':{amount:25,label:'Promo Code SAVE25'},'REFERRAL':{amount:50,label:'Referral Discount'},'FAMILY':{amount:50,label:'Family Discount'}};
 
-const S={step:1,propType:null,role:null,service:null,military:false,sqft:null,year:null,foundation:null,phase:null,foundLevel:null,moldType:null,resalePkg:'pro',addons:{mold:false,wdi:false,repair:false,extraSamples:0},coupon:null,customQuote:false};
+const S={step:1,propType:null,role:null,service:null,sqft:null,year:null,foundation:null,phase:null,foundLevel:null,moldType:null,resalePkg:'pro',addons:{mold:false,wdi:false,repair:false,extraSamples:0},coupon:null,promoDiscount:false,customQuote:false};
 
 function lookup(table,sqft){if(!sqft)return null;for(const t of table){if(sqft<=t.max)return t.p;}return null;}
 function fmt(n){return n!=null?'$'+n.toLocaleString():'--';}
@@ -107,13 +107,6 @@ function pickRole(r){
   var af=document.getElementById('agent-fields');if(af)af.style.display=(r==='agent')?'block':'none';
   buildStep3Cards();
   scrollToBtn('next-2');
-}
-
-function toggleMilitary(){
-  S.military=!S.military;
-  var wrap=document.getElementById('mil-wrap');
-  if(wrap)wrap.classList.toggle('active',S.military);
-  if(S.step>=5)renderSummary();
 }
 
 var SERVICE_DEFS={
@@ -479,54 +472,9 @@ function calcTotal(){
     total+=wa;
   }
   if(S.addons.repair&&svc==='resale'){lines.push({name:'Repair Estimate Report',val:fmt(130)});lines.push({name:'Standalone $149 — you save',val:fmt(19),cls:'discount'});total+=130;}
+  if(S.promoDiscount){lines.push({name:'Online Booking Discount',val:'-$25',cls:'discount'});total=Math.max(0,total-25);}
   if(S.coupon){lines.push({name:S.coupon.label,val:'-'+fmt(S.coupon.amount),cls:'discount'});total=Math.max(0,total-S.coupon.amount);}
   return{total:total,lines:lines,label:base.label,detail:base.detail,custom:false};
-}
-
-function buildAddonHTML(id, addon, on, priceHtml) {
-  var inner = document.createElement('div');
-  inner.className = 'addon-toggle-inner';
-  inner.setAttribute('onclick', 'window.IPtoggleAddon("' + id + '")');
-  inner.style.cssText = 'display:flex;align-items:flex-start;gap:16px;padding:18px 20px;cursor:pointer';
-
-  var sw = document.createElement('div');
-  sw.className = 'toggle-switch';
-  sw.innerHTML = '<div class="toggle-knob"></div>';
-
-  var body = document.createElement('div');
-  body.style.cssText = 'flex:1;min-width:0';
-  body.innerHTML =
-    '<div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tan);margin-bottom:5px">' + addon.eye + '</div>' +
-    '<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:#fafaf8;margin-bottom:6px;line-height:1.15">' + addon.icon + ' ' + addon.title + '</div>' +
-    '<div style="font-size:16px;color:rgba(250,250,248,.5);line-height:1.6">' + addon.desc + '</div>';
-
-  var price = document.createElement('div');
-  price.style.cssText = 'text-align:right;flex-shrink:0;padding-left:12px';
-  price.innerHTML = priceHtml;
-
-  inner.appendChild(sw);
-  inner.appendChild(body);
-  inner.appendChild(price);
-
-  var container = document.createElement('div');
-  container.appendChild(inner);
-
-  if(id === 'mold') {
-    var samples = document.createElement('div');
-    samples.id = 'extra-samples-wrap';
-    samples.style.cssText = 'display:' + (on ? 'block' : 'none') + ';padding:14px 20px;border-top:1px solid rgba(184,154,110,.1)';
-    samples.innerHTML =
-      '<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.4);margin-bottom:10px">Need more samples? $75 each</div>' +
-      '<div style="display:flex;align-items:center;gap:12px">' +
-      '<button onclick="window.IPchangeExtraSamples(-1)" type="button" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">-</button>' +
-      '<span id="extra-count" style="font-size:26px;font-weight:600;color:#fafaf8;min-width:28px;text-align:center">0</span>' +
-      '<button onclick="window.IPchangeExtraSamples(1)" type="button" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">+</button>' +
-      '<span style="font-size:15px;color:rgba(250,250,248,.4)">additional samples (3 included)</span>' +
-      '</div>';
-    container.appendChild(samples);
-  }
-
-  return container.innerHTML;
 }
 
 function buildAddons(){
@@ -546,11 +494,7 @@ function buildAddons(){
   var wdiShows=(svc==='resale'&&E.pkg!=='pro')||(phaseHasMold)||svc==='prelisting';
   if(wdiShows){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
-    addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Yes — termite inspection is performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No second appointment, no subcontractors.',addPrice:wa,wasPrice:ws,save:sv,military:false});
-  }
-  // Standalone termite — veteran discount
-  if(svc==='termite'&&S.military){
-    addons.push({id:'wdi-vet-disc',icon:'🇺🇸',eye:'Military / First Responder Benefit',title:'Veteran Discount Applied',desc:'$25 off your WDI termite inspection — because VA and FHA loans require it and you\'ve earned it.',addPrice:-25,wasPrice:null,save:25,vetDiscount:true});
+    addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Yes — termite inspection is performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No second appointment, no subcontractors.',addPrice:wa,wasPrice:ws,save:sv});
   }
   if(svc==='resale'){addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with approximate estimated minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.',addPrice:130,wasPrice:149,save:19});}
 
@@ -574,48 +518,39 @@ function buildAddons(){
       return;
     }
 
-    var on=S.addons[addon.id]||addon.military;
-    var card=document.createElement('button');
-    card.type='button';
+    var on=S.addons[addon.id];
+    var priceHtml='<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-bottom:6px">&#10003; Save '+fmt(addon.save)+'</div>'
+      +'<div style="font-size:clamp(28px,3.5vw,40px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
+      +'<div style="font-size:11px;color:rgba(250,250,248,.25);margin-top:5px">reg. '+fmt(addon.wasPrice)+'</div>';
+
+    var card=document.createElement('div');
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
-    card.style.cssText='width:100%;text-align:left;background:none;border:none;padding:0;cursor:pointer;display:block;font-family:inherit';
-    card.setAttribute('onclick','window.IPtoggleAddon("'+addon.id+'")');
-    var priceHtml=addon.military
-      ?'<div style="font-size:clamp(16px,2vw,20px);color:#6ecf95;font-weight:700;line-height:1.2;pointer-events:none">Complimentary</div>'
-       +'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-top:4px;pointer-events:none">Military benefit</div>'
-      :'<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6ecf95;margin-bottom:6px;pointer-events:none">&#10003; Save '+fmt(addon.save)+'</div>'
-       +'<div style="font-size:clamp(30px,3.8vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em;pointer-events:none">'+fmt(addon.addPrice)+'</div>'
-       +'<div style="font-size:11px;color:rgba(250,250,248,.25);margin-top:5px;pointer-events:none">reg. '+fmt(addon.wasPrice)+'</div>';
-    // Build inner HTML with all children pointer-events:none
-    card.innerHTML='<div style="display:flex;align-items:flex-start;gap:16px;padding:18px 20px;pointer-events:none">'
-      +'<div class="toggle-switch" style="pointer-events:none"><div class="toggle-knob"></div></div>'
-      +'<div style="flex:1;min-width:0;pointer-events:none">'
-      +'<div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tan);margin-bottom:5px">'+addon.eye+'</div>'
-      +'<div style="font-family:Georgia,serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:#fafaf8;margin-bottom:6px;line-height:1.15">'+addon.icon+' '+addon.title+'</div>'
-      +'<div style="font-size:16px;color:rgba(250,250,248,.5);line-height:1.6">'+addon.desc+'</div>'
+    card.style.cssText='position:relative;margin-bottom:10px';
+    card.innerHTML=
+      '<button type="button" onclick="window.IPtoggleAddon(\''+addon.id+'\')" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;border:none;background:none"></button>'
+      +'<div style="display:flex;align-items:flex-start;gap:16px;padding:18px 20px;pointer-events:none">'
+      +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
+      +'<div class="addon-toggle-title">'+addon.icon+' '+addon.title+'</div>'
+      +'<div class="addon-toggle-desc">'+addon.desc+'</div>'
       +'</div>'
-      +'<div style="text-align:right;flex-shrink:0;padding-left:12px;pointer-events:none">'+priceHtml+'</div>'
+      +'<div style="text-align:right;flex-shrink:0;padding-left:12px">'+priceHtml+'</div>'
       +'</div>';
-    // Extra samples for mold
+
     if(addon.id==='mold'){
       var samples=document.createElement('div');
       samples.id='extra-samples-wrap';
-      samples.style.cssText='display:'+(on?'block':'none')+';padding:14px 20px;border-top:1px solid rgba(184,154,110,.1)';
+      samples.style.cssText='display:'+(on?'block':'none')+';padding:14px 20px;border-top:1px solid rgba(184,154,110,.1);position:relative;z-index:3';
       samples.innerHTML='<div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.4);margin-bottom:10px">Need more samples? $75 each</div>'
         +'<div style="display:flex;align-items:center;gap:12px">'
-        +'<button type="button" onclick="window.IPchangeExtraSamples(-1)" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">-</button>'
+        +'<button type="button" onclick="window.IPchangeExtraSamples(-1)" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1;position:relative;z-index:4">-</button>'
         +'<span id="extra-count" style="font-size:26px;font-weight:600;color:#fafaf8;min-width:28px;text-align:center">0</span>'
-        +'<button type="button" onclick="window.IPchangeExtraSamples(1)" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1">+</button>'
+        +'<button type="button" onclick="window.IPchangeExtraSamples(1)" style="width:36px;height:36px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fafaf8;font-size:20px;cursor:pointer;line-height:1;position:relative;z-index:4">+</button>'
         +'<span style="font-size:15px;color:rgba(250,250,248,.4)">additional samples (3 included)</span>'
         +'</div>';
-      var outer=document.createElement('div');
-      outer.className='addon-toggle'+(on?' on':'');
-      outer.id='atog-'+addon.id+'-wrap';
-      outer.appendChild(card);
-      outer.appendChild(samples);
-      wrap.appendChild(outer);
-      return;
+      card.appendChild(samples);
     }
     wrap.appendChild(card);
   });
@@ -748,7 +683,6 @@ function renderSummary(){
   var le=document.getElementById('summary-lines');
   if(le)le.innerHTML=(calc.lines||[]).map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
   var te=document.getElementById('summary-total');if(te)te.textContent=calc.total!=null?fmt(calc.total):'--';
-  var mn=document.getElementById('summary-military-note');if(mn)mn.style.display=S.military?'block':'none';
   renderFinalSummary();
 }
 
@@ -814,7 +748,7 @@ function buildSubmissionData(){
   var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
   var addonList=[];
   if(S.addons.mold){var ms='Mold IAQ Sampling - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $75 each';addonList.push(ms);}
-  if(S.addons.wdi){if(S.military){addonList.push('WDI Termite - COMPLIMENTARY (Military/First Responder)');}else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
+  if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.repair)addonList.push('Repair Estimate Report - $130 (standalone: $149, save $19)');
 
   return{
@@ -831,6 +765,7 @@ function buildSubmissionData(){
     'SERVICE TYPE':svcLabels[S.service]||S.service,
     'PACKAGE':S.resalePkg?pkgLabels[S.resalePkg]||S.resalePkg:S.foundLevel?'Level '+S.foundLevel:S.moldType?S.moldType:S.phase?phaseLabels[S.phase]||('Phase '+S.phase):'N/A',
     'ADD-ONS':addonList.length?addonList.join(' | '):'None',
+    'ONLINE DISCOUNT':S.promoDiscount?'YES — $25 off applied':'No',
     'COUPON':S.coupon?S.coupon.label+' - -$'+S.coupon.amount:'None',
     'LINE ITEMS':'\n'+breakdown,
     'ESTIMATED TOTAL':calc.total!=null?fmt(calc.total):'CUSTOM QUOTE REQUIRED',
@@ -887,7 +822,7 @@ function renderFinalSummary(){
 
 function startOver(){
   // Reset all state
-  S.step=1;S.propType=null;S.role=null;S.service=null;S.military=false;
+  S.step=1;S.propType=null;S.role=null;S.service=null;
   S.sqft=null;S.year=null;S.foundation=null;S.phase=null;S.foundLevel=null;
   S.moldType=null;S.resalePkg='pro';S.addons={mold:false,wdi:false,repair:false,extraSamples:0};
   S.coupon=null;S.customQuote=false;
@@ -912,13 +847,18 @@ function startOver(){
    'pkg-info-panel','coupon-field','coupon-msg','date-err'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.style.display='none';
   });
-  // Reset promo unlock
-  var promoBtn=document.getElementById('promo-unlock-btn');
-  var promoField=document.getElementById('promo-field-wrap');
-  var promoIcon=document.getElementById('promo-lock-icon');
-  if(promoBtn){promoBtn.style.borderColor='rgba(110,207,149,.3)';promoBtn.style.background='rgba(45,122,74,.1)';promoBtn.onclick=function(){window.IPunlockPromo();};var unlockText=promoBtn.querySelector('span:last-child');if(unlockText)unlockText.textContent='Unlock →';}
-  if(promoField)promoField.style.display='none';
-  if(promoIcon)promoIcon.textContent='🔒';
+  S.promoDiscount=false;
+  // Reset promo toggle UI
+  var wrap=document.getElementById('promo-mil-wrap');
+  var check=document.getElementById('promo-check');
+  var mark=document.getElementById('promo-check-mark');
+  var label=document.getElementById('promo-toggle-label');
+  var msg=document.getElementById('promo-claimed-msg');
+  if(wrap){wrap.style.background='rgba(110,207,149,.06)';wrap.style.borderColor='rgba(110,207,149,.2)';wrap.style.borderLeftColor='#6ecf95';}
+  if(check){check.style.background='';check.style.borderColor='rgba(110,207,149,.4)';}
+  if(mark)mark.style.display='none';
+  if(label){label.textContent='Claim It';label.style.color='#6ecf95';}
+  if(msg)msg.style.display='none';
 
   // Reset mil wrap
   var mw=document.getElementById('mil-wrap');if(mw)mw.classList.remove('active');
@@ -934,7 +874,6 @@ window.IPtoggleSurveyInfo=toggleSurveyInfo;
 window.IPstartOver=startOver;
 window.IPpickPropertyType=pickPropertyType;
 window.IPpickRole=pickRole;
-window.IPtoggleMilitary=toggleMilitary;
 window.IPpickService=pickService;
 window.IPpickFoundation=pickFoundation;
 window.IPpickPhase=pickPhase;
@@ -984,32 +923,28 @@ window.IPvalidateDates=validateDates;
   document.head.appendChild(st);
 })();
 
-// Military toggle green CSS
-(function(){
-  if(document.getElementById('mil-green-style'))return;
-  var st=document.createElement('style');
-  st.id='mil-green-style';
-  st.textContent='#mil-wrap.active{background:rgba(26,107,58,.08)!important;border-color:rgba(110,207,149,.4)!important;border-left-color:#6ecf95!important}'
-    +'#mil-wrap.active .mil-check{background:#3a9e5f!important;border-color:#6ecf95!important}'
-    +'#mil-wrap .mil-title{font-size:16px!important}'
-    +'#mil-wrap .mil-desc{font-size:15px!important}';
-  document.head.appendChild(st);
-})();
-
 // ── WINDOW EXPORTS ───────────────────────────────────────
-function unlockPromo(){
-  var btn=document.getElementById('promo-unlock-btn');
-  var field=document.getElementById('promo-field-wrap');
-  var icon=document.getElementById('promo-lock-icon');
-  if(!btn||!field)return;
-  if(icon)icon.textContent='🔓';
-  btn.style.borderColor='rgba(110,207,149,.6)';
-  btn.style.background='rgba(45,122,74,.18)';
-  field.style.display='block';
-  btn.onclick=null;
-  var unlockText=btn.querySelector('span:last-child');
-  if(unlockText)unlockText.textContent='Unlocked ✓';
-  setTimeout(function(){var inp=document.getElementById('coupon-inp');if(inp)inp.focus();},200);
+function claimDiscount(){
+  S.promoDiscount=S.promoDiscount?false:true;
+  var wrap=document.getElementById('promo-mil-wrap');
+  var check=document.getElementById('promo-check');
+  var mark=document.getElementById('promo-check-mark');
+  var label=document.getElementById('promo-toggle-label');
+  var msg=document.getElementById('promo-claimed-msg');
+  if(S.promoDiscount){
+    if(wrap){wrap.style.background='rgba(200,83,26,.1)';wrap.style.borderColor='rgba(200,83,26,.4)';wrap.style.borderLeftColor='var(--orange)';}
+    if(check){check.style.background='var(--orange)';check.style.borderColor='var(--orange)';}
+    if(mark)mark.style.display='block';
+    if(label){label.textContent='Claimed!';label.style.color='var(--orange)';}
+    if(msg)msg.style.display='block';
+  } else {
+    if(wrap){wrap.style.background='rgba(110,207,149,.06)';wrap.style.borderColor='rgba(110,207,149,.2)';wrap.style.borderLeftColor='#6ecf95';}
+    if(check){check.style.background='';check.style.borderColor='rgba(110,207,149,.4)';}
+    if(mark)mark.style.display='none';
+    if(label){label.textContent='Claim It';label.style.color='#6ecf95';}
+    if(msg)msg.style.display='none';
+  }
+  renderSummary();
 }
 
 window.IPgoStep             = goStep;
@@ -1027,7 +962,7 @@ window.IPonSliderChange     = onSliderChange;
 window.IPtoggleAddon        = toggleAddon;
 window.IPchangeExtraSamples = changeExtraSamples;
 window.IPagentToggle        = agentToggle;
-window.IPunlockPromo        = unlockPromo;
+window.IPclaimDiscount      = claimDiscount;
 window.IPtoggleCoupon       = toggleCoupon;
 window.IPapplyCoupon        = applyCoupon;
 window.IPtoggleDate3        = toggleDate3;
