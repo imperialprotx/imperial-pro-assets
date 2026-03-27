@@ -936,3 +936,21 @@ window.IPonDetailsChange    = onDetailsChange;
 window.IPvalidateDates      = validateDates;
 
 updateProgress(1);
+
+// Mobile touchstart fallback for addon cards
+(function(){
+  function addTouch(id,addonId){
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.addEventListener('touchstart',function(e){
+      e.preventDefault();
+      window.IPtoggleAddon(addonId);
+    },{passive:false});
+  }
+  // Run after a tick to ensure DOM is ready
+  setTimeout(function(){
+    addTouch('atog-mold-inner','mold');
+    addTouch('atog-wdi-inner','wdi');
+    addTouch('atog-repair-inner','repair');
+  },500);
+})();
