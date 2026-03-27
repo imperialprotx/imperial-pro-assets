@@ -7,8 +7,8 @@ const PHASE1=[{max:2000,p:325},{max:2500,p:349},{max:3000,p:369},{max:3500,p:395
 const PHASE2=[{max:2000,p:449},{max:2500,p:469},{max:3000,p:489},{max:3500,p:539},{max:4000,p:589},{max:4500,p:639},{max:5000,p:689},{max:5500,p:739},{max:6000,p:789},{max:Infinity,p:null}];
 const PHASE3=[{max:2000,p:475},{max:2500,p:499},{max:3000,p:525},{max:3500,p:549},{max:4000,p:575},{max:4500,p:599},{max:5000,p:625},{max:5500,p:675},{max:6000,p:725},{max:Infinity,p:null}];
 const PHASE4=[{max:2000,p:425},{max:2500,p:449},{max:3000,p:475},{max:3500,p:499},{max:4000,p:525},{max:4500,p:549},{max:5000,p:575},{max:5500,p:625},{max:6000,p:675},{max:Infinity,p:null}];
-const RESALE_CORE=[{max:1500,p:475},{max:2000,p:500},{max:2500,p:550},{max:3000,p:575},{max:3500,p:625},{max:4000,p:675},{max:4500,p:725},{max:5000,p:825},{max:5500,p:925},{max:6000,p:1025},{max:Infinity,p:null}];
-const RESALE_PRO=[{max:1500,p:575},{max:2000,p:600},{max:2500,p:650},{max:3000,p:675},{max:3500,p:750},{max:4000,p:800},{max:4500,p:875},{max:5000,p:975},{max:5500,p:1075},{max:6000,p:1175},{max:Infinity,p:null}];
+const RESALE_CORE=[{max:1500,p:475},{max:2000,p:500},{max:2500,p:550},{max:3000,p:575},{max:3500,p:625},{max:4000,p:675},{max:4500,p:725},{max:5000,p:850},{max:5500,p:950},{max:6000,p:1050},{max:Infinity,p:null}];
+const RESALE_PRO=[{max:1500,p:625},{max:2000,p:650},{max:2500,p:700},{max:3000,p:725},{max:3500,p:800},{max:4000,p:850},{max:4500,p:925},{max:5000,p:1025},{max:5500,p:1125},{max:6000,p:1225},{max:Infinity,p:null}];
 const FOUND_A=[{max:2000,p:250},{max:2500,p:275},{max:3000,p:300},{max:3500,p:325},{max:4000,p:350},{max:5000,p:375},{max:6000,p:425},{max:Infinity,p:null}];
 const FOUND_B=[{max:2000,p:350},{max:2500,p:375},{max:3000,p:400},{max:3500,p:425},{max:4000,p:450},{max:5000,p:500},{max:6000,p:550},{max:Infinity,p:null}];
 const PRELISTING=[{max:2000,p:450},{max:2500,p:475},{max:3000,p:500},{max:3500,p:525},{max:4000,p:550},{max:4500,p:575},{max:5000,p:600},{max:6000,p:650},{max:Infinity,p:null}];
@@ -17,7 +17,7 @@ const WDI_ADDON_CORE=[{max:1500,p:115},{max:2000,p:125},{max:2500,p:135},{max:30
 const WDI_ADDON_PRO=75;
 
 const AGE_SURCHARGE=[{from:1977,to:9999,fee:0},{from:1967,to:1976,fee:25},{from:1957,to:1966,fee:35},{from:1947,to:1956,fee:50},{from:1937,to:1946,fee:75},{from:1927,to:1936,fee:100},{from:1917,to:1926,fee:135},{from:1907,to:1916,fee:250},{from:0,to:1906,fee:375}];
-const COUPONS={'JADI':{amount:30,label:'Promo Code JADI'},'SAVE30':{amount:30,label:'Promo Code SAVE30'},'REFERRAL':{amount:50,label:'Referral Discount'},'FAMILY':{amount:50,label:'Family Discount'}};
+const COUPONS={'JADI':{amount:25,label:'Promo Code JADI'},'SAVE25':{amount:25,label:'Promo Code SAVE25'},'REFERRAL':{amount:50,label:'Referral Discount'},'FAMILY':{amount:50,label:'Family Discount'}};
 
 const S={step:1,propType:null,role:null,service:null,military:false,sqft:null,year:null,foundation:null,phase:null,foundLevel:null,moldType:null,resalePkg:'pro',addons:{mold:false,wdi:false,repair:false,extraSamples:0},coupon:null,customQuote:false};
 
@@ -37,11 +37,7 @@ function wdiAddonPrice(){
   return lookup(WDI_ADDON_CORE,S.sqft)||115;
 }
 
-function getPhaseDiscount(phase){
-  if(S.service!=='phase')return 0;
-  if(phase===1||phase===2)return 25;
-  return 0;
-}
+function getPhaseDiscount(phase){return 0;}
 
 function updateProgress(step){
   for(var i=1;i<=5;i++){
@@ -327,18 +323,6 @@ function onDetailsChange(){
 function showPhaseDiscountBanner(){
   var existing=document.getElementById('phase-discount-banner');
   if(existing)existing.remove();
-  var phase=S.phase;
-  if(phase>=3)return;
-  var discPhases=phase===1?'Phases 1, 2, and 3':phase===2?'Phases 2 and 3':'';
-  var totalSaved=phase===1?'$75':phase===2?'$50':'';
-  if(!discPhases)return;
-  var banner=document.createElement('div');
-  banner.id='phase-discount-banner';
-  banner.style.cssText='background:rgba(26,107,58,.08);border:1px solid rgba(168,213,184,.25);border-left:4px solid #6ecf95;padding:16px 20px;margin-top:18px';
-  banner.innerHTML='<div style="font-family:\'Montserrat\',sans-serif!important;font-size:13px!important;font-weight:700!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:#3a9e5f!important;margin-bottom:6px">Multi-Phase Savings Unlocked</div>'
-    +'<div style="font-family:\'Crimson Pro\',serif!important;font-size:18px!important;color:#2d7a4a!important;line-height:1.55">Starting at Phase '+phase+' saves you <strong>$25 on '+discPhases+'</strong> — <strong>'+totalSaved+' total savings</strong> across your build. Your discounted rates are locked in and noted in your booking confirmation.</div>';
-  var phaseSection=document.getElementById('phase-section');
-  if(phaseSection)phaseSection.appendChild(banner);
 }
 
 function pickFoundation(f){
@@ -461,15 +445,18 @@ function calcTotal(){
     total+=275;
     if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*75;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
-  // Standalone mold — extra samples billed on top of base price
   if(svc==='mold'&&S.addons.extraSamples>0){
     var esc=S.addons.extraSamples*75;
     lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $75 each',val:'+'+fmt(esc)});
     total+=esc;
   }
-  if(S.addons.wdi&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
-    if(S.military){lines.push({name:'WDI Termite Inspection',val:'Complimentary',cls:'discount'});lines.push({name:'Military/First Responder benefit',val:'--',cls:'discount'});}
-    else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var saved=ws-wa;lines.push({name:'WDI Termite Inspection',val:fmt(wa)});lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});total+=wa;}
+  // WDI addon only for Core resale, phases, prelisting (Pro has WDI bundled)
+  var wdiEligible=(svc==='resale'&&S.resalePkg!=='pro')||phaseAllowsAddon||svc==='prelisting';
+  if(S.addons.wdi&&wdiEligible){
+    var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var saved=ws-wa;
+    lines.push({name:'WDI Termite Inspection',val:fmt(wa)});
+    lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});
+    total+=wa;
   }
   if(S.addons.repair&&svc==='resale'){lines.push({name:'Repair Estimate Report',val:fmt(130)});lines.push({name:'Standalone $149 — you save',val:fmt(19),cls:'discount'});total+=130;}
   if(S.coupon){lines.push({name:S.coupon.label,val:'-'+fmt(S.coupon.amount),cls:'discount'});total=Math.max(0,total-S.coupon.amount);}
@@ -527,7 +514,6 @@ function buildAddons(){
   wrap.innerHTML='';
   var svc=S.service,sqft=S.sqft,addons=[];
 
-  // Mold: resale, phase 3+4, prelisting, warranty only (NOT phase 1 or 2)
   var phaseHasMold=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
     addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold & IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100,showSamples:true});
@@ -536,10 +522,15 @@ function buildAddons(){
   if(svc==='mold'){
     addons.push({id:'mold-extra',icon:'🧪',eye:'Additional Samples · $75 Each',title:'Add More Air Samples',desc:'Your service already includes 3 samples (1 outdoor baseline + 2 indoor). Add more samples to cover additional rooms, floors, or areas of concern.',addPrice:75,wasPrice:null,save:null,samplesOnly:true});
   }
-  // WDI: resale, phase 3+4, prelisting, warranty only (NOT phase 1 or 2)
-  if(svc==='resale'||phaseHasMold||svc==='prelisting'){
+  // WDI addon only for non-Pro resale services (Pro has WDI bundled)
+  var wdiShows=(svc==='resale'&&E.pkg!=='pro')||(phaseHasMold)||svc==='prelisting';
+  if(wdiShows){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
-    addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:S.military?'WDI Termite Inspection — Complimentary':'WDI Termite Inspection',desc:'Yes — termite inspection is performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No second appointment, no subcontractors.',addPrice:S.military?0:wa,wasPrice:S.military?null:ws,save:S.military?null:sv,military:S.military});
+    addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Yes — termite inspection is performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No second appointment, no subcontractors.',addPrice:wa,wasPrice:ws,save:sv,military:false});
+  }
+  // Standalone termite — veteran discount
+  if(svc==='termite'&&S.military){
+    addons.push({id:'wdi-vet-disc',icon:'🇺🇸',eye:'Military / First Responder Benefit',title:'Veteran Discount Applied',desc:'$25 off your WDI termite inspection — because VA and FHA loans require it and you\'ve earned it.',addPrice:-25,wasPrice:null,save:25,vetDiscount:true});
   }
   if(svc==='resale'){addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with approximate estimated minimum and maximum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.',addPrice:130,wasPrice:149,save:19});}
 
@@ -609,6 +600,7 @@ function getValueItems(svc, pkg, phase){
   }
   if(svc==='resale'&&pkg==='pro'){
     base.push({title:'Foundation — Level B Advanced Assessment',sub:'ZIPLEVEL® precision data collection — full footprint mapped, scaled CAD drawing, data-supported professional opinion on foundation performance',tag:'Included'});
+    base.push({title:'WDI Termite Inspection — Bundled',sub:'In-house TDA-licensed termite inspection included at no extra charge. Official Texas SPCS/T-5 form, accepted by all lenders',tag:'Included'});
   }
   if(svc==='phase'){
     var phaseNames=['','Pre-Pour Foundation','Pre-Drywall Framing','Final New Construction','Builder Warranty (MEPS)'];
@@ -766,7 +758,6 @@ function buildSubmissionData(){
   if(S.addons.mold){var ms='Mold IAQ Sampling - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $75 each';addonList.push(ms);}
   if(S.addons.wdi){if(S.military){addonList.push('WDI Termite - COMPLIMENTARY (Military/First Responder)');}else{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.repair)addonList.push('Repair Estimate Report - $130 (standalone: $149, save $19)');
-  var pdNote=S.service==='phase'&&S.phase<3?'YES - $25 off applied. Client entitled to $25 off remaining phases. Honor at next booking.':'No';
 
   return{
     _subject:'New Booking - '+(svcLabels[S.service]||S.service)+' | Imperial Pro',
@@ -775,7 +766,6 @@ function buildSubmissionData(){
     'EMAIL':document.getElementById('inp-email').value,
     'PHONE':document.getElementById('inp-phone').value,
     'ROLE':roleLabels[S.role]||S.role,
-    'MILITARY':S.military?'YES - WDI Termite complimentary applied':'No',
     'ADDRESS':document.getElementById('inp-address').value+', '+document.getElementById('inp-city').value+', TX '+document.getElementById('inp-zip').value,
     'SQUARE FOOTAGE':S.sqft?S.sqft+' sq ft':'Not provided',
     'YEAR BUILT':S.year||'Not provided',
@@ -784,7 +774,6 @@ function buildSubmissionData(){
     'PACKAGE':S.resalePkg?pkgLabels[S.resalePkg]||S.resalePkg:S.foundLevel?'Level '+S.foundLevel:S.moldType?S.moldType:S.phase?phaseLabels[S.phase]||('Phase '+S.phase):'N/A',
     'ADD-ONS':addonList.length?addonList.join(' | '):'None',
     'COUPON':S.coupon?S.coupon.label+' - -$'+S.coupon.amount:'None',
-    'MULTI-PHASE DISCOUNT':pdNote,
     'LINE ITEMS':'\n'+breakdown,
     'ESTIMATED TOTAL':calc.total!=null?fmt(calc.total):'CUSTOM QUOTE REQUIRED',
     'PRICING NOTE':'Verify sqft, year built, foundation type before confirming. Age and crawlspace surcharges applied silently.',
@@ -793,7 +782,8 @@ function buildSubmissionData(){
     '3RD PREFERRED DATE':document.getElementById('inp-date3').value||'Not provided',
     'ACCESS NOTES':document.getElementById('inp-notes').value||'None',
     'AGENT NAME':document.getElementById('inp-agent-name').value||'N/A',
-    'AGENT EMAIL':document.getElementById('inp-agent-email').value||'N/A'
+    'AGENT EMAIL':document.getElementById('inp-agent-email').value||'N/A',
+    'REFERRED BY':document.getElementById('inp-referral')?document.getElementById('inp-referral').value||'N/A':'N/A'
   };
 }
 
@@ -853,7 +843,7 @@ function startOver(){
   // Clear form inputs
   ['inp-sqft','inp-year','inp-fname','inp-lname','inp-email','inp-phone',
    'inp-address','inp-city','inp-zip','inp-date1','inp-date2','inp-date3',
-   'inp-agent-name','inp-agent-email','inp-notes','coupon-inp'].forEach(function(id){
+   'inp-agent-name','inp-agent-email','inp-referral','inp-notes','coupon-inp'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
 
@@ -863,6 +853,13 @@ function startOver(){
    'pkg-info-panel','coupon-field','coupon-msg','date-err'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.style.display='none';
   });
+  // Reset promo unlock
+  var promoBtn=document.getElementById('promo-unlock-btn');
+  var promoField=document.getElementById('promo-field-wrap');
+  var promoIcon=document.getElementById('promo-lock-icon');
+  if(promoBtn){promoBtn.style.borderColor='rgba(110,207,149,.3)';promoBtn.style.background='rgba(45,122,74,.1)';promoBtn.onclick=function(){window.IPunlockPromo();};var unlockText=promoBtn.querySelector('span:last-child');if(unlockText)unlockText.textContent='Unlock →';}
+  if(promoField)promoField.style.display='none';
+  if(promoIcon)promoIcon.textContent='🔒';
 
   // Reset mil wrap
   var mw=document.getElementById('mil-wrap');if(mw)mw.classList.remove('active');
@@ -941,13 +938,27 @@ window.IPvalidateDates=validateDates;
 })();
 
 // ── WINDOW EXPORTS ───────────────────────────────────────
+function unlockPromo(){
+  var btn=document.getElementById('promo-unlock-btn');
+  var field=document.getElementById('promo-field-wrap');
+  var icon=document.getElementById('promo-lock-icon');
+  if(!btn||!field)return;
+  if(icon)icon.textContent='🔓';
+  btn.style.borderColor='rgba(110,207,149,.6)';
+  btn.style.background='rgba(45,122,74,.18)';
+  field.style.display='block';
+  btn.onclick=null;
+  var unlockText=btn.querySelector('span:last-child');
+  if(unlockText)unlockText.textContent='Unlocked ✓';
+  setTimeout(function(){var inp=document.getElementById('coupon-inp');if(inp)inp.focus();},200);
+}
+
 window.IPgoStep             = goStep;
 window.IPstartOver          = startOver;
 window.IPselectPkg          = selectPkg;
 window.IPtoggleSurveyInfo   = toggleSurveyInfo;
 window.IPpickPropertyType   = pickPropertyType;
 window.IPpickRole           = pickRole;
-window.IPtoggleMilitary     = toggleMilitary;
 window.IPpickService        = pickService;
 window.IPpickFoundation     = pickFoundation;
 window.IPpickPhase          = pickPhase;
@@ -956,6 +967,7 @@ window.IPpickMoldType       = pickMoldType;
 window.IPonSliderChange     = onSliderChange;
 window.IPtoggleAddon        = toggleAddon;
 window.IPchangeExtraSamples = changeExtraSamples;
+window.IPunlockPromo        = unlockPromo;
 window.IPtoggleCoupon       = toggleCoupon;
 window.IPapplyCoupon        = applyCoupon;
 window.IPtoggleDate3        = toggleDate3;
