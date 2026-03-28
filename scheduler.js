@@ -295,46 +295,36 @@ function selectPkg(pkg){
 function applyPkgSelection(pkg){
   var core=document.getElementById('pkg-core');
   var pro=document.getElementById('pkg-pro');
-  var coreBtn=document.getElementById('core-choose-btn');
-  var proBtn=document.getElementById('pro-choose-btn');
-  var coreChk=document.getElementById('core-checkbox');
-  var proChk=document.getElementById('pro-checkbox');
-  var coreLabel=document.getElementById('core-choose-label');
-  var proLabel=document.getElementById('pro-choose-label');
+  var coreSw=document.getElementById('core-toggle-switch');
+  var proSw=document.getElementById('pro-toggle-switch');
   if(!core||!pro)return;
 
   if(pkg==='core'){
-    // Core glows green
-    core.style.borderColor='#6ecf95';
-    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    // Pro returns to normal orange border
+    // Core — green glow + toggle on
+    core.style.borderColor='rgba(110,207,149,.5)';
+    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.15)';
+    if(coreSw){coreSw.style.background='#3a9e5f';coreSw.style.borderColor='#6ecf95';}
+    var coreKnob=coreSw?coreSw.querySelector('.toggle-knob'):null;
+    if(coreKnob){coreKnob.style.left='23px';coreKnob.style.background='#fafaf8';}
+    // Pro — back to normal, toggle off
     pro.style.borderColor='#c8531a';
     pro.style.boxShadow='none';
-    pro.style.opacity='1';
-    // Core choose button turns green
-    if(coreBtn){coreBtn.style.background='rgba(110,207,149,.15)';coreBtn.style.borderTopColor='#6ecf95';coreBtn.style.color='#6ecf95';}
-    if(coreChk){coreChk.style.borderColor='#6ecf95';coreChk.textContent='✓';}
-    if(coreLabel)coreLabel.textContent='Core Selected';
-    // Pro choose button resets
-    if(proBtn){proBtn.style.background='#c8531a';proBtn.style.borderTopColor='#c8531a';proBtn.style.color='#fafaf8';}
-    if(proChk){proChk.style.borderColor='rgba(255,255,255,.7)';proChk.textContent='';}
-    if(proLabel)proLabel.textContent='Choose Pro';
+    if(proSw){proSw.style.background='rgba(255,255,255,.1)';proSw.style.borderColor='rgba(255,255,255,.15)';}
+    var proKnob=proSw?proSw.querySelector('.toggle-knob'):null;
+    if(proKnob){proKnob.style.left='3px';proKnob.style.background='rgba(255,255,255,.4)';}
   } else {
-    // Pro glows green
-    pro.style.borderColor='#6ecf95';
-    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    // Core returns to normal blue border
+    // Pro — green glow + toggle on
+    pro.style.borderColor='rgba(110,207,149,.5)';
+    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.15)';
+    if(proSw){proSw.style.background='#3a9e5f';proSw.style.borderColor='#6ecf95';}
+    var proKnob2=proSw?proSw.querySelector('.toggle-knob'):null;
+    if(proKnob2){proKnob2.style.left='23px';proKnob2.style.background='#fafaf8';}
+    // Core — back to normal, toggle off
     core.style.borderColor='rgba(110,140,180,.35)';
     core.style.boxShadow='none';
-    core.style.opacity='1';
-    // Pro choose button turns green
-    if(proBtn){proBtn.style.background='rgba(110,207,149,.15)';proBtn.style.borderTopColor='#6ecf95';proBtn.style.color='#6ecf95';}
-    if(proChk){proChk.style.borderColor='#6ecf95';proChk.textContent='✓';}
-    if(proLabel)proLabel.textContent='Pro Selected';
-    // Core choose button resets
-    if(coreBtn){coreBtn.style.background='rgba(110,140,180,.15)';coreBtn.style.borderTopColor='#7eb8f7';coreBtn.style.color='#7eb8f7';}
-    if(coreChk){coreChk.style.borderColor='#7eb8f7';coreChk.textContent='';}
-    if(coreLabel)coreLabel.textContent='Choose Core';
+    if(coreSw){coreSw.style.background='rgba(255,255,255,.1)';coreSw.style.borderColor='rgba(255,255,255,.15)';}
+    var coreKnob2=coreSw?coreSw.querySelector('.toggle-knob'):null;
+    if(coreKnob2){coreKnob2.style.left='3px';coreKnob2.style.background='rgba(255,255,255,.4)';}
   }
 }
 
