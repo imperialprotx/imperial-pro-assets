@@ -204,10 +204,35 @@ function buildResaleSlider(){
   applyPkgSelection('pro');
 }
 
+function togglePkgDetails(pkg){
+  var panel=document.getElementById(pkg+'-details');
+  var arrow=document.getElementById(pkg+'-expand-arrow');
+  var btn=document.getElementById(pkg+'-expand-btn');
+  if(!panel)return;
+  var isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  if(arrow){
+    arrow.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
+    arrow.style.transition='transform .3s ease';
+  }
+  if(btn){
+    var span=btn.querySelector('span:first-child');
+    if(span)span.textContent=isOpen?'See Details':'Hide Details';
+  }
+}
+
 function toggleSurveyInfo(e){
   if(e){e.stopPropagation();e.preventDefault();}
   var panel=document.getElementById('pkg-info-panel');
-  if(panel)panel.style.display=(panel.style.display==='none'||!panel.style.display)?'block':'none';
+  var arrow=document.getElementById('survey-arrow');
+  if(panel){
+    var isOpen=panel.style.display!=='none'&&panel.style.display!=='';
+    panel.style.display=isOpen?'none':'block';
+    if(arrow){
+      arrow.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
+      arrow.style.transition='transform .3s ease';
+    }
+  }
 }
 
 function agentToggle(isYes){
@@ -963,6 +988,7 @@ function claimDiscount(){
 window.IPgoStep             = goStep;
 window.IPstartOver          = startOver;
 window.IPselectPkg          = selectPkg;
+window.IPtogglePkgDetails    = togglePkgDetails;
 window.IPtoggleSurveyInfo   = toggleSurveyInfo;
 window.IPpickPropertyType   = pickPropertyType;
 window.IPpickRole           = pickRole;
