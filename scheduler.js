@@ -215,10 +215,29 @@ function agentToggle(isYes){
   var nBtn=document.getElementById('agent-no-btn');
   var agentWrap=document.getElementById('agent-detail-wrap');
   var refWrap=document.getElementById('referral-detail-wrap');
-  if(yBtn)yBtn.style.cssText=isYes?'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--navy);border:2px solid var(--navy);color:#fafaf8;cursor:pointer':'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
-  if(nBtn)nBtn.style.cssText=!isYes?'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--navy);border:2px solid var(--navy);color:#fafaf8;cursor:pointer':'flex:1;padding:14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
+  var activeStyle='flex:1;padding:14px;font-family:\'Montserrat\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--navy);border:2px solid var(--navy);color:#fafaf8;cursor:pointer';
+  var inactiveStyle='flex:1;padding:14px;font-family:\'Montserrat\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
+  if(yBtn)yBtn.style.cssText=isYes?activeStyle:inactiveStyle;
+  if(nBtn)nBtn.style.cssText=!isYes?activeStyle:inactiveStyle;
   if(agentWrap)agentWrap.style.display=isYes?'block':'none';
   if(refWrap)refWrap.style.display=!isYes?'block':'none';
+  // Reset referral sub-question when toggling
+  if(!isYes){
+    var rY=document.getElementById('agent-referred-yes');
+    var rN=document.getElementById('agent-referred-no');
+    var smallInactive='flex:1;padding:12px;font-family:\'Montserrat\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
+    if(rY)rY.style.cssText=smallInactive;
+    if(rN)rN.style.cssText=smallInactive;
+  }
+}
+
+function agentReferredToggle(isYes){
+  var yBtn=document.getElementById('agent-referred-yes');
+  var nBtn=document.getElementById('agent-referred-no');
+  var activeStyle='flex:1;padding:12px;font-family:\'Montserrat\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--navy);border:2px solid var(--navy);color:#fafaf8;cursor:pointer';
+  var inactiveStyle='flex:1;padding:12px;font-family:\'Montserrat\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--white);border:2px solid rgba(10,22,40,.14);color:var(--text-muted);cursor:pointer';
+  if(yBtn)yBtn.style.cssText=isYes?activeStyle:inactiveStyle;
+  if(nBtn)nBtn.style.cssText=!isYes?activeStyle:inactiveStyle;
 }
 
 function selectPkg(pkg){
@@ -509,9 +528,12 @@ function buildAddons(){
 
   addons.forEach(function(addon){
     var on=S.addons[addon.id];
-    var card=document.createElement('div');
+    var card=document.createElement('button');
+    card.type='button';
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
+    card.style.cssText='display:block;width:100%;text-align:left;background:var(--navy);border:1px solid rgba(184,154,110,.14);padding:0;cursor:pointer;margin-bottom:10px';
+    card.setAttribute('onclick',"window.IPtoggleAddon('"+addon.id+"')");
 
     // Elegant price block matching inspection card style
     var priceHtml=addon.wasPrice
@@ -524,14 +546,14 @@ function buildAddons(){
        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(32px,3.5vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
        +'</div>';
 
-    card.innerHTML='<div class="addon-toggle-inner" onclick="window.IPtoggleAddon(\''+addon.id+'\')">'
-      +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
-      +'<div class="addon-toggle-body">'
+    card.innerHTML='<div class="addon-toggle-inner" style="pointer-events:none">'
+      +'<div class="toggle-switch" style="pointer-events:none"><div class="toggle-knob"></div></div>'
+      +'<div class="addon-toggle-body" style="pointer-events:none">'
       +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
       +'<div class="addon-toggle-title">'+addon.icon+' '+addon.title+'</div>'
       +'<div class="addon-toggle-desc">'+addon.desc+'</div>'
       +'</div>'
-      +'<div style="flex-shrink:0;padding-left:20px">'+priceHtml+'</div>'
+      +'<div style="flex-shrink:0;padding-left:20px;pointer-events:none">'+priceHtml+'</div>'
       +'</div>'
       +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
         +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $75 each</div>'
@@ -759,7 +781,8 @@ function buildSubmissionData(){
     '2ND PREFERRED DATE':document.getElementById('inp-date2').value||'Not provided',
     '3RD PREFERRED DATE':document.getElementById('inp-date3').value||'Not provided',
     'ACCESS NOTES':document.getElementById('inp-notes').value||'None',
-    'REFERRED BY AGENT':document.getElementById('agent-yes-btn')&&document.getElementById('agent-yes-btn').style.background.includes('navy')?'YES':'NO',
+    'REFERRED BY AGENT':document.getElementById('agent-yes-btn')&&document.getElementById('agent-yes-btn').style.background.indexOf('navy')!==-1?'YES':'NO',
+    'AGENT REFERRED IMPERIAL PRO':(function(){var b=document.getElementById('agent-referred-yes');return b&&b.style.background.indexOf('navy')!==-1?'YES':'NO';})(),
     'AGENT NAME':document.getElementById('inp-agent-name')?document.getElementById('inp-agent-name').value||'N/A':'N/A',
     'AGENT PHONE':document.getElementById('inp-agent-phone')?document.getElementById('inp-agent-phone').value||'N/A':'N/A',
     'AGENT EMAIL':document.getElementById('inp-agent-email')?document.getElementById('inp-agent-email').value||'N/A':'N/A',
@@ -841,6 +864,15 @@ function startOver(){
 
   // Reset mil wrap
   var mw=document.getElementById('mil-wrap');if(mw)mw.classList.remove('active');
+
+  // Reset agent buttons
+  var agentBtns=['agent-yes-btn','agent-no-btn','agent-referred-yes','agent-referred-no'];
+  agentBtns.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el){el.style.background='var(--white)';el.style.borderColor='rgba(10,22,40,.14)';el.style.color='var(--text-muted)';}
+  });
+  var adw=document.getElementById('agent-detail-wrap');if(adw)adw.style.display='none';
+  var rdw=document.getElementById('referral-detail-wrap');if(rdw)rdw.style.display='none';
 
   // Show progress bar if hidden (post-success)
   var pw=document.getElementById('progress-wrap');if(pw)pw.style.display='block';
@@ -936,6 +968,7 @@ window.IPonSliderChange     = onSliderChange;
 window.IPtoggleAddon        = toggleAddon;
 window.IPchangeExtraSamples = changeExtraSamples;
 window.IPagentToggle        = agentToggle;
+window.IPagentReferredToggle= agentReferredToggle;
 window.IPclaimDiscount      = claimDiscount;
 window.IPtoggleCoupon       = toggleCoupon;
 window.IPapplyCoupon        = applyCoupon;
