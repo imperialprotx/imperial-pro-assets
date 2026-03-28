@@ -91,7 +91,7 @@ function scrollToEl(id){
 }
 function scrollToBtn(id){
   var btn=document.getElementById(id);
-  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'nearest'});},150);
+  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},150);
 }
 
 function pickPropertyType(t){
@@ -542,14 +542,14 @@ function buildAddons(){
        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(32px,3.5vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
        +'</div>';
 
-    card.innerHTML='<div class="addon-toggle-inner">'
-      +'<button type="button" class="toggle-switch" onclick="window.IPtoggleAddon(\''+addon.id+'\')" style="cursor:pointer;background:none;border:none;padding:0;flex-shrink:0;margin-top:3px"><div class="toggle-knob"></div></button>'
-      +'<div class="addon-toggle-body">'
+    card.innerHTML='<div class="addon-toggle-inner" style="cursor:default">'
+      +'<button type="button" class="toggle-switch" style="cursor:pointer;background:none;border:none;padding:0;flex-shrink:0;margin-top:3px"><div class="toggle-knob"></div></button>'
+      +'<div class="addon-toggle-body" style="pointer-events:none;cursor:default">'
       +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
       +'<div class="addon-toggle-title">'+addon.icon+' '+addon.title+'</div>'
       +'<div class="addon-toggle-desc">'+addon.desc+'</div>'
       +'</div>'
-      +'<div style="flex-shrink:0;padding-left:20px">'+priceHtml+'</div>'
+      +'<div style="flex-shrink:0;padding-left:20px;pointer-events:none">'+priceHtml+'</div>'
       +'</div>'
       +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
         +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $75 each</div>'
@@ -978,24 +978,38 @@ updateProgress(1);
 // ── DELEGATED EVENT LISTENERS ─────────────────────────────
 (function(){
   function findAddonCard(el){
-    // Walk up from click target to find an element with id starting "atog-"
-    while(el && el !== document){
-      if(el.id && el.id.indexOf('atog-')===0) return el.id.replace('atog-','');
-      el=el.parentElement;
+    // Only fire if click originated from a toggle-switch button or its knob
+    var node=el;
+    var fromToggle=false;
+    while(node && node!==document){
+      if(node.className && typeof node.className==='string' &&
+         (node.className.indexOf('toggle-switch')>=0 || node.className.indexOf('toggle-knob')>=0)){
+        fromToggle=true;
+      }
+      if(fromToggle && node.id && node.id.indexOf('atog-')===0){
+        return node.id.replace('atog-','');
+      }
+      node=node.parentElement;
     }
     return null;
   }
   function findPromo(el){
-    while(el && el !== document){
-      if(el.id==='promo-discount-card') return true;
-      el=el.parentElement;
+    var node=el;
+    var fromToggle=false;
+    while(node && node!==document){
+      if(node.className && typeof node.className==='string' &&
+         (node.className.indexOf('toggle-switch')>=0 || node.className.indexOf('toggle-knob')>=0)){
+        fromToggle=true;
+      }
+      if(fromToggle && node.id==='promo-discount-card') return true;
+      node=node.parentElement;
     }
     return false;
   }
   function handle(e){
     var id=findAddonCard(e.target);
-    if(id){ e.preventDefault(); window.IPtoggleAddon(id); return; }
-    if(findPromo(e.target)){ e.preventDefault(); window.IPclaimDiscount(); return; }
+    if(id){ e.preventDefault(); e.stopPropagation(); window.IPtoggleAddon(id); return; }
+    if(findPromo(e.target)){ e.preventDefault(); e.stopPropagation(); window.IPclaimDiscount(); return; }
   }
   document.addEventListener('click',   handle, true);
   document.addEventListener('touchend',handle, {capture:true,passive:false});
