@@ -299,32 +299,39 @@ function applyPkgSelection(pkg){
   var proSw=document.getElementById('pro-toggle-switch');
   if(!core||!pro)return;
 
+  // Helper to set toggle state
+  function setToggle(sw, on){
+    if(!sw)return;
+    if(on){
+      sw.style.background='#3a9e5f';
+      sw.style.borderColor='#6ecf95';
+      sw.style.border='1px solid #6ecf95';
+    } else {
+      sw.style.background='rgba(255,255,255,.1)';
+      sw.style.borderColor='rgba(255,255,255,.15)';
+      sw.style.border='1px solid rgba(255,255,255,.15)';
+    }
+    var knob=sw.querySelector('div');
+    if(knob){
+      knob.style.left=on?'23px':'3px';
+      knob.style.background=on?'#fafaf8':'rgba(255,255,255,.4)';
+    }
+  }
+
   if(pkg==='core'){
-    // Core — green glow + toggle on
-    core.style.borderColor='rgba(110,207,149,.5)';
-    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.15)';
-    if(coreSw){coreSw.style.background='#3a9e5f';coreSw.style.borderColor='#6ecf95';}
-    var coreKnob=coreSw?coreSw.querySelector('.toggle-knob'):null;
-    if(coreKnob){coreKnob.style.left='23px';coreKnob.style.background='#fafaf8';}
-    // Pro — back to normal, toggle off
+    core.style.borderColor='rgba(110,207,149,.6)';
+    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.18)';
     pro.style.borderColor='#c8531a';
     pro.style.boxShadow='none';
-    if(proSw){proSw.style.background='rgba(255,255,255,.1)';proSw.style.borderColor='rgba(255,255,255,.15)';}
-    var proKnob=proSw?proSw.querySelector('.toggle-knob'):null;
-    if(proKnob){proKnob.style.left='3px';proKnob.style.background='rgba(255,255,255,.4)';}
+    setToggle(coreSw, true);
+    setToggle(proSw, false);
   } else {
-    // Pro — green glow + toggle on
-    pro.style.borderColor='rgba(110,207,149,.5)';
-    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.15)';
-    if(proSw){proSw.style.background='#3a9e5f';proSw.style.borderColor='#6ecf95';}
-    var proKnob2=proSw?proSw.querySelector('.toggle-knob'):null;
-    if(proKnob2){proKnob2.style.left='23px';proKnob2.style.background='#fafaf8';}
-    // Core — back to normal, toggle off
+    pro.style.borderColor='rgba(110,207,149,.6)';
+    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.18)';
     core.style.borderColor='rgba(110,140,180,.35)';
     core.style.boxShadow='none';
-    if(coreSw){coreSw.style.background='rgba(255,255,255,.1)';coreSw.style.borderColor='rgba(255,255,255,.15)';}
-    var coreKnob2=coreSw?coreSw.querySelector('.toggle-knob'):null;
-    if(coreKnob2){coreKnob2.style.left='3px';coreKnob2.style.background='rgba(255,255,255,.4)';}
+    setToggle(proSw, true);
+    setToggle(coreSw, false);
   }
 }
 
