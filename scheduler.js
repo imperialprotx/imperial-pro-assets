@@ -528,14 +528,10 @@ function buildAddons(){
 
   addons.forEach(function(addon){
     var on=S.addons[addon.id];
-    var card=document.createElement('button');
-    card.type='button';
+    var card=document.createElement('div');
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
-    card.style.cssText='display:block;width:100%;text-align:left;background:var(--navy);border:1px solid rgba(184,154,110,.14);padding:0;cursor:pointer;margin-bottom:10px';
-    card.setAttribute('onclick',"window.IPtoggleAddon('"+addon.id+"')");
 
-    // Elegant price block matching inspection card style
     var priceHtml=addon.wasPrice
       ?'<div style="text-align:right">'
        +'<div style="font-family:\'Montserrat\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(110,207,149,.5);text-decoration:line-through;margin-bottom:2px">'+fmt(addon.wasPrice)+'</div>'
@@ -546,14 +542,14 @@ function buildAddons(){
        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(32px,3.5vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
        +'</div>';
 
-    card.innerHTML='<div class="addon-toggle-inner" style="pointer-events:none">'
-      +'<div class="toggle-switch" style="pointer-events:none"><div class="toggle-knob"></div></div>'
-      +'<div class="addon-toggle-body" style="pointer-events:none">'
+    card.innerHTML='<div class="addon-toggle-inner">'
+      +'<button type="button" class="toggle-switch" onclick="window.IPtoggleAddon(\''+addon.id+'\')" style="cursor:pointer;background:none;border:none;padding:0;flex-shrink:0;margin-top:3px"><div class="toggle-knob"></div></button>'
+      +'<div class="addon-toggle-body">'
       +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
       +'<div class="addon-toggle-title">'+addon.icon+' '+addon.title+'</div>'
       +'<div class="addon-toggle-desc">'+addon.desc+'</div>'
       +'</div>'
-      +'<div style="flex-shrink:0;padding-left:20px;pointer-events:none">'+priceHtml+'</div>'
+      +'<div style="flex-shrink:0;padding-left:20px">'+priceHtml+'</div>'
       +'</div>'
       +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
         +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $75 each</div>'
