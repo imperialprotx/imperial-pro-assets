@@ -1,4 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329a)
+console.log('[Imperial Pro Scheduler] build 329a loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
