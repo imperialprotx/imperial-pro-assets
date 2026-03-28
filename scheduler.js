@@ -901,6 +901,7 @@ window.IPvalidateDates=validateDates;
   st.id='addon-green-style';
   st.textContent='.addon-toggle.on{border-color:rgba(110,207,149,.35)!important}'
     +'.addon-toggle.on .toggle-switch{background:#3a9e5f!important;border-color:#6ecf95!important}'
+    +'.addon-toggle.on .toggle-knob{left:23px!important;background:#fafaf8!important}'
     +'.addon-toggle.on .addon-toggle-eye{color:#6ecf95!important}';
   document.head.appendChild(st);
 })();
