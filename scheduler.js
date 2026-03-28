@@ -216,8 +216,57 @@ function togglePkgDetails(pkg){
     arrow.style.transition='transform .3s ease';
   }
   if(btn){
-    var span=btn.querySelector('span:first-child');
-    if(span)span.textContent=isOpen?'See Details':'Hide Details';
+    var spans=btn.querySelectorAll('span');
+    if(spans[0])spans[0].textContent=isOpen?'See Details':'Hide Details';
+  }
+}
+
+function choosePkg(pkg){
+  // Select the package AND scroll — triggered only by the choose button
+  S.resalePkg=pkg;
+  applyPkgSelection(pkg);
+  onDetailsChange();
+  setTimeout(function(){
+    var el=document.getElementById('price-preview');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  },200);
+  setTimeout(function(){scrollToBtn('next-4');},1400);
+}
+
+function selectPkg(pkg){
+  // Select only — no scroll (used by card header click)
+  S.resalePkg=pkg;
+  applyPkgSelection(pkg);
+  onDetailsChange();
+}
+
+function applyPkgSelection(pkg){
+  var core=document.getElementById('pkg-core');
+  var pro=document.getElementById('pkg-pro');
+  var coreChk=document.getElementById('core-choose-btn');
+  var proChk=document.getElementById('pro-choose-btn');
+  var coreChosen=document.getElementById('core-chosen-badge');
+  var proChosen=document.getElementById('pro-chosen-badge');
+  if(!core||!pro)return;
+
+  if(pkg==='core'){
+    core.style.borderColor='#6ecf95';
+    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
+    pro.style.borderColor='#c8531a';
+    pro.style.boxShadow='none';
+    if(coreChk)coreChk.style.display='none';
+    if(coreChosen)coreChosen.style.display='flex';
+    if(proChk)proChk.style.display='flex';
+    if(proChosen)proChosen.style.display='none';
+  } else {
+    pro.style.borderColor='#6ecf95';
+    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
+    core.style.borderColor='rgba(110,140,180,.35)';
+    core.style.boxShadow='none';
+    if(proChk)proChk.style.display='none';
+    if(proChosen)proChosen.style.display='flex';
+    if(coreChk)coreChk.style.display='flex';
+    if(coreChosen)coreChosen.style.display='none';
   }
 }
 
@@ -276,34 +325,29 @@ function selectPkg(pkg){
 function applyPkgSelection(pkg){
   var core=document.getElementById('pkg-core');
   var pro=document.getElementById('pkg-pro');
-  var coreLabel=document.getElementById('core-select-label');
-  var coreBadge=document.getElementById('core-selected-badge');
-  var proLabel=document.getElementById('pro-select-label');
-  var proBadge=document.getElementById('pro-selected-badge');
+  var coreChk=document.getElementById('core-choose-btn');
+  var proChk=document.getElementById('pro-choose-btn');
+  var coreChosen=document.getElementById('core-chosen-badge');
+  var proChosen=document.getElementById('pro-chosen-badge');
   if(!core||!pro)return;
-
   if(pkg==='core'){
     core.style.borderColor='#6ecf95';
     core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    core.style.opacity='1';
-    pro.style.borderColor='rgba(200,83,26,.3)';
+    pro.style.borderColor='#c8531a';
     pro.style.boxShadow='none';
-    pro.style.opacity='.65';
-    if(coreLabel)coreLabel.style.display='none';
-    if(coreBadge)coreBadge.style.display='block';
-    if(proLabel)proLabel.style.display='block';
-    if(proBadge)proBadge.style.display='none';
+    if(coreChk)coreChk.style.display='none';
+    if(coreChosen)coreChosen.style.display='flex';
+    if(proChk)proChk.style.display='flex';
+    if(proChosen)proChosen.style.display='none';
   } else {
     pro.style.borderColor='#6ecf95';
     pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    pro.style.opacity='1';
-    core.style.borderColor='rgba(110,140,180,.2)';
+    core.style.borderColor='rgba(110,140,180,.35)';
     core.style.boxShadow='none';
-    core.style.opacity='.7';
-    if(proLabel)proLabel.style.display='none';
-    if(proBadge)proBadge.style.display='block';
-    if(coreLabel)coreLabel.style.display='block';
-    if(coreBadge)coreBadge.style.display='none';
+    if(proChk)proChk.style.display='none';
+    if(proChosen)proChosen.style.display='flex';
+    if(coreChk)coreChk.style.display='flex';
+    if(coreChosen)coreChosen.style.display='none';
   }
 }
 
@@ -988,7 +1032,8 @@ function claimDiscount(){
 window.IPgoStep             = goStep;
 window.IPstartOver          = startOver;
 window.IPselectPkg          = selectPkg;
-window.IPtogglePkgDetails    = togglePkgDetails;
+window.IPchoosePkg          = choosePkg;
+window.IPtogglePkgDetails   = togglePkgDetails;
 window.IPtoggleSurveyInfo   = toggleSurveyInfo;
 window.IPpickPropertyType   = pickPropertyType;
 window.IPpickRole           = pickRole;
