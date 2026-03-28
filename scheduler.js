@@ -1,5 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329a)
-console.log('[Imperial Pro Scheduler] build 329a loaded');
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329b)
+console.log('[Imperial Pro Scheduler] build 329b loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
@@ -205,25 +205,6 @@ function buildResaleSlider(){
   applyPkgSelection('pro');
 }
 
-function togglePkgDetails(pkg){
-  var panel=document.getElementById(pkg+'-details');
-  var arrow=document.getElementById(pkg+'-expand-arrow');
-  var btn=document.getElementById(pkg+'-expand-btn');
-  if(!panel)return;
-  var isOpen=panel.classList.contains('open');
-  panel.classList.toggle('open',!isOpen);
-  if(arrow){
-    arrow.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
-    arrow.style.transition='transform .3s ease';
-  }
-  if(btn){
-    var spans=btn.querySelectorAll('span');
-    if(spans[0])spans[0].textContent=isOpen?'See Details':'Hide Details';
-  }
-}
-
-function choosePkg(pkg){ selectPkg(pkg); }
-
 function toggleSurveyInfo(e){
   if(e){e.stopPropagation();e.preventDefault();}
   var panel=document.getElementById('pkg-info-panel');
@@ -268,6 +249,17 @@ function agentReferredToggle(isYes){
   if(nBtn)nBtn.style.cssText=!isYes?activeStyle:inactiveStyle;
 }
 
+function togglePkgDetails(pkg){
+  var panel=document.getElementById(pkg+'-details');
+  var arrow=document.getElementById(pkg+'-expand-arrow');
+  var btn=document.getElementById(pkg+'-expand-btn');
+  if(!panel)return;
+  var isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  if(arrow){arrow.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';arrow.style.transition='transform .3s ease';}
+  if(btn){var s=btn.querySelector('span:first-child');if(s)s.textContent=isOpen?'See Full Details':'Hide Details';}
+}
+
 function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
@@ -279,12 +271,12 @@ function selectPkg(pkg){
 function applyPkgSelection(pkg){
   var core=document.getElementById('pkg-core');
   var pro=document.getElementById('pkg-pro');
-  var coreSw=document.getElementById('core-sw');
-  var proSw=document.getElementById('pro-sw');
   var coreLabel=document.getElementById('core-select-label');
   var coreBadge=document.getElementById('core-selected-badge');
   var proLabel=document.getElementById('pro-select-label');
   var proBadge=document.getElementById('pro-selected-badge');
+  var coreSw=document.getElementById('core-sw');
+  var proSw=document.getElementById('pro-sw');
   if(!core||!pro)return;
   function setSw(sw,on){
     if(!sw)return;
@@ -293,14 +285,14 @@ function applyPkgSelection(pkg){
     else{sw.style.background='rgba(255,255,255,.1)';sw.style.borderColor='rgba(255,255,255,.15)';if(k){k.style.left='3px';k.style.background='rgba(255,255,255,.4)';}}
   }
   if(pkg==='core'){
-    core.style.borderColor='#6ecf95';core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    pro.style.borderColor='#c8531a';pro.style.boxShadow='none';
+    core.style.borderColor='#6ecf95';core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';core.style.opacity='1';
+    pro.style.borderColor='rgba(200,83,26,.3)';pro.style.boxShadow='none';pro.style.opacity='.65';
     setSw(coreSw,true);setSw(proSw,false);
     if(coreLabel)coreLabel.style.display='none';if(coreBadge)coreBadge.style.display='block';
     if(proLabel)proLabel.style.display='block';if(proBadge)proBadge.style.display='none';
   } else {
-    pro.style.borderColor='#6ecf95';pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    core.style.borderColor='rgba(110,140,180,.35)';core.style.boxShadow='none';
+    pro.style.borderColor='#6ecf95';pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';pro.style.opacity='1';
+    core.style.borderColor='rgba(110,140,180,.2)';core.style.boxShadow='none';core.style.opacity='.7';
     setSw(proSw,true);setSw(coreSw,false);
     if(proLabel)proLabel.style.display='none';if(proBadge)proBadge.style.display='block';
     if(coreLabel)coreLabel.style.display='block';if(coreBadge)coreBadge.style.display='none';
@@ -387,7 +379,7 @@ function pickFoundation(f){
   onDetailsChange();
   // For resale, scroll to package cards. For others, scroll to next-4
   if(S.service==='resale'){
-    setTimeout(function(){scrollToEl('pkg-cards-wrap');},400);
+    setTimeout(function(){scrollToEl('pkg-cards-wrap');},200);
   } else {
     scrollToBtn('next-4');
   }
@@ -988,8 +980,7 @@ function claimDiscount(){
 window.IPgoStep             = goStep;
 window.IPstartOver          = startOver;
 window.IPselectPkg          = selectPkg;
-window.IPchoosePkg          = choosePkg;
-window.IPtogglePkgDetails   = togglePkgDetails;
+window.IPtogglePkgDetails    = togglePkgDetails;
 window.IPtoggleSurveyInfo   = toggleSurveyInfo;
 window.IPpickPropertyType   = pickPropertyType;
 window.IPpickRole           = pickRole;
