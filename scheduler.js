@@ -258,25 +258,23 @@ function applyPkgSelection(pkg){
   if(!core||!pro)return;
 
   if(pkg==='core'){
-    // Core selected
     core.style.borderColor='#6ecf95';
-    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.25)';
+    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
     core.style.opacity='1';
-    pro.style.borderColor='rgba(10,22,40,.15)';
+    pro.style.borderColor='rgba(200,83,26,.3)';
     pro.style.boxShadow='none';
-    pro.style.opacity='.55';
+    pro.style.opacity='.65';
     if(coreLabel)coreLabel.style.display='none';
     if(coreBadge)coreBadge.style.display='block';
     if(proLabel)proLabel.style.display='block';
     if(proBadge)proBadge.style.display='none';
   } else {
-    // Pro selected
     pro.style.borderColor='#6ecf95';
-    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.25)';
+    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
     pro.style.opacity='1';
     core.style.borderColor='rgba(110,140,180,.2)';
     core.style.boxShadow='none';
-    core.style.opacity='.55';
+    core.style.opacity='.7';
     if(proLabel)proLabel.style.display='none';
     if(proBadge)proBadge.style.display='block';
     if(coreLabel)coreLabel.style.display='block';
@@ -685,7 +683,20 @@ function renderSummary(){
   var de=document.getElementById('summary-detail');if(de)de.textContent=calc.detail;
   var le=document.getElementById('summary-lines');
   if(le)le.innerHTML=(calc.lines||[]).map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
-  var te=document.getElementById('summary-total');if(te)te.textContent=calc.total!=null?fmt(calc.total):'--';
+  var te=document.getElementById('summary-total');
+  if(te){
+    te.textContent=calc.total!=null?fmt(calc.total):'--';
+    te.style.animation='none';
+    te.offsetHeight; // force reflow
+    te.style.animation='totalpulse .4s ease';
+  }
+  // Also pulse step-4 total
+  var pt=document.getElementById('pc-total');
+  if(pt){
+    pt.style.animation='none';
+    pt.offsetHeight;
+    pt.style.animation='totalpulse .4s ease';
+  }
   renderFinalSummary();
 }
 
