@@ -91,7 +91,7 @@ function scrollToEl(id){
 }
 function scrollToBtn(id){
   var btn=document.getElementById(id);
-  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},150);
+  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'nearest'});},150);
 }
 
 function pickPropertyType(t){
@@ -524,7 +524,7 @@ function buildAddons(){
        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(32px,3.5vw,44px);font-weight:700;color:#6ecf95;line-height:1;letter-spacing:-.02em">'+fmt(addon.addPrice)+'</div>'
        +'</div>';
 
-    card.innerHTML='<div class="addon-toggle-inner" id="atog-'+addon.id+'-inner" onclick="window.IPtoggleAddon(\''+addon.id+'\')">'
+    card.innerHTML='<div class="addon-toggle-inner" onclick="window.IPtoggleAddon(\''+addon.id+'\')">'
       +'<div class="toggle-switch"><div class="toggle-knob"></div></div>'
       +'<div class="addon-toggle-body">'
       +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
@@ -548,12 +548,8 @@ function buildAddons(){
 
 function toggleAddon(id){
   S.addons[id]=!S.addons[id];
-  // Toggle .on on outer wrapper (for JS-injected cards)
   var card=document.getElementById('atog-'+id);
   if(card)card.classList.toggle('on',S.addons[id]);
-  // Toggle .on on inner div (for static HTML fallback cards)
-  var inner=document.getElementById('atog-'+id+'-inner');
-  if(inner)inner.classList.toggle('on',S.addons[id]);
   if(id==='mold'){
     var esWrap=document.getElementById('extra-samples-wrap');
     if(esWrap)esWrap.style.display=S.addons.mold?'block':'none';
@@ -951,31 +947,27 @@ window.IPvalidateDates      = validateDates;
 updateProgress(1);
 
 // ── DELEGATED EVENT LISTENERS ─────────────────────────────
-// Catches all clicks/touches at document level - bypasses all inline onclick restrictions
 (function(){
-  function closest(el, id){
+  function findAddonCard(el){
+    // Walk up from click target to find an element with id starting "atog-"
     while(el && el !== document){
-      if(el.id === id) return el;
-      el = el.parentElement;
+      if(el.id && el.id.indexOf('atog-')===0) return el.id.replace('atog-','');
+      el=el.parentElement;
     }
     return null;
   }
-
-  function handle(e){
-    var target = e.target;
-
-    // Walk up the DOM to find a clickable addon card
-    var mold = closest(target, 'atog-mold-inner') || closest(target, 'atog-mold');
-    var wdi  = closest(target, 'atog-wdi-inner')  || closest(target, 'atog-wdi');
-    var rep  = closest(target, 'atog-repair-inner')|| closest(target, 'atog-repair');
-    var promo= closest(target, 'promo-discount-card');
-
-    if(mold){ e.preventDefault(); window.IPtoggleAddon('mold'); return; }
-    if(wdi){  e.preventDefault(); window.IPtoggleAddon('wdi');  return; }
-    if(rep){  e.preventDefault(); window.IPtoggleAddon('repair'); return; }
-    if(promo){ e.preventDefault(); window.IPclaimDiscount(); return; }
+  function findPromo(el){
+    while(el && el !== document){
+      if(el.id==='promo-discount-card') return true;
+      el=el.parentElement;
+    }
+    return false;
   }
-
-  document.addEventListener('click',     handle, true);
-  document.addEventListener('touchend',  handle, {capture:true, passive:false});
+  function handle(e){
+    var id=findAddonCard(e.target);
+    if(id){ e.preventDefault(); window.IPtoggleAddon(id); return; }
+    if(findPromo(e.target)){ e.preventDefault(); window.IPclaimDiscount(); return; }
+  }
+  document.addEventListener('click',   handle, true);
+  document.addEventListener('touchend',handle, {capture:true,passive:false});
 })();
