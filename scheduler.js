@@ -87,11 +87,11 @@ function highlightCard(ids, selectedId){
 
 function scrollToEl(id){
   var el=document.getElementById(id);
-  if(el)setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},150);
+  if(el)setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},300);
 }
 function scrollToBtn(id){
   var btn=document.getElementById(id);
-  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},150);
+  if(btn)setTimeout(function(){btn.scrollIntoView({behavior:'smooth',block:'center'});},300);
 }
 
 function pickPropertyType(t){
@@ -229,8 +229,8 @@ function choosePkg(pkg){
   setTimeout(function(){
     var el=document.getElementById('price-preview');
     if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
-  },200);
-  setTimeout(function(){scrollToBtn('next-4');},1400);
+  },500);
+  setTimeout(function(){scrollToBtn('next-4');},2400);
 }
 
 function selectPkg(pkg){
@@ -288,8 +288,8 @@ function selectPkg(pkg){
   S.resalePkg=pkg;
   applyPkgSelection(pkg);
   onDetailsChange();
-  setTimeout(function(){var el=document.getElementById('price-preview');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},200);
-  setTimeout(function(){scrollToBtn('next-4');},1400);
+  setTimeout(function(){var el=document.getElementById('price-preview');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},500);
+  setTimeout(function(){scrollToBtn('next-4');},2400);
 }
 
 function applyPkgSelection(pkg){
@@ -415,7 +415,7 @@ function pickFoundation(f){
   onDetailsChange();
   // For resale, scroll to package cards. For others, scroll to next-4
   if(S.service==='resale'){
-    setTimeout(function(){scrollToEl('pkg-cards-wrap');},200);
+    setTimeout(function(){scrollToEl('pkg-cards-wrap');},400);
   } else {
     scrollToBtn('next-4');
   }
