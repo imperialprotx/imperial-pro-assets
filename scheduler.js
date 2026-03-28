@@ -114,21 +114,21 @@ var SERVICE_DEFS={
     {id:'resale',icon:'🏠',title:'Resale Home Inspection',desc:'Buying an existing home. Core includes full TREC inspection, infrared thermal imaging, and moisture testing. Upgrade to Pro to add a ZIPLEVEL precision foundation survey — the standard for Fort Bend County.',tag:'✦ Core · Pro · Add-ons'},
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'Building with a builder. ICC-certified inspections at every critical stage. The only ICC-certified inspector in Fort Bend County.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Foundation evaluation only. Level A is a thorough visual assessment. Level B is a full ZIPLEVEL precision survey with CAD drawing — the same tool foundation engineers use.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Standalone Mold / IAQ Inspection',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ IAQ Sampling · Assessment'},
+    {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ Air Quality Testing · Assessment'},
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'Performed by our inspector — TDA-licensed wood-destroying insect inspection. Required by most lenders. Official Texas WDI report, same visit, no subcontractors.',tag:'✦ TDA Licensed · In-House'},
   ],
   homeowner:[
     {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural — plus a ZIPLEVEL® foundation elevation survey. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS · ZIPLEVEL® Survey'},
     {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment with spot elevation readings and drainage review, or Level B full ZIPLEVEL® precision survey with scaled CAD drawing.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Mold / IAQ Inspection',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ IAQ Sampling · Assessment'},
+    {id:'mold',icon:'🧪',title:'Mold &amp; Air Quality Testing',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ Air Quality Testing · Assessment'},
     {id:'termite',icon:'🪲',title:'WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.',tag:'✦ TDA Licensed'},
   ],
   agent:[
     {id:'resale',icon:'🏠',title:'Resale Home Inspection',desc:'For your buyer purchasing an existing home. Core or Pro — both include infrared imaging and our Repair Request Builder formatted for seller negotiations.',tag:'✦ Core · Pro · Add-ons'},
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'For your buyer building with a builder. ICC-certified at every stage — Fort Bend County\'s only ICC-certified inspector.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A or Level B precision survey — powerful negotiating data for your clients.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Standalone Mold / IAQ Inspection',desc:'Certified air and surface sampling. One visit, full written report.',tag:'✦ IAQ Sampling · Assessment'},
+    {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Certified air and surface sampling. One visit, full written report.',tag:'✦ Air Quality Testing · Assessment'},
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed WDI inspection. Required by most lenders.',tag:'✦ TDA Licensed'},
   ]
 };
@@ -447,8 +447,8 @@ function calcBase(){
     price=fbase+crawlFee();
   } else if(svc==='mold'){
     if(!S.moldType)return{price:null,lines:[],label:'',detail:'',custom:false};
-    if(S.moldType==='iaq'){price=375;label='Mold IAQ Sampling';detail='3 samples · Certified lab · Written report';lines.push({name:'IAQ Sampling (3 samples)',val:fmt(375)});}
-    else{var ab=sqft<=2000?475:sqft<=3000?525:sqft<=4000?575:sqft<=5000?625:sqft<=6000?675:null;if(!ab)return{price:null,lines:[],label:'',detail:'',custom:true};price=ab;label='Mold Assessment + IAQ Sampling';detail='Physical inspection + 3 air samples + certified lab';lines.push({name:'Mold Assessment + 3 IAQ Samples',val:fmt(ab)});}
+    if(S.moldType==='iaq'){price=375;label='Mold &amp; Air Quality Testing';detail='3 air samples · Certified lab · Written report';lines.push({name:'Air Quality Sampling (3 samples)',val:fmt(375)});}
+    else{var ab=sqft<=2000?475:sqft<=3000?525:sqft<=4000?575:sqft<=5000?625:sqft<=6000?675:null;if(!ab)return{price:null,lines:[],label:'',detail:'',custom:true};price=ab;label='Mold Assessment + Air Quality Testing';detail='Physical inspection + 3 air samples + certified lab';lines.push({name:'Mold Assessment + 3 Air Quality Samples',val:fmt(ab)});}
   } else if(svc==='termite'){
     var tbase=lookup(WDI_STANDALONE,sqft);if(!tbase)return{price:null,lines:[],label:'',detail:'',custom:true};
     price=tbase;label='WDI Termite Inspection';detail='TDA-licensed · Official WDI report';
@@ -473,7 +473,7 @@ function calcTotal(){
 
   var phaseAllowsAddon=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
   if(S.addons.mold&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
-    lines.push({name:'Mold IAQ Sampling (3 samples)',val:fmt(275)});
+    lines.push({name:'Mold &amp; Air Quality Testing (3 samples)',val:fmt(275)});
     lines.push({name:'Standalone $375 — you save',val:fmt(100),cls:'discount'});
     total+=275;
     if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*75;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
@@ -506,7 +506,7 @@ function buildAddons(){
 
   // Mold: resale, qualifying phases, prelisting
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
-    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; IAQ Air Sampling',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
+    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
   }
   // WDI: phases and prelisting ONLY — not resale (Pro already bundles it, Core clients had their choice)
   var wdiShows=phaseHasMold||svc==='prelisting';
@@ -745,12 +745,12 @@ function toggleDate3(){
 function buildSubmissionData(){
   var calc=calcTotal();
   var roleLabels={homebuyer:'Homebuyer',homeowner:'Homeowner',agent:'Real Estate Agent'};
-  var svcLabels={resale:'Resale Home Inspection',phase:'New Construction Phase Inspection',foundation:'Standalone Foundation Inspection',mold:'Mold / IAQ Inspection',termite:'WDI Termite Inspection',prelisting:'Pre-Listing Inspection (MEPS)',warranty:'Builder Warranty Inspection (MEPS)'};
+  var svcLabels={resale:'Resale Home Inspection',phase:'New Construction Phase Inspection',foundation:'Standalone Foundation Inspection',mold:'Mold &amp; Air Quality Testing',termite:'WDI Termite Inspection',prelisting:'Pre-Listing Inspection (MEPS)',warranty:'Builder Warranty Inspection (MEPS)'};
   var phaseLabels={1:'Phase 1 - Pre-Pour Foundation',2:'Phase 2 - Pre-Drywall Framing',3:'Phase 3 - Final New Construction',4:'Phase 4 - Builder Warranty (MEPS)'};
   var pkgLabels={core:'Core (Visual Foundation Assessment)',pro:'Pro (ZIPLEVEL Precision Survey)'};
   var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
   var addonList=[];
-  if(S.addons.mold){var ms='Mold IAQ Sampling - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $75 each';addonList.push(ms);}
+  if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $75 each';addonList.push(ms);}
   if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.repair)addonList.push('Repair Estimate Report - $149');
 
