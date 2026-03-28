@@ -240,36 +240,6 @@ function selectPkg(pkg){
   onDetailsChange();
 }
 
-function applyPkgSelection(pkg){
-  var core=document.getElementById('pkg-core');
-  var pro=document.getElementById('pkg-pro');
-  var coreChk=document.getElementById('core-choose-btn');
-  var proChk=document.getElementById('pro-choose-btn');
-  var coreChosen=document.getElementById('core-chosen-badge');
-  var proChosen=document.getElementById('pro-chosen-badge');
-  if(!core||!pro)return;
-
-  if(pkg==='core'){
-    core.style.borderColor='#6ecf95';
-    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    pro.style.borderColor='#c8531a';
-    pro.style.boxShadow='none';
-    if(coreChk)coreChk.style.display='none';
-    if(coreChosen)coreChosen.style.display='flex';
-    if(proChk)proChk.style.display='flex';
-    if(proChosen)proChosen.style.display='none';
-  } else {
-    pro.style.borderColor='#6ecf95';
-    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
-    core.style.borderColor='rgba(110,140,180,.35)';
-    core.style.boxShadow='none';
-    if(proChk)proChk.style.display='none';
-    if(proChosen)proChosen.style.display='flex';
-    if(coreChk)coreChk.style.display='flex';
-    if(coreChosen)coreChosen.style.display='none';
-  }
-}
-
 function toggleSurveyInfo(e){
   if(e){e.stopPropagation();e.preventDefault();}
   var panel=document.getElementById('pkg-info-panel');
@@ -325,29 +295,46 @@ function selectPkg(pkg){
 function applyPkgSelection(pkg){
   var core=document.getElementById('pkg-core');
   var pro=document.getElementById('pkg-pro');
-  var coreChk=document.getElementById('core-choose-btn');
-  var proChk=document.getElementById('pro-choose-btn');
-  var coreChosen=document.getElementById('core-chosen-badge');
-  var proChosen=document.getElementById('pro-chosen-badge');
+  var coreBtn=document.getElementById('core-choose-btn');
+  var proBtn=document.getElementById('pro-choose-btn');
+  var coreChk=document.getElementById('core-checkbox');
+  var proChk=document.getElementById('pro-checkbox');
+  var coreLabel=document.getElementById('core-choose-label');
+  var proLabel=document.getElementById('pro-choose-label');
   if(!core||!pro)return;
+
   if(pkg==='core'){
+    // Core glows green
     core.style.borderColor='#6ecf95';
     core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
+    // Pro returns to normal orange border
     pro.style.borderColor='#c8531a';
     pro.style.boxShadow='none';
-    if(coreChk)coreChk.style.display='none';
-    if(coreChosen)coreChosen.style.display='flex';
-    if(proChk)proChk.style.display='flex';
-    if(proChosen)proChosen.style.display='none';
+    pro.style.opacity='1';
+    // Core choose button turns green
+    if(coreBtn){coreBtn.style.background='rgba(110,207,149,.15)';coreBtn.style.borderTopColor='#6ecf95';coreBtn.style.color='#6ecf95';}
+    if(coreChk){coreChk.style.borderColor='#6ecf95';coreChk.textContent='✓';}
+    if(coreLabel)coreLabel.textContent='Core Selected';
+    // Pro choose button resets
+    if(proBtn){proBtn.style.background='#c8531a';proBtn.style.borderTopColor='#c8531a';proBtn.style.color='#fafaf8';}
+    if(proChk){proChk.style.borderColor='rgba(255,255,255,.7)';proChk.textContent='';}
+    if(proLabel)proLabel.textContent='Choose Pro';
   } else {
+    // Pro glows green
     pro.style.borderColor='#6ecf95';
     pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
+    // Core returns to normal blue border
     core.style.borderColor='rgba(110,140,180,.35)';
     core.style.boxShadow='none';
-    if(proChk)proChk.style.display='none';
-    if(proChosen)proChosen.style.display='flex';
-    if(coreChk)coreChk.style.display='flex';
-    if(coreChosen)coreChosen.style.display='none';
+    core.style.opacity='1';
+    // Pro choose button turns green
+    if(proBtn){proBtn.style.background='rgba(110,207,149,.15)';proBtn.style.borderTopColor='#6ecf95';proBtn.style.color='#6ecf95';}
+    if(proChk){proChk.style.borderColor='#6ecf95';proChk.textContent='✓';}
+    if(proLabel)proLabel.textContent='Pro Selected';
+    // Core choose button resets
+    if(coreBtn){coreBtn.style.background='rgba(110,140,180,.15)';coreBtn.style.borderTopColor='#7eb8f7';coreBtn.style.color='#7eb8f7';}
+    if(coreChk){coreChk.style.borderColor='#7eb8f7';coreChk.textContent='';}
+    if(coreLabel)coreLabel.textContent='Choose Core';
   }
 }
 
