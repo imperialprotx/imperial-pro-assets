@@ -516,7 +516,7 @@ function buildAddons(){
   }
   // Repair: resale only, $130 (save $19 vs standalone $149)
   if(svc==='resale'){
-    addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with estimated minimum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.<br><span style="display:block;margin-top:10px;font-size:13px;color:rgba(184,154,110,.7);font-family:\'Montserrat\',sans-serif;letter-spacing:.1em;text-transform:uppercase">Includes: Executive Summary · Deficiency Schedule · Condition Assessment Summary · RUL Estimates</span>',addPrice:130,wasPrice:149,save:19});
+    addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with estimated minimum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.<br><span style="display:block;margin-top:10px;font-size:15px;color:rgba(184,154,110,.85);font-family:\'Crimson Pro\',serif;font-style:italic;line-height:1.6">Includes: Executive Summary · Deficiency Schedule · Condition Assessment Summary · RUL Estimates</span>',addPrice:130,wasPrice:149,save:19});
   }
 
   var noMsg=document.getElementById('no-addons-msg');
