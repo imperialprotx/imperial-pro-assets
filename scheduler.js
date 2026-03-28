@@ -221,24 +221,7 @@ function togglePkgDetails(pkg){
   }
 }
 
-function choosePkg(pkg){
-  // Select the package AND scroll — triggered only by the choose button
-  S.resalePkg=pkg;
-  applyPkgSelection(pkg);
-  onDetailsChange();
-  setTimeout(function(){
-    var el=document.getElementById('price-preview');
-    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
-  },500);
-  setTimeout(function(){scrollToBtn('next-4');},2400);
-}
-
-function selectPkg(pkg){
-  // Select only — no scroll (used by card header click)
-  S.resalePkg=pkg;
-  applyPkgSelection(pkg);
-  onDetailsChange();
-}
+function choosePkg(pkg){ selectPkg(pkg); }
 
 function toggleSurveyInfo(e){
   if(e){e.stopPropagation();e.preventDefault();}
@@ -295,43 +278,31 @@ function selectPkg(pkg){
 function applyPkgSelection(pkg){
   var core=document.getElementById('pkg-core');
   var pro=document.getElementById('pkg-pro');
-  var coreSw=document.getElementById('core-toggle-switch');
-  var proSw=document.getElementById('pro-toggle-switch');
+  var coreSw=document.getElementById('core-sw');
+  var proSw=document.getElementById('pro-sw');
+  var coreLabel=document.getElementById('core-select-label');
+  var coreBadge=document.getElementById('core-selected-badge');
+  var proLabel=document.getElementById('pro-select-label');
+  var proBadge=document.getElementById('pro-selected-badge');
   if(!core||!pro)return;
-
-  // Helper to set toggle state
-  function setToggle(sw, on){
+  function setSw(sw,on){
     if(!sw)return;
-    if(on){
-      sw.style.background='#3a9e5f';
-      sw.style.borderColor='#6ecf95';
-      sw.style.border='1px solid #6ecf95';
-    } else {
-      sw.style.background='rgba(255,255,255,.1)';
-      sw.style.borderColor='rgba(255,255,255,.15)';
-      sw.style.border='1px solid rgba(255,255,255,.15)';
-    }
-    var knob=sw.querySelector('div');
-    if(knob){
-      knob.style.left=on?'23px':'3px';
-      knob.style.background=on?'#fafaf8':'rgba(255,255,255,.4)';
-    }
+    var k=sw.querySelector('div');
+    if(on){sw.style.background='#3a9e5f';sw.style.borderColor='#6ecf95';if(k){k.style.left='23px';k.style.background='#fafaf8';}}
+    else{sw.style.background='rgba(255,255,255,.1)';sw.style.borderColor='rgba(255,255,255,.15)';if(k){k.style.left='3px';k.style.background='rgba(255,255,255,.4)';}}
   }
-
   if(pkg==='core'){
-    core.style.borderColor='rgba(110,207,149,.6)';
-    core.style.boxShadow='0 0 0 3px rgba(110,207,149,.18)';
-    pro.style.borderColor='#c8531a';
-    pro.style.boxShadow='none';
-    setToggle(coreSw, true);
-    setToggle(proSw, false);
+    core.style.borderColor='#6ecf95';core.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
+    pro.style.borderColor='#c8531a';pro.style.boxShadow='none';
+    setSw(coreSw,true);setSw(proSw,false);
+    if(coreLabel)coreLabel.style.display='none';if(coreBadge)coreBadge.style.display='block';
+    if(proLabel)proLabel.style.display='block';if(proBadge)proBadge.style.display='none';
   } else {
-    pro.style.borderColor='rgba(110,207,149,.6)';
-    pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.18)';
-    core.style.borderColor='rgba(110,140,180,.35)';
-    core.style.boxShadow='none';
-    setToggle(proSw, true);
-    setToggle(coreSw, false);
+    pro.style.borderColor='#6ecf95';pro.style.boxShadow='0 0 0 3px rgba(110,207,149,.2)';
+    core.style.borderColor='rgba(110,140,180,.35)';core.style.boxShadow='none';
+    setSw(proSw,true);setSw(coreSw,false);
+    if(proLabel)proLabel.style.display='none';if(proBadge)proBadge.style.display='block';
+    if(coreLabel)coreLabel.style.display='block';if(coreBadge)coreBadge.style.display='none';
   }
 }
 
