@@ -1,5 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329b)
-console.log('[Imperial Pro Scheduler] build 329b loaded');
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329c)
+console.log('[Imperial Pro Scheduler] build 329c loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
@@ -491,11 +491,11 @@ function calcTotal(){
     lines.push({name:'Mold &amp; Air Quality Testing (3 samples)',val:fmt(275)});
     lines.push({name:'Standalone $375 — you save',val:fmt(100),cls:'discount'});
     total+=275;
-    if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*75;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
+    if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*50;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
   if(svc==='mold'&&S.addons.extraSamples>0){
-    var esc=S.addons.extraSamples*75;
-    lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $75 each',val:'+'+fmt(esc)});
+    var esc=S.addons.extraSamples*50;
+    lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $50 each',val:'+'+fmt(esc)});
     total+=esc;
   }
   // WDI addon only for Core resale, phases, prelisting (Pro has WDI bundled)
@@ -523,6 +523,10 @@ function buildAddons(){
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
     addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
   }
+  // Extra samples: standalone mold gets this as its only addon
+  if(svc==='mold'){
+    addons.push({id:'mold',icon:'🧪',eye:'Certified Lab · Same Visit',title:'Additional Air Quality Samples',desc:'Your base service includes 3 samples. Add more to test additional rooms, floors, or areas of concern — each sample includes certified lab analysis. $50 per additional sample.',addPrice:0,wasPrice:0,save:0,extraOnly:true});
+  }
   // WDI: phases and prelisting ONLY — not resale (Pro already bundles it, Core clients had their choice)
   var wdiShows=phaseHasMold||svc==='prelisting';
   if(wdiShows){
@@ -544,6 +548,28 @@ function buildAddons(){
   addons.forEach(function(addon){
     var on=S.addons[addon.id];
     var card=document.createElement('div');
+
+    // extraOnly: standalone mold — show just the stepper, no toggle
+    if(addon.extraOnly){
+      card.className='addon-toggle on';
+      card.id='atog-mold-extra';
+      card.innerHTML='<div style="padding:18px 20px 6px 20px">'
+        +'<div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(184,154,110,.6);margin-bottom:6px">'+addon.eye+'</div>'
+        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(20px,2vw,26px);font-weight:700;color:#fafaf8;margin-bottom:6px">'+addon.icon+' '+addon.title+'</div>'
+        +'<div style="font-family:\'Crimson Pro\',serif;font-size:15px;color:rgba(250,250,248,.65);line-height:1.6;margin-bottom:14px">'+addon.desc+'</div>'
+        +'</div>'
+        +'<div id="extra-samples-wrap" style="display:block;padding:14px 20px 18px 20px;border-top:1px solid rgba(184,154,110,.1)">'
+        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Additional samples — $50 each</div>'
+        +'<div style="display:flex;align-items:center;gap:14px">'
+        +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">-</button>'
+        +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif;font-size:28px;font-weight:600;color:#fafaf8;min-width:32px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
+        +'<button onclick="window.IPchangeExtraSamples(1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">+</button>'
+        +'<span style="font-size:15px;color:rgba(250,250,248,.4)">extra samples (3 already included)</span>'
+        +'</div></div>';
+      wrap.appendChild(card);
+      return;
+    }
+
     card.className='addon-toggle'+(on?' on':'');
     card.id='atog-'+addon.id;
 
@@ -567,7 +593,7 @@ function buildAddons(){
       +'<div style="flex-shrink:0;padding-left:20px;pointer-events:none">'+priceHtml+'</div>'
       +'</div>'
       +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
-        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $75 each</div>'
+        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $50 each</div>'
         +'<div style="display:flex;align-items:center;gap:14px">'
         +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">-</button>'
         +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif;font-size:28px;font-weight:600;color:#fafaf8;min-width:32px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
@@ -778,7 +804,7 @@ function buildSubmissionData(){
   var pkgLabels={core:'Core (Visual Foundation Assessment)',pro:'Pro (ZIPLEVEL Precision Survey)'};
   var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
   var addonList=[];
-  if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $75 each';addonList.push(ms);}
+  if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $50 each';addonList.push(ms);}
   if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.repair)addonList.push('Repair Estimate Report - $149');
 
