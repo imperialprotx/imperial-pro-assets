@@ -355,7 +355,7 @@ function onDetailsChange(){
       else{badge.style.display='none';}
     }
     // Value stack
-    renderValueStack(S.service,S.resalePkg,S.phase);
+    if(S.service!=='sewer') renderValueStack(S.service,S.resalePkg,S.phase);
     var le=document.getElementById('pc-lines');
     if(le)le.innerHTML=calc.lines.map(function(l){return'<div class="pc-line'+(l.cls?' '+l.cls:'')+'"><span class="pc-line-name">'+l.name+'</span><span class="pc-line-val">'+l.val+'</span></div>';}).join('');
     var te2=document.getElementById('pc-total');if(te2)te2.textContent=fmt(calc.price);
@@ -617,7 +617,6 @@ function buildAddons(){
     card.innerHTML='<div class="addon-toggle-inner" style="cursor:default">'
       +'<button type="button" class="toggle-switch" style="cursor:pointer;background:none;border:none;padding:0;flex-shrink:0;margin-top:3px"><div class="toggle-knob"></div></button>'
       +'<div class="addon-toggle-body" style="pointer-events:none;cursor:default">'
-      +'<div class="addon-toggle-eye">'+addon.eye+'</div>'
       +'<div class="addon-toggle-title">'+addon.icon+' '+addon.title+'</div>'
       +'<div class="addon-toggle-desc">'+addon.desc+'</div>'
       +'</div>'
@@ -735,6 +734,7 @@ function getValueItems(svc, pkg, phase){
 function renderValueStack(svc, pkg, phase){
   var wrap=document.getElementById('pc-value-stack');
   if(!wrap)return;
+  if(svc==='sewer'){wrap.innerHTML='';return;}
   var items=getValueItems(svc,pkg,phase);
   wrap.innerHTML='<div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(184,154,110,.5);margin-bottom:12px">What\'s Included</div>';
   items.forEach(function(item,i){
