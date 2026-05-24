@@ -16,8 +16,8 @@ const PRELISTING=[{max:2000,p:450},{max:2500,p:475},{max:3000,p:500},{max:3500,p
 const WDI_STANDALONE=[{max:1500,p:175},{max:2000,p:195},{max:2500,p:215},{max:3000,p:235},{max:3500,p:255},{max:4000,p:275},{max:5000,p:300},{max:6000,p:325},{max:Infinity,p:null}];
 const WDI_ADDON_CORE=[{max:1500,p:115},{max:2000,p:125},{max:2500,p:135},{max:3000,p:145},{max:3500,p:155},{max:4000,p:165},{max:5000,p:175},{max:6000,p:185},{max:Infinity,p:null}];
 const WDI_ADDON_PRO=75;
-const SEWER_STANDALONE=250;
-const SEWER_ADDON=150;
+const SEWER_STANDALONE=350;
+const SEWER_ADDON=250;
 
 const AGE_SURCHARGE=[{from:1977,to:9999,fee:0},{from:1967,to:1976,fee:25},{from:1957,to:1966,fee:35},{from:1947,to:1956,fee:50},{from:1937,to:1946,fee:75},{from:1927,to:1936,fee:100},{from:1917,to:1926,fee:135},{from:1907,to:1916,fee:250},{from:0,to:1906,fee:375}];
 const COUPONS={'JADI':{amount:25,label:'Promo Code JADI'},'SAVE25':{amount:25,label:'Promo Code SAVE25'},'REFERRAL':{amount:50,label:'Referral Discount'},'FAMILY':{amount:50,label:'Family Discount'}};
@@ -118,7 +118,7 @@ var SERVICE_DEFS={
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'Building with a builder. ICC-certified inspections at every critical stage. The only ICC-certified inspector in Fort Bend County.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Foundation evaluation only. Level A is a thorough visual assessment. Level B is a full ZIPLEVEL precision survey with CAD drawing — the same tool foundation engineers use.',tag:'✦ Level A · Level B'},
     {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ Air Quality Testing · Assessment'},
-    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line from cleanout to city tap. Documents root intrusion, pipe bellies, offset joints, cracks, and construction debris. Video recording delivered with report.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $250 Standalone · $150 Add-On to Any Inspection'},
+    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line from cleanout to city tap. Documents root intrusion, pipe bellies, offset joints, cracks, and construction debris. Video recording delivered with report.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On to Any Inspection'},
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'Performed by our inspector — TDA-licensed wood-destroying insect inspection. Required by most lenders. Official Texas WDI report, same visit, no subcontractors.',tag:'✦ TDA Licensed · In-House'},
   ],
   homeowner:[
@@ -126,7 +126,7 @@ var SERVICE_DEFS={
     {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment with spot elevation readings and drainage review, or Level B full ZIPLEVEL® precision survey with scaled CAD drawing.',tag:'✦ Level A · Level B'},
     {id:'mold',icon:'🧪',title:'Mold &amp; Air Quality Testing',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ Air Quality Testing · Assessment'},
-    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line. Documents root intrusion, pipe bellies, cracks, and blockages. Video recording delivered with report. Independent — no repairs sold.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $250 Standalone · $150 Add-On to Any Inspection'},
+    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line. Documents root intrusion, pipe bellies, cracks, and blockages. Video recording delivered with report. Independent — no repairs sold.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On to Any Inspection'},
     {id:'termite',icon:'🪲',title:'WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.',tag:'✦ TDA Licensed'},
   ],
   agent:[
@@ -134,7 +134,7 @@ var SERVICE_DEFS={
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'For your buyer building with a builder. ICC-certified at every stage — Fort Bend County\'s only ICC-certified inspector.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A or Level B precision survey — powerful negotiating data for your clients.',tag:'✦ Level A · Level B'},
     {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Certified air and surface sampling. One visit, full written report.',tag:'✦ Air Quality Testing · Assessment'},
-    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of the lateral sewer line. Flat $250 standalone, or $150 added to any home or foundation inspection. Independent — no repairs sold, no referral fees.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $250 Standalone · $150 Add-On'},
+    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of the lateral sewer line. Flat $350 standalone, or $250 added to any home or foundation inspection. Independent — no repairs sold, no referral fees.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On'},
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed WDI inspection. Required by most lenders.',tag:'✦ TDA Licensed'},
   ]
 };
@@ -529,7 +529,7 @@ function calcTotal(){
   var sewerAddonEligible=svc==='resale'||(svc==='phase'&&S.phase>=3)||svc==='warranty'||svc==='foundation'||svc==='prelisting';
   if(S.addons.sewer&&sewerAddonEligible){
     lines.push({name:'Sewer Scope Inspection',val:fmt(SEWER_ADDON)});
-    lines.push({name:'Standalone $250 — you save',val:fmt(SEWER_STANDALONE-SEWER_ADDON),cls:'discount'});
+    lines.push({name:'Standalone $350 — you save',val:fmt(SEWER_STANDALONE-SEWER_ADDON),cls:'discount'});
     total+=SEWER_ADDON;
   }
   if(S.promoDiscount){lines.push({name:'Online Booking Discount',val:'-$25',cls:'discount'});total=Math.max(0,total-25);}
@@ -545,28 +545,29 @@ function buildAddons(){
   var phaseHasMold=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
 
   // Mold: resale, qualifying phases, prelisting
-  if(svc==='resale'||phaseHasMold||svc==='prelisting'){
-    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
-  }
-  // Extra samples: standalone mold gets this as its only addon
-  if(svc==='mold'){
-    addons.push({id:'mold',icon:'🧪',eye:'Certified Lab · Same Visit',title:'Additional Air Quality Samples',desc:'Your base service includes 3 samples. Add more to test additional rooms, floors, or areas of concern — each sample includes certified lab analysis. $50 per additional sample.',addPrice:0,wasPrice:0,save:0,extraOnly:true});
-  }
-  // WDI: phases and prelisting ONLY — not resale (Pro already bundles it, Core clients had their choice)
+  // ORDER: lowest to highest price
+  // WDI $75 — phases and prelisting only
   var wdiShows=phaseHasMold||svc==='prelisting';
   if(wdiShows){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
     addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No subcontractors.',addPrice:wa,wasPrice:ws,save:sv});
   }
-  // Repair: resale only, $130 (save $19 vs standalone $149)
+  // Repair $130 — resale only
   if(svc==='resale'){
     addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with estimated minimum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.<br><span style="display:block;margin-top:10px;font-size:15px;color:rgba(184,154,110,.85);font-family:\'Crimson Pro\',serif;font-style:italic;line-height:1.6">Includes: Executive Summary · Deficiency Schedule · Condition Assessment Summary · RUL Estimates</span>',addPrice:130,wasPrice:149,save:19});
   }
-
-  // Sewer Scope: resale, phase 3+4, warranty, foundation, prelisting — residential only
-  var sewerEligible = svc==='resale' || (svc==='phase'&&S.phase>=3) || svc==='warranty' || svc==='foundation' || svc==='prelisting';
+  // Sewer $250 — resale, phase 3+4, warranty, foundation, prelisting
+  var sewerEligible=svc==='resale'||(svc==='phase'&&S.phase>=3)||svc==='warranty'||svc==='foundation'||svc==='prelisting';
   if(sewerEligible){
     addons.push({id:'sewer',icon:'🔭',eye:'Same Visit · No Second Trip · Independent Inspector',title:'Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line from cleanout to city tap — typically 50–100 feet. Documents root intrusion, pipe bellies, offset joints, cracks, and construction debris. Video recording delivered with report. <span style="color:#6ecf95;font-weight:600">No repairs sold. No referral fees.</span><br><span style="display:block;margin-top:8px;font-size:13px;color:rgba(184,154,110,.55);font-style:italic">Requires accessible ground-level cleanout. Most homes built after 1970 have one.</span>',addPrice:SEWER_ADDON,wasPrice:SEWER_STANDALONE,save:SEWER_STANDALONE-SEWER_ADDON});
+  }
+  // Mold $275 — resale, qualifying phases, prelisting
+  if(svc==='resale'||phaseHasMold||svc==='prelisting'){
+    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
+  }
+  // Extra samples: standalone mold only
+  if(svc==='mold'){
+    addons.push({id:'mold',icon:'🧪',eye:'Certified Lab · Same Visit',title:'Additional Air Quality Samples',desc:'Your base service includes 3 samples. Add more to test additional rooms, floors, or areas of concern — each sample includes certified lab analysis. $50 per additional sample.',addPrice:0,wasPrice:0,save:0,extraOnly:true});
   }
 
   var noMsg=document.getElementById('no-addons-msg');
@@ -838,7 +839,7 @@ function buildSubmissionData(){
   if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $50 each';addonList.push(ms);}
   if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.repair)addonList.push('Repair Estimate Report - $149');
-  if(S.addons.sewer)addonList.push('Sewer Scope Inspection - $150 (standalone $250, save $100)');
+  if(S.addons.sewer)addonList.push('Sewer Scope Inspection - $250 (standalone $350, save $100)');
 
   return{
     _subject:'New Booking - '+(svcLabels[S.service]||S.service)+' | Imperial Pro',
