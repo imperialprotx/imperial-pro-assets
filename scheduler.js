@@ -477,8 +477,8 @@ function calcBase(){
     price=fbase+crawlFee();
   } else if(svc==='mold'){
     if(!S.moldType)return{price:null,lines:[],label:'',detail:'',custom:false};
-    if(S.moldType==='iaq'){price=375;label='Mold &amp; Air Quality Testing';detail='3 air samples · Certified lab · Written report';lines.push({name:'Air Quality Sampling (3 samples)',val:fmt(375)});}
-    else{var ab=sqft<=2000?475:sqft<=3000?525:sqft<=4000?575:sqft<=5000?625:sqft<=6000?675:null;if(!ab)return{price:null,lines:[],label:'',detail:'',custom:true};price=ab;label='Mold Assessment + Air Quality Testing';detail='Physical inspection + 3 air samples + certified lab';lines.push({name:'Mold Assessment + 3 Air Quality Samples',val:fmt(ab)});}
+    if(S.moldType==='iaq'){price=475;label='Mold &amp; Air Quality Testing';detail='3 air samples · Certified lab · Written report';lines.push({name:'Air Quality Sampling (3 samples)',val:fmt(475)});}
+    else{var ab=sqft<=2000?575:sqft<=3000?625:sqft<=4000?675:sqft<=5000?725:sqft<=6000?775:null;if(!ab)return{price:null,lines:[],label:'',detail:'',custom:true};price=ab;label='Mold Assessment + Air Quality Testing';detail='Physical inspection + 3 air samples + certified lab';lines.push({name:'Mold Assessment + 3 Air Quality Samples',val:fmt(ab)});}
   } else if(svc==='termite'){
     var tbase=lookup(WDI_STANDALONE,sqft);if(!tbase)return{price:null,lines:[],label:'',detail:'',custom:true};
     price=tbase;label='WDI Termite Inspection';detail='TDA-licensed · Official WDI report';
@@ -507,13 +507,13 @@ function calcTotal(){
   var phaseAllowsAddon=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
   if(S.addons.mold&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
     lines.push({name:'Mold &amp; Air Quality Testing (3 samples)',val:fmt(275)});
-    lines.push({name:'Standalone $375 — you save',val:fmt(100),cls:'discount'});
+    lines.push({name:'Standalone $475 — you save',val:fmt(100),cls:'discount'});
     total+=275;
-    if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*50;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
+    if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*70;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
   if(svc==='mold'&&S.addons.extraSamples>0){
-    var esc=S.addons.extraSamples*50;
-    lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $50 each',val:'+'+fmt(esc)});
+    var esc=S.addons.extraSamples*70;
+    lines.push({name:'Additional samples (x'+S.addons.extraSamples+') at $70 each',val:'+'+fmt(esc)});
     total+=esc;
   }
   // WDI addon only for Core resale, phases, prelisting (Pro has WDI bundled)
@@ -563,11 +563,11 @@ function buildAddons(){
   }
   // Mold $275 — resale, qualifying phases, prelisting
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
-    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:275,wasPrice:375,save:100});
+    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:375,wasPrice:475,save:100});
   }
   // Extra samples: standalone mold only
   if(svc==='mold'){
-    addons.push({id:'mold',icon:'🧪',eye:'Certified Lab · Same Visit',title:'Additional Air Quality Samples',desc:'Your base service includes 3 samples. Add more to test additional rooms, floors, or areas of concern — each sample includes certified lab analysis. $50 per additional sample.',addPrice:0,wasPrice:0,save:0,extraOnly:true});
+    addons.push({id:'mold',icon:'🧪',eye:'Certified Lab · Same Visit',title:'Additional Air Quality Samples',desc:'Your base service includes 3 samples. Add more to test additional rooms, floors, or areas of concern — each sample includes certified lab analysis. $70 per additional sample.',addPrice:0,wasPrice:0,save:0,extraOnly:true});
   }
 
   var noMsg=document.getElementById('no-addons-msg');
@@ -591,7 +591,7 @@ function buildAddons(){
         +'<div style="font-family:\'Crimson Pro\',serif;font-size:15px;color:rgba(250,250,248,.65);line-height:1.6;margin-bottom:14px">'+addon.desc+'</div>'
         +'</div>'
         +'<div id="extra-samples-wrap" style="display:block;padding:14px 20px 18px 20px;border-top:1px solid rgba(184,154,110,.1)">'
-        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Additional samples — $50 each</div>'
+        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Additional samples — $70 each</div>'
         +'<div style="display:flex;align-items:center;gap:14px">'
         +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">-</button>'
         +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif;font-size:28px;font-weight:600;color:#fafaf8;min-width:32px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
@@ -624,7 +624,7 @@ function buildAddons(){
       +'<div style="flex-shrink:0;padding-left:20px;pointer-events:none">'+priceHtml+'</div>'
       +'</div>'
       +(addon.id==='mold'?'<div id="extra-samples-wrap" style="display:'+(on?'block':'none')+';padding:14px 20px 18px 76px;border-top:1px solid rgba(184,154,110,.1)">'
-        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $50 each</div>'
+        +'<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,250,248,.35);margin-bottom:12px">Need more samples? $70 each</div>'
         +'<div style="display:flex;align-items:center;gap:14px">'
         +'<button onclick="window.IPchangeExtraSamples(-1)" style="width:38px;height:38px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fafaf8;font-size:22px;cursor:pointer;line-height:1">-</button>'
         +'<span id="extra-count" style="font-family:\'Cormorant Garamond\',serif;font-size:28px;font-weight:600;color:#fafaf8;min-width:32px;text-align:center">'+((S.addons.extraSamples)||0)+'</span>'
@@ -836,7 +836,7 @@ function buildSubmissionData(){
   var pkgLabels={core:'Core (Visual Foundation Assessment)',pro:'Pro (ZIPLEVEL Precision Survey)'};
   var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
   var addonList=[];
-  if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $275 (save $100 vs standalone $375)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $50 each';addonList.push(ms);}
+  if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $375 (save $100 vs standalone $475)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $70 each';addonList.push(ms);}
   if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.repair)addonList.push('Repair Estimate Report - $149');
   if(S.addons.sewer)addonList.push('Sewer Scope Inspection - $250 (standalone $350, save $100)');
