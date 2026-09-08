@@ -506,9 +506,9 @@ function calcTotal(){
 
   var phaseAllowsAddon=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
   if(S.addons.mold&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
-    lines.push({name:'Mold &amp; Air Quality Testing (3 samples)',val:fmt(275)});
+    lines.push({name:'Mold &amp; Air Quality Testing (3 samples)',val:fmt(375)});
     lines.push({name:'Standalone $475 — you save',val:fmt(100),cls:'discount'});
-    total+=275;
+    total+=375;
     if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*70;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
   if(svc==='mold'&&S.addons.extraSamples>0){
