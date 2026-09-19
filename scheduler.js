@@ -1,5 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329d — sewer scope added)
-console.log('[Imperial Pro Scheduler] build 329d loaded');
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329g — sewer scope added)
+console.log('[Imperial Pro Scheduler] build 329g loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
@@ -22,7 +22,7 @@ const SEWER_ADDON=250;
 const AGE_SURCHARGE=[{from:1977,to:9999,fee:0},{from:1967,to:1976,fee:25},{from:1957,to:1966,fee:35},{from:1947,to:1956,fee:50},{from:1937,to:1946,fee:75},{from:1927,to:1936,fee:100},{from:1917,to:1926,fee:135},{from:1907,to:1916,fee:250},{from:0,to:1906,fee:375}];
 const COUPONS={'JADI':{amount:25,label:'Promo Code JADI'},'SAVE25':{amount:25,label:'Promo Code SAVE25'},'REFERRAL':{amount:50,label:'Referral Discount'},'FAMILY':{amount:50,label:'Family Discount'}};
 
-const S={step:1,propType:null,role:null,service:null,sqft:null,year:null,foundation:null,phase:null,foundLevel:null,moldType:null,resalePkg:'pro',addons:{mold:false,wdi:false,repair:false,sewer:false,extraSamples:0},coupon:null,promoDiscount:false,customQuote:false};
+const S={step:1,propType:null,role:null,service:null,sqft:null,year:null,foundation:null,phase:null,foundLevel:null,moldType:null,resalePkg:'pro',addons:{mold:false,wdi:false,sewer:false,extraSamples:0},coupon:null,promoDiscount:false,customQuote:false};
 
 function lookup(table,sqft){if(!sqft)return null;for(const t of table){if(sqft<=t.max)return t.p;}return null;}
 function fmt(n){return n!=null?'$'+n.toLocaleString():'--';}
@@ -117,7 +117,7 @@ var SERVICE_DEFS={
     {id:'resale',icon:'🏠',title:'Resale Home Inspection',desc:'Buying an existing home. Core includes full TREC inspection, infrared thermal imaging, and moisture testing. Upgrade to Pro to add a ZIPLEVEL precision foundation survey — the standard for Fort Bend County.',tag:'✦ Core · Pro · Add-ons'},
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'Building with a builder. ICC-certified inspections at every critical stage. The only ICC-certified inspector in Fort Bend County.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Foundation evaluation only. Level A is a thorough visual assessment. Level B is a full ZIPLEVEL precision survey with CAD drawing — the same tool foundation engineers use.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ Air Quality Testing · Assessment'},
+    {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Air and surface sampling with certified lab results, or a full mold assessment plus sampling. No home inspection required.',tag:'✦ Air Quality Testing · Targeted Assessment · Whole Home'},
     {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line from cleanout to city tap. Documents root intrusion, pipe bellies, offset joints, cracks, and construction debris. Video recording delivered with report.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On to Any Inspection'},
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'Performed by our inspector — TDA-licensed wood-destroying insect inspection. Required by most lenders. Official Texas WDI report, same visit, no subcontractors.',tag:'✦ TDA Licensed · In-House'},
   ],
@@ -125,7 +125,7 @@ var SERVICE_DEFS={
     {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural — plus a ZIPLEVEL® foundation elevation survey. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS · ZIPLEVEL® Survey'},
     {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment with spot elevation readings and drainage review, or Level B full ZIPLEVEL® precision survey with scaled CAD drawing.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Mold &amp; Air Quality Testing',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ Air Quality Testing · Assessment'},
+    {id:'mold',icon:'🧪',title:'Mold &amp; Air Quality Testing',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ Air Quality Testing · Targeted Assessment · Whole Home'},
     {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line. Documents root intrusion, pipe bellies, cracks, and blockages. Video recording delivered with report. Independent — no repairs sold.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On to Any Inspection'},
     {id:'termite',icon:'🪲',title:'WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.',tag:'✦ TDA Licensed'},
   ],
@@ -133,7 +133,7 @@ var SERVICE_DEFS={
     {id:'resale',icon:'🏠',title:'Resale Home Inspection',desc:'For your buyer purchasing an existing home. Core or Pro — both include infrared imaging and our Repair Request Builder formatted for seller negotiations.',tag:'✦ Core · Pro · Add-ons'},
     {id:'phase',icon:'🏗️',title:'New Construction Phase Inspection',desc:'For your buyer building with a builder. ICC-certified at every stage — Fort Bend County\'s only ICC-certified inspector.',tag:'✦ Phase 1 · 2 · 3 · 4'},
     {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A or Level B precision survey — powerful negotiating data for your clients.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Certified air and surface sampling. One visit, full written report.',tag:'✦ Air Quality Testing · Assessment'},
+    {id:'mold',icon:'🧪',title:'Standalone Mold &amp; Air Quality Testing',desc:'Certified air and surface sampling. One visit, full written report.',tag:'✦ Air Quality Testing · Targeted Assessment · Whole Home'},
     {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of the lateral sewer line. Flat $350 standalone, or $250 added to any home or foundation inspection. Independent — no repairs sold, no referral fees.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On'},
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'TDA-licensed WDI inspection. Required by most lenders.',tag:'✦ TDA Licensed'},
   ]
@@ -162,7 +162,7 @@ function buildStep3Cards(){
 
 function pickService(svc){
   S.service=svc;
-  S.addons={mold:false,wdi:false,repair:false,sewer:false,extraSamples:0};
+  S.addons={mold:false,wdi:false,sewer:false,extraSamples:0};
   S.resalePkg='pro';S.phase=null;S.foundLevel=null;S.moldType=null;
   document.querySelectorAll('[id^="svc-"]').forEach(function(c){
     c.classList.remove('selected');
@@ -194,7 +194,7 @@ function configStep4(){
     onDetailsChange();
     return;
   }
-  show('fg-sqft',true);
+  show('fg-sqft',svc!=='mold'); // mold: sqft only shown after Whole Home tier is picked
   if(svc==='resale'||svc==='prelisting')show('fg-year',true);
   if(svc==='resale'||svc==='phase'||svc==='foundation'||svc==='warranty'||svc==='prelisting')show('fg-foundation',true);
   if(svc==='phase')show('fg-phase',true);
@@ -412,7 +412,11 @@ function pickFoundLevel(l){
 
 function pickMoldType(t){
   S.moldType=t;
-  ['iaq','assess'].forEach(function(x){var el=document.getElementById('rb-mold-'+x);if(el)el.classList.toggle('selected',x===t);});
+  ['iaq','targeted','whole'].forEach(function(x){var el=document.getElementById('rb-mold-'+x);if(el)el.classList.toggle('selected',x===t);});
+  // iaq and targeted are flat price -- no sqft needed
+  var sqftField=document.getElementById('fg-sqft');
+  if(sqftField) sqftField.style.display=(t==='whole'?'block':'none');
+  if(t!=='whole'){var si=document.getElementById('inp-sqft');if(si)si.value='';}
   onDetailsChange();
   scrollToBtn('next-4');
 }
@@ -420,6 +424,7 @@ function pickMoldType(t){
 function checkStep4Ready(){
   var svc=S.service;
   if(svc==='sewer')return true; // flat price, no sqft needed
+  if(svc==='mold'&&(S.moldType==='iaq'||S.moldType==='targeted'))return true; // flat price tiers
   if(!S.sqft||S.sqft<100)return false;
   if(S.sqft>6000)return false;
   if(svc==='resale'&&!S.resalePkg)return false;
@@ -435,6 +440,12 @@ function calcBase(){
   var sqft=S.sqft,svc=S.service;
   if(svc==='sewer'){
     return{price:SEWER_STANDALONE,lines:[{name:'Sewer Scope Inspection',val:fmt(SEWER_STANDALONE)}],label:'Sewer Scope Inspection',detail:'Standalone · Full lateral line · Video delivered with report',custom:false};
+  }
+  if(svc==='mold'&&S.moldType==='iaq'){
+    return{price:495,lines:[{name:'Air Quality Sampling (3 samples)',val:fmt(495)}],label:'Mold & Air Quality Testing',detail:'Air Quality Testing · 3 samples · Certified lab · Written report',custom:false};
+  }
+  if(svc==='mold'&&S.moldType==='targeted'){
+    return{price:595,lines:[{name:'Targeted Mold Assessment (3 samples)',val:fmt(595)}],label:'Targeted Mold Assessment',detail:'Targeted assessment · Thermal imaging · 3 air samples · Certified lab',custom:false};
   }
   if(!sqft)return{price:null,lines:[],label:'',detail:'',custom:false};
   if(sqft>6000)return{price:null,lines:[],label:'',detail:'',custom:true};
@@ -477,8 +488,8 @@ function calcBase(){
     price=fbase+crawlFee();
   } else if(svc==='mold'){
     if(!S.moldType)return{price:null,lines:[],label:'',detail:'',custom:false};
-    if(S.moldType==='iaq'){price=475;label='Mold &amp; Air Quality Testing';detail='3 air samples · Certified lab · Written report';lines.push({name:'Air Quality Sampling (3 samples)',val:fmt(475)});}
-    else{var ab=sqft<=2000?575:sqft<=3000?625:sqft<=4000?675:sqft<=5000?725:sqft<=6000?775:null;if(!ab)return{price:null,lines:[],label:'',detail:'',custom:true};price=ab;label='Mold Assessment + Air Quality Testing';detail='Physical inspection + 3 air samples + certified lab';lines.push({name:'Mold Assessment + 3 Air Quality Samples',val:fmt(ab)});}
+    if(S.moldType==='whole'){var wh=sqft<=3000?795:sqft<=4000?895:sqft<=5000?995:sqft<=6000?1095:null;if(!wh)return{price:null,lines:[],label:'',detail:'',custom:true};price=wh;label='Whole Home Mold Assessment';detail='Full structure · Thermal imaging · 3 air samples · Certified lab';lines.push({name:'Whole Home Mold Assessment (3 samples)',val:fmt(wh)});}
+    else{return{price:null,lines:[],label:'',detail:'',custom:false};}
   } else if(svc==='termite'){
     var tbase=lookup(WDI_STANDALONE,sqft);if(!tbase)return{price:null,lines:[],label:'',detail:'',custom:true};
     price=tbase;label='WDI Termite Inspection';detail='TDA-licensed · Official WDI report';
@@ -506,9 +517,9 @@ function calcTotal(){
 
   var phaseAllowsAddon=(svc==='phase'&&S.phase>=3)||(svc==='warranty');
   if(S.addons.mold&&(svc==='resale'||phaseAllowsAddon||svc==='prelisting')){
-    lines.push({name:'Mold &amp; Air Quality Testing (3 samples)',val:fmt(375)});
-    lines.push({name:'Standalone $475 — you save',val:fmt(100),cls:'discount'});
-    total+=375;
+    lines.push({name:'Air Quality Testing — 3 samples (add-on)',val:fmt(395)});
+    lines.push({name:'Standalone $495 — you save',val:fmt(100),cls:'discount'});
+    total+=395;
     if(S.addons.extraSamples>0){var ec=S.addons.extraSamples*70;lines.push({name:'Additional samples (x'+S.addons.extraSamples+')',val:'+'+fmt(ec)});total+=ec;}
   }
   if(svc==='mold'&&S.addons.extraSamples>0){
@@ -524,7 +535,6 @@ function calcTotal(){
     lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});
     total+=wa;
   }
-  if(S.addons.repair&&svc==='resale'){lines.push({name:'Repair Estimate Report',val:fmt(130)});lines.push({name:'Standalone $149 — you save',val:fmt(19),cls:'discount'});total+=130;}
   // Sewer scope addon
   var sewerAddonEligible=svc==='resale'||(svc==='phase'&&S.phase>=3)||svc==='warranty'||svc==='foundation'||svc==='prelisting';
   if(S.addons.sewer&&sewerAddonEligible){
@@ -552,10 +562,7 @@ function buildAddons(){
     var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
     addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No subcontractors.',addPrice:wa,wasPrice:ws,save:sv});
   }
-  // Repair $130 — resale only
-  if(svc==='resale'){
-    addons.push({id:'repair',icon:'📋',eye:'Exclusive to Imperial Pro · Resale Only',title:'Repair Estimate Report',desc:'Every defect priced line by line with estimated minimum repair cost ranges. Most inspectors hand you a list of problems. We hand you the leverage.<br><span style="display:block;margin-top:10px;font-size:15px;color:rgba(184,154,110,.85);font-family:\'Crimson Pro\',serif;font-style:italic;line-height:1.6">Includes: Executive Summary · Deficiency Schedule · Condition Assessment Summary · RUL Estimates</span>',addPrice:130,wasPrice:149,save:19});
-  }
+
   // Sewer $250 — resale, phase 3+4, warranty, foundation, prelisting
   var sewerEligible=svc==='resale'||(svc==='phase'&&S.phase>=3)||svc==='warranty'||svc==='foundation'||svc==='prelisting';
   if(sewerEligible){
@@ -563,7 +570,7 @@ function buildAddons(){
   }
   // Mold $275 — resale, qualifying phases, prelisting
   if(svc==='resale'||phaseHasMold||svc==='prelisting'){
-    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:375,wasPrice:475,save:100});
+    addons.push({id:'mold',icon:'🧪',eye:'Same Visit · Certified Lab Results',title:'Mold &amp; Air Quality Testing',desc:'3 air samples — 1 outdoor baseline and 2 indoor — with certified lab analysis. Reveals hidden mold and elevated spore counts that no visual inspection can detect. No second appointment needed.',addPrice:395,wasPrice:495,save:100});
   }
   // Extra samples: standalone mold only
   if(svc==='mold'){
@@ -836,9 +843,8 @@ function buildSubmissionData(){
   var pkgLabels={core:'Core (Visual Foundation Assessment)',pro:'Pro (ZIPLEVEL Precision Survey)'};
   var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
   var addonList=[];
-  if(S.addons.mold){var ms='Mold &amp; Air Quality Testing - $375 (save $100 vs standalone $475)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $70 each';addonList.push(ms);}
+  if(S.addons.mold){var ms='Air Quality Testing add-on - $395 (save $100 vs standalone $495)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $70 each';addonList.push(ms);}
   if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
-  if(S.addons.repair)addonList.push('Repair Estimate Report - $149');
   if(S.addons.sewer)addonList.push('Sewer Scope Inspection - $250 (standalone $350, save $100)');
 
   return{
@@ -853,7 +859,7 @@ function buildSubmissionData(){
     'YEAR BUILT':S.year||'Not provided',
     'FOUNDATION TYPE':S.foundation==='crawl'?'Crawlspace / Pier & Beam (+$100 applied silently)':'Slab',
     'SERVICE TYPE':svcLabels[S.service]||S.service,
-    'PACKAGE':S.resalePkg?pkgLabels[S.resalePkg]||S.resalePkg:S.foundLevel?'Level '+S.foundLevel:S.moldType?S.moldType:S.phase?phaseLabels[S.phase]||('Phase '+S.phase):'N/A',
+    'PACKAGE':S.resalePkg?pkgLabels[S.resalePkg]||S.resalePkg:S.foundLevel?'Level '+S.foundLevel:S.moldType?({iaq:'Air Quality Testing',targeted:'Targeted Mold Assessment',whole:'Whole Home Mold Assessment'}[S.moldType]||S.moldType):S.phase?phaseLabels[S.phase]||('Phase '+S.phase):'N/A',
     'ADD-ONS':addonList.length?addonList.join(' | '):'None',
     'ONLINE DISCOUNT':S.promoDiscount?'YES — $25 off applied':'No',
     'COUPON':S.coupon?S.coupon.label+' - -$'+S.coupon.amount:'None',
@@ -916,7 +922,7 @@ function startOver(){
   // Reset all state
   S.step=1;S.propType=null;S.role=null;S.service=null;
   S.sqft=null;S.year=null;S.foundation=null;S.phase=null;S.foundLevel=null;
-  S.moldType=null;S.resalePkg='pro';S.addons={mold:false,wdi:false,repair:false,sewer:false,extraSamples:0};
+  S.moldType=null;S.resalePkg='pro';S.addons={mold:false,wdi:false,sewer:false,extraSamples:0};
   S.coupon=null;S.customQuote=false;
 
   // Clear all selections visually
