@@ -1,5 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329g — sewer scope added)
-console.log('[Imperial Pro Scheduler] build 329g loaded');
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329h — sewer scope added)
+console.log('[Imperial Pro Scheduler] build 329h loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
@@ -13,9 +13,8 @@ const RESALE_PRO=[{max:1500,p:619},{max:2000,p:645},{max:2500,p:695},{max:3000,p
 const FOUND_A=[{max:2000,p:250},{max:2500,p:275},{max:3000,p:300},{max:3500,p:325},{max:4000,p:350},{max:5000,p:375},{max:6000,p:425},{max:Infinity,p:null}];
 const FOUND_B=[{max:2000,p:350},{max:2500,p:375},{max:3000,p:400},{max:3500,p:425},{max:4000,p:450},{max:5000,p:500},{max:6000,p:550},{max:Infinity,p:null}];
 const PRELISTING=[{max:1500,p:419},{max:2000,p:449},{max:2500,p:495},{max:3000,p:519},{max:3500,p:569},{max:4000,p:619},{max:4500,p:669},{max:5000,p:769},{max:6000,p:869},{max:Infinity,p:null}];
-const WDI_STANDALONE=[{max:1500,p:175},{max:2000,p:195},{max:2500,p:215},{max:3000,p:235},{max:3500,p:255},{max:4000,p:275},{max:5000,p:300},{max:6000,p:325},{max:Infinity,p:null}];
-const WDI_ADDON_CORE=[{max:1500,p:115},{max:2000,p:125},{max:2500,p:135},{max:3000,p:145},{max:3500,p:155},{max:4000,p:165},{max:5000,p:175},{max:6000,p:185},{max:Infinity,p:null}];
-const WDI_ADDON_PRO=75;
+const WDI_STANDALONE=[{max:3000,p:195},{max:4000,p:245},{max:5000,p:295},{max:6000,p:345},{max:Infinity,p:null}];
+const WDI_ADDON_DISCOUNT=100; // add-on = standalone minus this; Pro resale includes WDI at no charge
 const SEWER_STANDALONE=350;
 const SEWER_ADDON=250;
 
@@ -31,13 +30,8 @@ function crawlFee(){return S.foundation==='crawl'?100:0;}
 function scrollToWizard(){var el=document.getElementById('wizard-top');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 function wdiAddonPrice(){
-  var svc=S.service;
-  var isPro=svc==='resale'&&S.resalePkg==='pro';
-  var isPhase=svc==='phase'&&S.phase>=3;
-  var isWarranty=svc==='warranty';
-  var isPre=svc==='prelisting';
-  if(isPro||isPhase||isWarranty||isPre)return WDI_ADDON_PRO;
-  return lookup(WDI_ADDON_CORE,S.sqft)||115;
+  var ws=lookup(WDI_STANDALONE,S.sqft);
+  return ws?ws-WDI_ADDON_DISCOUNT:null;
 }
 
 function getPhaseDiscount(phase){return 0;}
@@ -529,8 +523,8 @@ function calcTotal(){
   }
   // WDI addon only for Core resale, phases, prelisting (Pro has WDI bundled)
   var wdiEligible=(svc==='resale'&&S.resalePkg!=='pro')||phaseAllowsAddon||svc==='prelisting';
-  if(S.addons.wdi&&wdiEligible){
-    var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var saved=ws-wa;
+  if(S.addons.wdi&&wdiEligible&&wdiAddonPrice()){
+    var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft);var saved=ws-wa;
     lines.push({name:'WDI Termite Inspection',val:fmt(wa)});
     lines.push({name:'Standalone '+fmt(ws)+' — you save',val:fmt(saved),cls:'discount'});
     total+=wa;
@@ -556,10 +550,11 @@ function buildAddons(){
 
   // Mold: resale, qualifying phases, prelisting
   // ORDER: lowest to highest price
-  // WDI $75 — phases and prelisting only
-  var wdiShows=phaseHasMold||svc==='prelisting';
-  if(wdiShows){
-    var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,sqft)||195;var sv=ws-wa;
+  // WDI — standalone minus $100. Core resale, Phase 3+, Warranty, Prelisting. Pro resale includes it.
+  var wdiShows=(svc==='resale'&&S.resalePkg!=='pro')||phaseHasMold||svc==='prelisting';
+  var waTest=wdiAddonPrice();
+  if(wdiShows&&waTest){
+    var wa=waTest;var ws=lookup(WDI_STANDALONE,sqft);var sv=ws-wa;
     addons.push({id:'wdi',icon:'🪲',eye:'In-House · TDA Licensed · Same Visit',title:'WDI Termite Inspection',desc:'Performed by our inspector during the same visit. Official Texas WDI report, TDA licensed, accepted by all lenders. No subcontractors.',addPrice:wa,wasPrice:ws,save:sv});
   }
 
@@ -844,7 +839,7 @@ function buildSubmissionData(){
   var breakdown=(calc.lines||[]).map(function(l){return'  '+l.name+': '+l.val;}).join('\n');
   var addonList=[];
   if(S.addons.mold){var ms='Air Quality Testing add-on - $395 (save $100 vs standalone $495)';if(S.addons.extraSamples>0)ms+=' + '+S.addons.extraSamples+' extra samples at $70 each';addonList.push(ms);}
-  if(S.addons.wdi){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft)||195;addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
+  if(S.addons.wdi&&wdiAddonPrice()){{var wa=wdiAddonPrice();var ws=lookup(WDI_STANDALONE,S.sqft);addonList.push('WDI Termite - $'+wa+' (standalone: $'+ws+', save $'+(ws-wa)+')');}}
   if(S.addons.sewer)addonList.push('Sewer Scope Inspection - $250 (standalone $350, save $100)');
 
   return{
