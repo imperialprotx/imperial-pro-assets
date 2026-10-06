@@ -1,5 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329h — sewer scope added)
-console.log('[Imperial Pro Scheduler] build 329h loaded');
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329i — sewer scope added)
+console.log('[Imperial Pro Scheduler] build 329i loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
@@ -116,11 +116,11 @@ var SERVICE_DEFS={
     {id:'termite',icon:'🪲',title:'Standalone WDI Termite Inspection',desc:'Performed by our inspector — TDA-licensed wood-destroying insect inspection. Required by most lenders. Official Texas WDI report, same visit, no subcontractors.',tag:'✦ TDA Licensed · In-House'},
   ],
   homeowner:[
+    {id:'mold',icon:'🧪',title:'Mold &amp; Air Quality Testing',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ Air Quality Testing · Targeted Assessment · Whole Home'},
+    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment with spot elevation readings and drainage review, or Level B full ZIPLEVEL® precision survey with scaled CAD drawing.',tag:'✦ Level A · Level B'},
+    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line. Documents root intrusion, pipe bellies, cracks, and blockages. Video recording delivered with report. Independent — no repairs sold.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On to Any Inspection'},
     {id:'warranty',icon:'📋',title:'Builder Warranty Inspection',desc:'Your 11-month window before your builder warranty expires. MEPS inspection covers Mechanical, Electrical, Plumbing, and Structural — plus a ZIPLEVEL® foundation elevation survey. Last chance to make them fix it at no cost to you.',tag:'✦ MEPS · ZIPLEVEL® Survey'},
     {id:'prelisting',icon:'🏷️',title:'Pre-Listing Inspection',desc:'Selling your home? A pre-listing MEPS inspection finds issues before buyers do — giving you full control of the negotiation before you ever list.',tag:'✦ MEPS Scope'},
-    {id:'foundation',icon:'📐',title:'Standalone Foundation Inspection',desc:'Level A visual assessment with spot elevation readings and drainage review, or Level B full ZIPLEVEL® precision survey with scaled CAD drawing.',tag:'✦ Level A · Level B'},
-    {id:'mold',icon:'🧪',title:'Mold &amp; Air Quality Testing',desc:'Professional air and surface sampling with certified lab results, or a full mold assessment plus sampling.',tag:'✦ Air Quality Testing · Targeted Assessment · Whole Home'},
-    {id:'sewer',icon:'🔭',title:'Standalone Sewer Scope Inspection',desc:'HD camera inspection of your lateral sewer line. Documents root intrusion, pipe bellies, cracks, and blockages. Video recording delivered with report. Independent — no repairs sold.<br><small style="color:rgba(10,22,40,.4);font-style:italic">Requires ground-level cleanout access. Most homes built after 1970 have one.</small>',tag:'✦ $350 Standalone · $250 Add-On to Any Inspection'},
     {id:'termite',icon:'🪲',title:'WDI Termite Inspection',desc:'TDA-licensed wood-destroying insect inspection. One visit, official report.',tag:'✦ TDA Licensed'},
   ],
   agent:[
@@ -189,6 +189,12 @@ function configStep4(){
     return;
   }
   show('fg-sqft',svc!=='mold'); // mold: sqft only shown after Whole Home tier is picked
+  // Place sqft field directly under the mold tier picker so Whole Home users see it where they are
+  var sq=document.getElementById('fg-sqft'),mt=document.getElementById('fg-mold-type'),yr=document.getElementById('fg-year');
+  if(sq&&mt&&yr&&sq.parentNode){
+    if(svc==='mold'){mt.insertAdjacentElement('afterend',sq);}
+    else{yr.insertAdjacentElement('beforebegin',sq);}
+  }
   if(svc==='resale'||svc==='prelisting')show('fg-year',true);
   if(svc==='resale'||svc==='phase'||svc==='foundation'||svc==='warranty'||svc==='prelisting')show('fg-foundation',true);
   if(svc==='phase')show('fg-phase',true);
@@ -412,7 +418,8 @@ function pickMoldType(t){
   if(sqftField) sqftField.style.display=(t==='whole'?'block':'none');
   if(t!=='whole'){var si=document.getElementById('inp-sqft');if(si)si.value='';}
   onDetailsChange();
-  scrollToBtn('next-4');
+  if(t==='whole'){setTimeout(function(){var si=document.getElementById('inp-sqft');if(si){si.scrollIntoView({behavior:'smooth',block:'center'});si.focus();}},350);}
+  else{scrollToBtn('next-4');}
 }
 
 function checkStep4Ready(){
