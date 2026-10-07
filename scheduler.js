@@ -1,5 +1,5 @@
-// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329i — sewer scope added)
-console.log('[Imperial Pro Scheduler] build 329i loaded');
+// IMPERIAL PRO INSPECTION — SCHEDULER ENGINE v2 (build 329j — sewer scope added)
+console.log('[Imperial Pro Scheduler] build 329j loaded');
 // Auto-advance, phase discounts, Core/Pro slider,
 // green addon toggles, WDI by pkg, silent surcharges,
 // weekend blocking, larger fonts, military green
@@ -1019,8 +1019,9 @@ window.IPvalidateDates=validateDates;
   var st=document.createElement('style');
   st.id='addon-green-style';
   st.textContent='.addon-toggle.on{border-color:rgba(110,207,149,.35)!important}'
-    +'.addon-toggle.on .toggle-switch{background:#3a9e5f!important;border-color:#6ecf95!important}'
-    +'.addon-toggle.on .toggle-knob{left:23px!important;background:#fafaf8!important}'
+    +'.addon-toggle.on .toggle-switch{background:#3a9e5f!important;border-color:#8fe0b0!important}'
+    +'.addon-toggle.on .toggle-knob{left:26px!important;background:#fafaf8!important}'+
+    '.addon-toggle.on .toggle-knob::after{content:"\\2713"}'
     +'.addon-toggle.on .addon-toggle-eye{color:#6ecf95!important}';
   document.head.appendChild(st);
 })();
@@ -1028,7 +1029,7 @@ window.IPvalidateDates=validateDates;
 // ── WINDOW EXPORTS ───────────────────────────────────────
 function showPromoIfEligible(){
   var svc=S.service;
-  var eligible=svc==='resale'||svc==='phase'||svc==='warranty';
+  var eligible=svc==='resale'||svc==='phase'||svc==='warranty'||svc==='mold';
   var wrap=document.getElementById('promo-unlock-wrap');
   if(wrap)wrap.style.display=eligible?'block':'none';
   if(!eligible&&S.promoDiscount){
